@@ -1,0 +1,14 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="splash_screen_text">40sp</dimen>
+    <dimen name="visible_text_reading_size">16sp</dimen>
+    <dimen name="home_page_reading_text">20sp</dimen>
+    <dimen name="user_profile_reading_text">18sp</dimen>
+    <dimen name="home_page_button_text">16sp</dimen>
+    <dimen name="points_text">30sp</dimen>
+    <dimen name="user_profile_points_text">12sp</dimen>
+    <dimen name="user_profile_points_info_text">14sp</dimen>
+    <dimen name="wait_time_text_size">22sp</dimen>
+</resources>

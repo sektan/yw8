@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "54832716150",
+    "project_id": "w8-production"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54832716150:android:4e43d76748433f66",
+        "android_client_info": {
+          "package_name": "com.dishq.buzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "54832716150-fedbq3bfv99as0vkv2fp3q12juu3btp7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dishq.buzz",
+            "certificate_hash": "3F5E018BC08BAC1F6F4F560392C916B4906144E2"
+          }
+        },
+        {
+          "client_id": "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6dS9RAiJiZiYSsk1gSLCmBITrCjSKXio"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.UpdateRestProfileActivity"
+    tools:showIn="@layout/activity_update_rest_profile"
+    android:background="@color/white">
+
+    <include
+        android:id="@+id/update_rest_profile_toolbar"
+        layout="@layout/tool_bar_rest_info"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_update_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="17dp"
+        android:layout_below="@+id/update_rest_profile_toolbar">
+
+        <android.support.v7.widget.CardView
+            android:id= "@+id/cv_update_rest_name"
+            android:layout_gravity ="center"
+            card_view:cardBackgroundColor="@color/white"
+            android:layout_width = "match_parent"
+            android:layout_height= "46dp"
+            android:layout_marginTop="11dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="15dp"
+            android:foregroundGravity="left|center"
+            card_view:cardCornerRadius="2dp">
+
+                <TextView
+                    android:id="@+id/cv_up_rest_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textSize="@dimen/visible_text_reading_size"
+                    android:textColor="@color/black"/>
+
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/tv_current_wait"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginTop="30dp"
+            android:layout_below="@+id/cv_update_rest_name"
+            android:textSize="@dimen/visible_text_reading_size"
+            android:text="@string/current_wait"/>
+
+        <LinearLayout
+            android:id="@+id/ll_current_wait"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="13dp"
+            android:layout_below="@+id/tv_current_wait">
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_wait_one"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_width = "62dp"
+                android:layout_height= "71dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cv_tv_wait_time_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:text="0"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/cv_tv_min_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/mins"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_wait_two"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/blueGreen"
+                android:alpha="0.1"
+                android:layout_width = "62dp"
+                android:layout_height= "71dp"
+                android:layout_marginStart="5dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cv_tv_wait_time_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="10"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/cv_tv_min_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/mins"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_wait_three"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/blueGreen"
+                android:alpha="0.3"
+                android:layout_width = "62dp"
+                android:layout_height= "71dp"
+                android:layout_marginStart="5dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cv_tv_wait_time_three"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="20"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/cv_tv_min_three"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/mins"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_wait_four"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/blueGreen"
+                android:alpha="0.4"
+                android:layout_width = "62dp"
+                android:layout_height= "71dp"
+                android:layout_marginStart="5dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cv_tv_wait_time_four"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="30"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/cv_tv_min_four"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/mins"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_wait_five"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/blueGreen"
+                android:alpha="0.6"
+                android:layout_width = "62dp"
+                android:layout_height= "71dp"
+                android:layout_marginStart="5dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cv_tv_wait_time_five"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="30&#43;"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/cv_tv_min_five"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/mins"
+                        android:textSize="@dimen/visible_text_reading_size"
+                        android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_ambiance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_current_wait"
+            android:textColor="@color/black"
+            android:layout_marginTop="30dp"
+            android:textSize="@dimen/visible_text_reading_size"
+            android:visibility="gone"
+            android:text="@string/ambiance"/>
+
+        <LinearLayout
+            android:id="@+id/ll_current_ambiance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="13dp"
+            android:visibility="gone"
+            android:layout_below="@+id/tv_ambiance">
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_ambiance_one"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/blueGreen"
+                android:alpha="0.15"
+                android:layout_width = "160dp"
+                android:layout_height= "71dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <TextView
+                    android:id="@+id/cv_tv_ambiance_one"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textSize="@dimen/visible_text_reading_size"
+                    android:text="Quiet"
+                    android:textColor="@color/black"/>
+
+                </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id= "@+id/cv_ambiance_two"
+                android:layout_gravity ="center"
+                card_view:cardBackgroundColor="@color/blueGreen"
+                android:alpha="0.4"
+                android:layout_width = "160dp"
+                android:layout_height= "71dp"
+                android:paddingStart="13dp"
+                android:paddingEnd="15dp"
+                card_view:cardCornerRadius="2dp">
+
+                <TextView
+                    android:id="@+id/cv_tv_ambiance_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textSize="@dimen/visible_text_reading_size"
+                    android:text="Lively"
+                    android:textColor="@color/black"/>
+
+            </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/button_update"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="3dp"
+        android:text="UPDATE"
+        android:textSize="@dimen/visible_text_reading_size"
+        android:alpha="0.38"
+        android:background="@color/black"
+        android:textColor="@color/white"
+        android:enabled="false"/>
+</RelativeLayout>

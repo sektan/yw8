@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+               android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+    android:elevation="3dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/search_dark"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:layout_marginTop="6dp"
+            android:id="@+id/restaurant_search_name"
+            android:layout_marginStart="4dp"
+            android:textColor="#86000000"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_weight="1"
+        android:textColor="#54000000"
+        android:drawablePadding="5dp"
+        android:id="@+id/restaurant_search_address"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginStart="26dp" />
+
+</LinearLayout>
