@@ -457,6 +457,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private void fetchUpdatedUserInfo() {
         checkGPS();
+        getLongitude = 77.62916017;
         final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(query,
                 getLatitude, getLongitude, waitTimeId, buzzTypeId);
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
