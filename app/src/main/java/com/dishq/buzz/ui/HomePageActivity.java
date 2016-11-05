@@ -95,7 +95,7 @@ public class HomePageActivity extends BaseActivity {
 
         int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
         if (spUserPoints != null && lifetimePoints != 0) {
-            spUserPoints.setText(lifetimePoints);
+            spUserPoints.setText(Integer.toString(lifetimePoints));
         }
         String displayName = shortUserDetailsFinder.getFullName();
         if (spUserName != null && displayName != null) {
@@ -149,6 +149,7 @@ public class HomePageActivity extends BaseActivity {
                 return true;
             case R.id.log_out:
                 Intent intentLogOut = new Intent(HomePageActivity.this, LoginActivity.class);
+                signOut();
                 finish();
                 startActivity(intentLogOut);
                 return true;
@@ -156,5 +157,9 @@ public class HomePageActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void signOut() {
+
     }
 }
