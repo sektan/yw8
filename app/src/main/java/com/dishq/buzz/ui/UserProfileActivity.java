@@ -94,7 +94,7 @@ public class UserProfileActivity extends BaseActivity {
 
             int currPoints = fullUserDetailsFinder.getfLifeTimePoints();
             if(currPoints!=0) {
-                userProfPointsAlloted.setText(currPoints);
+                userProfPointsAlloted.setText(Integer.toString(currPoints));
             }
 
             String pointsToUpgradeText = fullUserDetailsFinder.getfPointsToUgrade();
@@ -111,7 +111,7 @@ public class UserProfileActivity extends BaseActivity {
 
             int monthPoints = fullUserDetailsFinder.getmNoOfPoints();
             if(monthPoints!=0) {
-                userProfMonthPoints.setText(monthPoints);
+                userProfMonthPoints.setText(Integer.toString(monthPoints));
             }
 
             int year = fullUserDetailsFinder.getyYear();
@@ -127,7 +127,7 @@ public class UserProfileActivity extends BaseActivity {
 
             int yearPoints = fullUserDetailsFinder.getyNoOfPoints();
             if(yearPoints!=0) {
-                userProfYearPoints.setText(yearPoints);
+                userProfYearPoints.setText(Integer.toString(yearPoints));
             }
         }
 
