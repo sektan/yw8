@@ -2,6 +2,7 @@ package com.dishq.buzz.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,8 @@ public class UserProfileActivity extends BaseActivity {
     private static String serverAccessToken = "";
     private String TAG = "UserProfileActivity";
     private FullUserDetailsFinder fullUserDetailsFinder;
+    private int progressStatus = 0;
+    private Handler handler = new Handler();
 
     ImageView userProfBack, userProfFinder, userProfBadge;
     TextView userProfileHeader, userProfName, userProfBadgeName,
@@ -64,12 +67,14 @@ public class UserProfileActivity extends BaseActivity {
         userProfYearPoints = (TextView) findViewById(R.id.up_year_points);
         monthCV = (CardView) findViewById(R.id.cv_month_leaderboard);
         yearCV = (CardView) findViewById(R.id.cv_year_leaderboard);
+        userProfProgress = (ProgressBar) findViewById(R.id.up_progressBar);
     }
 
     private void setFunctionality(final FullUserDetailsFinder fullUserDetailsFinder) {
 
         final int monthNumber = fullUserDetailsFinder.getmMonthNo();
         final int yearNumber = fullUserDetailsFinder.getyYear();
+        final int currPoints = fullUserDetailsFinder.getfLifeTimePoints();
         userProfBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,7 +97,6 @@ public class UserProfileActivity extends BaseActivity {
                 userProfBadgeName.setText(currBadgeName);
             }
 
-            int currPoints = fullUserDetailsFinder.getfLifeTimePoints();
             if(currPoints!=0) {
                 userProfPointsAlloted.setText(Integer.toString(currPoints));
             }
@@ -153,6 +157,22 @@ public class UserProfileActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (progressStatus <200) {
+                    progressStatus = currPoints;
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            userProfProgress.setProgress(progressStatus);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     private void fetchFullUserDetails() {

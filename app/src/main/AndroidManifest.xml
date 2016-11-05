@@ -46,9 +46,6 @@
         android:label="Get Points"
         android:screenOrientation="portrait"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".ui.HomePageActivity"/>
     </activity>
 
         <activity
