@@ -16,6 +16,10 @@
     <string name="new_account">Don\'t have an account?&#160;</string>
     <string name="text_signup">Sign up</string>
     <string name="server_client_id">54832716150-fedbq3bfv99as0vkv2fp3q12juu3btp7.apps.googleusercontent.com</string>
+    <string name="server_web_id">54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com</string>
+    <string name="backend_facebook">facebook</string>
+    <string name="grant_type_conv_token">convert_token</string>
+    <string name="backend_google">google-oauth2</string>
 
     <!-- Menu Bar -->
     <string name="options">Options</string>
@@ -40,6 +44,7 @@
     <!-- User Profile-->
     <string name="badge_type_rookie">ROOKIE</string>
     <string name="lifetime_points">Lifetime Points</string>
+    <string name="profile">Profile</string>
 
     <!-- Restaurant Profile & Update Profile-->
     <string name="current_waiting_time_text">Current Waiting Time is</string>
@@ -47,5 +52,8 @@
     <string name="update">Update</string>
     <string name="current_wait">Current Waiting Time \?</string>
     <string name="ambiance">Ambiance \?</string>
+
+    <!-- Leader Board -->
+    <string name="leaderboard">Leaderboard</string>
 
 </resources>

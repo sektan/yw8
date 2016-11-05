@@ -53,12 +53,8 @@
 
         <activity
             android:name=".ui.UserProfileActivity"
-            android:label="Profile"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomePageActivity"/>
         </activity>
 
         <activity android:name=".ui.SearchActivity"
@@ -83,6 +79,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
+
+        <activity
+            android:name=".ui.LeaderBoardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+
     </application>
 
 </manifest>

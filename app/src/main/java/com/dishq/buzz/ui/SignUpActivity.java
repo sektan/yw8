@@ -74,10 +74,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        String serverClientId = getResources().getString(R.string.server_client_id);
+        String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
-                .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestServerAuthCode(serverClientId)
                 .requestIdToken(serverClientId)
                 .build();
@@ -223,7 +222,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 @Override
                 protected void onPostExecute(String token) {
                     Log.i(TAG, "Access token retrieved:" + ace);
-                    fetchAccessToken();
+                    fetchAccessToken(ace);
                 }
 
             };
@@ -234,17 +233,28 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         } else {
             Log.e("google", result + "");
-            fetchAccessToken();
+            //fetchAccessToken(accessToken);
             // Signed out, show unauthenticated UI.
             // updateUI(false);
         }
     }
 
-    private void fetchAccessToken() {
+    private void fetchAccessToken(String accessToken) {
+
+        if(accessToken==null) {
+            accessToken = facebookAccessToken;
+        }
+
+        String backend;
+        if (GOOGLE_BUTTON_SELECTED) {
+            backend = getString(R.string.backend_google);
+        } else {
+            backend = getString(R.string.backend_facebook);
+        }
         //Creating an APIRequest
-        final SignUpHelper signUpHelper = new SignUpHelper("convert_token", "facebook", "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
+        final SignUpHelper signUpHelper = new SignUpHelper("convert_token", backend, "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
                 "aymffss0X4FP0k0A4A2qMJL5OdcTQckYxL9nlSA1M14DUXDGC5XuGfhUOjT7X888CQGd8XMbQONUpXTNj3wZd8cF0rFA9GsSj75jRWorPPGWTHSGi25rf45lMdZaEDAg",
-                facebookAccessToken);
+                accessToken);
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<SignUpResponse> call = apiInterface.createNewUser(signUpHelper);
         call.enqueue(new Callback<SignUpResponse>() {

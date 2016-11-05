@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.UserProfileActivity"
-    tools:showIn="@layout/activity_user_profile"
-    android:background="@color/white">
+    tools:showIn="@layout/activity_user_profile">
 
-    <android.support.v7.widget.Toolbar
-        xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    <include
         android:id="@+id/user_profile_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/blueGreen"
-        materialdesign:elevation="0dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
-    
+        layout="@layout/tool_bar" />
+
     <RelativeLayout
         android:id="@+id/rl_up_user_info"
         android:layout_width="match_parent"
-        android:layout_below="@+id/user_profile_toolbar"
         android:layout_height="170dp"
-        android:elevation="4dp"
-        android:background="@color/blueGreen">
-        
+        android:layout_below="@+id/user_profile_toolbar"
+        android:background="@color/blueGreen"
+        android:elevation="4dp">
+
         <RelativeLayout
             android:id="@+id/up_user_info"
             android:layout_width="match_parent"
@@ -35,34 +29,35 @@
             <TextView
                 android:id="@+id/up_user_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:gravity="center"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/white"
                 android:layout_marginTop="6dp"
-                android:text="Tania Sekhon"
-                android:textSize="@dimen/user_profile_reading_text"/>
+                android:gravity="center"
+                android:text="Name"
+                android:textColor="@color/white"
+                android:textSize="@dimen/user_profile_reading_text" />
 
             <ImageView
                 android:id="@+id/up_badge_image"
                 android:layout_width="55dp"
                 android:layout_height="70dp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/up_user_name"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/homescreen_profile_rookie_locked"/>
+                android:src="@drawable/homescreen_profile_rookie_locked" />
 
             <TextView
+                android:id="@+id/up_badge_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/up_badge_image"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/badge_type_rookie"
                 android:textColor="@color/white"
-                android:layout_marginTop="8dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/up_badge_image"
-                android:textSize="@dimen/user_profile_reading_text"/>
-            
+                android:textSize="@dimen/user_profile_reading_text" />
+
         </RelativeLayout>
 
     </RelativeLayout>
@@ -71,90 +66,185 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/rl_up_user_info"
+        android:layout_marginEnd="14dp"
         android:layout_marginStart="14dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="14dp">
+        android:layout_marginTop="10dp">
 
         <RelativeLayout
             android:id="@+id/up_points_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:layout_gravity="center">
 
             <TextView
                 android:id="@+id/up_points_allotted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
                 android:maxLines="1"
                 android:text="0"
-                android:gravity="center"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/points_text"/>
+                android:textSize="@dimen/points_text" />
 
             <TextView
                 android:id="@+id/up_lifetime_points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/up_points_allotted"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
                 android:maxLines="1"
                 android:text="@string/lifetime_points"
-                android:layout_below="@+id/up_points_allotted"
-                android:gravity="center"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/user_profile_points_info_text"/>
+                android:textSize="@dimen/user_profile_points_info_text" />
 
             <ProgressBar
+                android:id="@+id/up_progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
                 android:layout_below="@+id/up_lifetime_points"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/up_progressBar" />
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:drawableEnd="@drawable/profile_points_soldier" />
 
             <TextView
                 android:id="@+id/up_info_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:text="Give your first waiting time to become a Rookie"
                 android:layout_below="@+id/up_progressBar"
-                android:gravity="center"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
-                android:textSize="@dimen/user_profile_points_info_text"/>
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="Give your first waiting time to become a Rookie"
+                android:textSize="@dimen/user_profile_points_info_text" />
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_yearly_leaderboard"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/lightGreen"
-                android:layout_width = "330dp"
-                android:layout_height= "100dp"
-                android:layout_marginTop="16dp"
-                android:paddingStart="14dp"
-                android:paddingEnd="15dp"
+                android:id="@+id/cv_month_leaderboard"
+                android:layout_width="330dp"
+                android:layout_height="100dp"
+                android:layout_alignStart="@+id/cv_year_leaderboard"
                 android:layout_below="@+id/up_info_text"
-                card_view:cardCornerRadius="4dp"
-                android:layout_alignStart="@+id/cv_monthly_leaderboard">
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/lightGreen"
+                android:alpha= "0.5"
+                card_view:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="14dp"
+                    android:alpha= "0.9"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/up_month_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Month"
+                        android:textSize="@dimen/home_page_button_text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/up_month_rank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="46dp"
+                            android:text="&#35; &#45;&#45;"
+                            android:textSize="@dimen/points_rank" />
+
+                        <TextView
+                            android:id="@+id/up_month_points"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="153dp"
+                            android:text="0"
+                            android:textSize="@dimen/points_rank" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:text="Pts"
+                            android:textSize="@dimen/user_profile_points_text" />
+                    </LinearLayout>
+                </LinearLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_monthly_leaderboard"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/lightGreen"
-                android:layout_width = "330dp"
-                android:layout_height= "100dp"
+                android:id="@+id/cv_year_leaderboard"
+                android:layout_width="330dp"
+                android:layout_height="100dp"
+                android:layout_below="@+id/cv_month_leaderboard"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
                 android:layout_marginTop="12dp"
-                android:paddingStart="14dp"
                 android:paddingEnd="15dp"
-                android:layout_below="@+id/cv_yearly_leaderboard"
-                card_view:cardCornerRadius="4dp"
-                android:layout_centerHorizontal="true">
-                </android.support.v7.widget.CardView>
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/lightGreen"
+                android:alpha= "0.5"
+                card_view:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/up_year_no"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Month"
+                        android:textSize="@dimen/home_page_button_text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/up_year_rank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="46dp"
+                            android:text="&#35; &#45;&#45;"
+                            android:textSize="@dimen/points_rank" />
+
+                        <TextView
+                            android:id="@+id/up_year_points"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="153dp"
+                            android:text="0"
+                            android:textSize="@dimen/points_rank" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:text="Pts"
+                            android:textSize="@dimen/user_profile_points_text" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
 
         </RelativeLayout>
 
     </RelativeLayout>
-    </RelativeLayout>
+</RelativeLayout>

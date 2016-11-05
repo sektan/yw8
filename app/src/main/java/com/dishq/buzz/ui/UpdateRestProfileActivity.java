@@ -50,6 +50,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
     public static Boolean yes_gps = false;
     private boolean noNetwork, didPause, locationOff;
 
+    private double getLatitude, getLongitude;
+
     private String query = "";
     private SignUpInfoFinder signUpInfoFinder;
     private String restaurantName = "";
@@ -99,7 +101,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
             gps = new GPSTrackerService(this);
             if (gps.canGetLocation()) {
                 latitude = gps.getLatitude();
+                getLatitude = latitude;
                 longitude = gps.getLongitude();
+                getLongitude = longitude;
             } else {
                 locationOff = true;
                 gps.showSettingsAlert();
@@ -452,8 +456,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     private void fetchUpdatedUserInfo() {
+        checkGPS();
         final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(query,
-                latitude, longitude, waitTimeId, buzzTypeId);
+                getLatitude, getLongitude, waitTimeId, buzzTypeId);
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         String tokenType = SignUpActivity.getTokenType();
         String access = SignUpActivity.getAccessToken();

@@ -91,7 +91,7 @@ public class RestaurantProfileActivity extends BaseActivity {
 
             if (restaurantTypeText != null) {
                 String restaurantType = Arrays.toString(restaurantInfoFinder.getRestaurantType());
-                restaurantTypeText.setText(restaurantType.toString());
+                restaurantTypeText.setText(restaurantType);
             }
 
             if (restAddrText != null) {
@@ -131,7 +131,6 @@ public class RestaurantProfileActivity extends BaseActivity {
                     restaurantInfoFinder = new RestaurantInfoFinder(body.getIsOpenNow(), body.getDisplayAddress(), body.getCuisine(),
                             body.getRestName(), body.getRestId(), body.getRestaurantType(), body.waitTimeData.getShowBuzzTypeText(),
                             body.waitTimeData.getWaitTime(), body.waitTimeData.getBuzzTypeText());
-
                     setFunctionality(restaurantInfoFinder);
                 }
             }

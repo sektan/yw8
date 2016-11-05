@@ -15,7 +15,7 @@ public class ShortUserDetailsResponse {
 
     @SerializedName("data")
     @Expose
-    private ShortUserDetailsInfo shortUserDetailsInfo;
+    public ShortUserDetailsInfo shortUserDetailsInfo;
 
     public class ShortUserDetailsInfo {
         @SerializedName("life_time_points")
@@ -24,11 +24,11 @@ public class ShortUserDetailsResponse {
 
         @SerializedName("user_details")
         @Expose
-        private ShortUserDetails shortUserDetails;
+        public ShortUserDetails shortUserDetails;
 
         @SerializedName("curr_badge")
         @Expose
-        private ShortUserCurrBadge shortUserCurrBadge;
+        public ShortUserCurrBadge shortUserCurrBadge;
 
         public int getLifeTimePoints() {
             return lifeTimePoints;

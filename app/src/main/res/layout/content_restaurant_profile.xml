@@ -11,7 +11,7 @@
 
     <include
         android:id="@+id/restaurant_profile_toolbar"
-        layout="@layout/tool_bar_rest_info"/>
+        layout="@layout/tool_bar"/>
 
     <RelativeLayout
         android:id="@+id/restaurant_wait_time_info"

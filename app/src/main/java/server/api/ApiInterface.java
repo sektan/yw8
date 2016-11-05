@@ -11,6 +11,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import server.Request.SignUpHelper;
 import server.Request.UpdateRestaurantHelper;
+import server.Response.FullUserDetailsResponse;
+import server.Response.MonthLeaderBoardResponse;
 import server.Response.RestaurantInfoResponse;
 import server.Response.RestaurantSuggestResponse;
 import server.Response.ShortUserDetailsResponse;
@@ -19,6 +21,7 @@ import server.Response.SimilarRestaurantResponse;
 import server.Response.UpdateRestaurantResponse;
 import server.Response.UpdateWaitTimeResponse;
 import server.Response.VersionCheckResponse;
+import server.Response.YearLeaderBoardResponse;
 
 /**
  * Created by dishq on 28-10-2016.
@@ -52,4 +55,17 @@ public interface ApiInterface {
 
     @GET("api/userprofile/shortdetails/")
     Call<ShortUserDetailsResponse> getShortUserDetails(@Header("Authorization") String header);
+
+    @GET("api/userprofile/fulldetails/")
+    Call<FullUserDetailsResponse> getFullUserDetails(@Header("Authorization") String header);
+
+    @GET("api/userprofile/monthleaderboard/")
+    Call<MonthLeaderBoardResponse> getMonthLeaderBoardDetails(@Header("Authorization") String header,
+                                                              @Query("month_number") int monthNumber,
+                                                              @Query("year") int year);
+
+    @GET("api/userprofile/yearleaderboard/")
+    Call<YearLeaderBoardResponse> getYearLeaderBoardDetails(@Header("Authorization") String header,
+                                                            @Query("year") int year);
+
 }

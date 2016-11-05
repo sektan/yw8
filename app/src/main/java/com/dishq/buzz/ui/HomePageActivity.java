@@ -11,6 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
@@ -18,6 +20,7 @@ import com.dishq.buzz.R;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import server.Finder.ShortUserDetailsFinder;
 import server.Finder.SignUpInfoFinder;
 import server.Response.ShortUserDetailsResponse;
 import server.api.ApiInterface;
@@ -28,11 +31,15 @@ import server.api.Config;
  * Class contains the main page of the app
  */
 
-public class HomePageActivity extends BaseActivity{
+public class HomePageActivity extends BaseActivity {
+
+    private ShortUserDetailsFinder shortUserDetailsFinder;
 
     private static String serverAccessToken = "";
     private Button searchButton, updateButton;
     private CardView userProfileCard;
+    private ImageView spBadgeImage;
+    private TextView spBadgeName, spUserName, spUserPoints;
     private static final String RESTAURANT_PROFILE = "RESTAURANT_PROFILE";
     private static final String RESTAURANT_UPDATE = "RESTAURANT_UPDATE";
 
@@ -42,12 +49,23 @@ public class HomePageActivity extends BaseActivity{
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
         setSupportActionBar(toolbar);
+
+        setTags();
         fetchShortUserProfile();
 
-        //serverAccessToken = signUpInfoFinder.getTokenType() + " " + signUpInfoFinder.getAccessToken();
+    }
+
+    void setTags() {
         searchButton = (Button) findViewById(R.id.waiting_time_search);
         updateButton = (Button) findViewById(R.id.give_time_update);
         userProfileCard = (CardView) findViewById(R.id.cv_user_profile);
+        spBadgeImage = (ImageView) findViewById(R.id.cv_badge_image);
+        spBadgeName = (TextView) findViewById(R.id.cv_badge_name);
+        spUserName = (TextView) findViewById(R.id.cv_short_user_name);
+        spUserPoints = (TextView) findViewById(R.id.cv_short_user_points);
+    }
+
+    void setFunctionality(ShortUserDetailsFinder shortUserDetailsFinder) {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +93,14 @@ public class HomePageActivity extends BaseActivity{
             }
         });
 
+        int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
+        if (spUserPoints != null && lifetimePoints != 0) {
+            spUserPoints.setText(lifetimePoints);
+        }
+        String displayName = shortUserDetailsFinder.getFullName();
+        if (spUserName != null && displayName != null) {
+            spUserName.setText(displayName);
+        }
     }
 
     public void fetchShortUserProfile() {
@@ -87,7 +113,14 @@ public class HomePageActivity extends BaseActivity{
             @Override
             public void onResponse(Call<ShortUserDetailsResponse> call, Response<ShortUserDetailsResponse> response) {
                 Log.d("YW8", "Success");
-
+                if (call != null && response != null) {
+                    ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
+                    if (body != null) {
+                        shortUserDetailsFinder = new ShortUserDetailsFinder(body.getLifeTimePoints(), body.shortUserDetails.getFullName(),
+                                body.shortUserDetails.getDisplayName(), body.shortUserCurrBadge.getShortUserName(), body.shortUserCurrBadge.getBadgeLevel());
+                        setFunctionality(shortUserDetailsFinder);
+                    }
+                }
             }
 
             @Override
