@@ -26,6 +26,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,7 +42,7 @@ import server.api.Config;
  * Class contains the main page of the app
  */
 
-public class HomePageActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener{
+public class HomePageActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private ShortUserDetailsFinder shortUserDetailsFinder;
 
@@ -60,26 +62,29 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
         setSupportActionBar(toolbar);
 
-        String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestServerAuthCode(serverClientId)
-                .requestIdToken(serverClientId)
-                .build();
-
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .addOnConnectionFailedListener(this).
-                        addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .addApi(Plus.API)
-                .build();
-
         Intent intent = getIntent();
-        facebookOrGoogle = intent.getExtras().getString("signup_option");
+        if (intent != null) {
+            facebookOrGoogle = intent.getExtras().getString("signup_option");
+        }
+        if (facebookOrGoogle.equals("google")) {
+            String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
+            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .requestServerAuthCode(serverClientId)
+                    .requestIdToken(serverClientId)
+                    .build();
+
+            // [START build_client]
+            // Build a GoogleApiClient with access to the Google Sign-In API and the
+            // options specified by gso.
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                    .addOnConnectionFailedListener(this).
+                            addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                    .addApi(Plus.API)
+                    .build();
+        }
 
         setTags();
         fetchShortUserProfile();
@@ -124,7 +129,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             }
         });
 
-        if(shortUserDetailsFinder!=null) {
+        if (shortUserDetailsFinder != null) {
             int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
             if (spUserPoints != null && lifetimePoints != 0) {
                 spUserPoints.setText(Integer.toString(lifetimePoints));
@@ -146,13 +151,23 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             @Override
             public void onResponse(Call<ShortUserDetailsResponse> call, Response<ShortUserDetailsResponse> response) {
                 Log.d("YW8", "Success");
-                if (call != null && response != null) {
-                    ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
-                    if (body != null) {
-                        shortUserDetailsFinder = new ShortUserDetailsFinder(body.getLifeTimePoints(), body.shortUserDetails.getFullName(),
-                                body.shortUserDetails.getDisplayName(), body.shortUserCurrBadge.getShortUserName(), body.shortUserCurrBadge.getBadgeLevel());
-                        setFunctionality(shortUserDetailsFinder);
+                try {
+                    if (response.isSuccessful()) {
+                        ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
+                        if (body != null) {
+                            shortUserDetailsFinder = new ShortUserDetailsFinder(body.getLifeTimePoints(), body.shortUserDetails.getFullName(),
+                                    body.shortUserDetails.getDisplayName(), body.shortUserCurrBadge.getShortUserName(), body.shortUserCurrBadge.getBadgeLevel());
+                            setFunctionality(shortUserDetailsFinder);
+                        }
+                    }else {
+                        String error = response.errorBody().string();
+                        Log.d("HomePage", error);
+
                     }
+
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -184,7 +199,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 Intent intentLogOut = new Intent(HomePageActivity.this, SignUpActivity.class);
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();
-                }else {
+                } else {
                     googleSignOut();
                 }
                 finish();
@@ -201,13 +216,13 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     public void googleSignOut() {
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
 
-                        }
-                    });
+                    }
+                });
 
     }
 

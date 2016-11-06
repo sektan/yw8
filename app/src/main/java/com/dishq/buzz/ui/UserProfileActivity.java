@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -185,15 +187,20 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onResponse(Call<FullUserDetailsResponse> call, Response<FullUserDetailsResponse> response) {
                 Log.d(TAG, "s");
-                FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
-                if(body!=null) {
-                    fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
-                            body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
-                            body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
-                            body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
-                            body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
+                try {
+                    String error = response.errorBody().string();
+                    FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
+                    if(body!=null) {
+                        fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
+                                body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
+                                body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
+                                body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
+                                body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
 
-                    setFunctionality(fullUserDetailsFinder);
+                        setFunctionality(fullUserDetailsFinder);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 

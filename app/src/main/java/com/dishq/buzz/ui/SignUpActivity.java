@@ -100,7 +100,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 .addApi(Plus.API)
                 .build();
         // [END build_client]
-        setmGoogleApiClient(mGoogleApiClient);
         setContentView(R.layout.activity_signup);
         setTags(getApplicationContext());
     }
@@ -156,7 +155,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 @Override
                 public void onClick(View v) {
                     GOOGLE_BUTTON_SELECTED = false;
-                    facebookOrGoogle = "facebook";
                 }
             });
         }
@@ -167,6 +165,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 public void onClick(View v) {
                     GOOGLE_BUTTON_SELECTED = false;
                     FACEBOOK_BUTTON_SELECTED = true;
+                    facebookOrGoogle = "facebook";
                     loginButton.performClick();
                 }
             });
@@ -182,10 +181,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
+                facebookOrGoogle = "facebook";
                 facebookAccessToken = loginResult.getAccessToken().getToken();
                 fetchAccessToken(facebookAccessToken);
                 Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
+                i.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(i);
             }
@@ -400,21 +400,4 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         this.tokenType = tokenType;
     }
 
-    public static GoogleApiClient getmGoogleApiClient() {
-        return mGoogleApiClient;
-    }
-
-    public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
-        this.mGoogleApiClient = mGoogleApiClient;
-    }
-
-    public void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-
-                    }
-                });
-    }
 }
