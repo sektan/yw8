@@ -11,7 +11,7 @@ import com.google.gson.internal.UnsafeAllocator;
 public class UpdateRestaurantHelper {
     @SerializedName("restaurant_id")
     @Expose
-    private String restaurantId;
+    private int restaurantId;
 
     @SerializedName("latitude")
     @Expose
@@ -29,7 +29,7 @@ public class UpdateRestaurantHelper {
     @Expose
     private int buzzTypeId;
 
-    public UpdateRestaurantHelper(String restaurantId, double latitude, double longitude, int waitTimeId,
+    public UpdateRestaurantHelper(int restaurantId, double latitude, double longitude, int waitTimeId,
                                   int buzzTypeId) {
         this.restaurantId = restaurantId;
         this.latitude = latitude;
@@ -38,11 +38,11 @@ public class UpdateRestaurantHelper {
         this.buzzTypeId = buzzTypeId;
     }
 
-    public String getRestaurantId() {
+    public int getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(String restaurantId) {
+    public void setRestaurantId(int restaurantId) {
         this.restaurantId = restaurantId;
     }
 

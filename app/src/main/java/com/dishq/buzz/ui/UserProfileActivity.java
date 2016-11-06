@@ -29,7 +29,7 @@ import server.api.Config;
 
 public class UserProfileActivity extends BaseActivity {
 
-    private static String serverAccessToken = "";
+    private static String serverAccessToken = "", facebookOrGoogle = "";
     private String TAG = "UserProfileActivity";
     private FullUserDetailsFinder fullUserDetailsFinder;
     private int progressStatus = 0;
@@ -48,6 +48,8 @@ public class UserProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
+        Intent i = getIntent();
+        facebookOrGoogle = i.getExtras().getString("signup_option");
         setTags();
         fetchFullUserDetails();
     }
@@ -81,6 +83,7 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
+                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -144,6 +147,7 @@ public class UserProfileActivity extends BaseActivity {
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("month_number", monthNumber);
                 intent.putExtra("year_number", yearNumber);
+                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -155,6 +159,7 @@ public class UserProfileActivity extends BaseActivity {
                 int year = fullUserDetailsFinder.getyYear();
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("year_number", year);
+                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -186,19 +191,24 @@ public class UserProfileActivity extends BaseActivity {
         request.enqueue(new Callback<FullUserDetailsResponse>() {
             @Override
             public void onResponse(Call<FullUserDetailsResponse> call, Response<FullUserDetailsResponse> response) {
-                Log.d(TAG, "s");
+                Log.d(TAG, "success");
                 try {
-                    String error = response.errorBody().string();
-                    FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
-                    if(body!=null) {
-                        fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
-                                body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
-                                body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
-                                body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
-                                body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
+                        if (response.isSuccessful()) {
+                            FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
+                            if(body!=null) {
+                                fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
+                                        body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
+                                        body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
+                                        body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
+                                        body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
 
-                        setFunctionality(fullUserDetailsFinder);
-                    }
+                                setFunctionality(fullUserDetailsFinder);
+                            }
+                        }else {
+                            String error = response.errorBody().string();
+                            Log.d(TAG, error);
+                        }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -206,7 +216,7 @@ public class UserProfileActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<FullUserDetailsResponse> call, Throwable t) {
-                Log.d(TAG, "f");
+                Log.d(TAG, "fail");
             }
         });
     }

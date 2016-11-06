@@ -31,6 +31,7 @@ public class RestaurantProfileActivity extends BaseActivity {
 
     private String query = "";
     private String restaurantName = "";
+    private static String facebookOrGoogle = "";
     private String TAG = "RestaurantInfoResponse";
 
     private RestaurantInfoFinder restaurantInfoFinder;
@@ -49,6 +50,7 @@ public class RestaurantProfileActivity extends BaseActivity {
 
         query = intentFromSearch.getExtras().getString("restaurant_id");
         restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
+        facebookOrGoogle = intentFromSearch.getExtras().getString("signup_options");
         setTags();
 
         fetchRestaurantInfo(query);
@@ -111,6 +113,7 @@ public class RestaurantProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
+                backButtonIntent.putExtra("signup_options", facebookOrGoogle);
                 finish();
                 startActivity(backButtonIntent);
             }
@@ -187,6 +190,7 @@ public class RestaurantProfileActivity extends BaseActivity {
 
                 Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, SimilarRestaurantProfileActivity.class);
                 finish();
+                intentSuggestRest.putExtra("signup_option", facebookOrGoogle);
                 intentSuggestRest.putExtra("similarRestCuisine", similarRestCuisine);
                 intentSuggestRest.putExtra("similarRestAddr", similarRestAddr);
                 intentSuggestRest.putExtra("similarRestName", similarRestName);

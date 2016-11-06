@@ -46,6 +46,7 @@ import static java.security.AccessController.getContext;
 public class UpdateRestProfileActivity extends BaseActivity {
 
     private GPSTrackerService gps;
+    private static String facebookOrGoogle = "";
     public static Boolean no_gps = false;
     public static Boolean yes_gps = false;
     private boolean noNetwork, didPause, locationOff;
@@ -77,6 +78,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         if (intentFromSearch != null) {
             query = intentFromSearch.getExtras().getString("restaurant_id");
             restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
+            facebookOrGoogle = intentFromSearch.getExtras().getString("signup_option");
         }
         setTags();
         fetchWaitTimeInfo();
@@ -162,6 +164,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
+                backButtonIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(backButtonIntent);
             }
@@ -430,6 +433,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 public void onClick(View view) {
                     fetchUpdatedUserInfo();
                     Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                    goToHomePageIntent.putExtra("signup_option", facebookOrGoogle);
                     finish();
                     startActivity(goToHomePageIntent);
                 }
@@ -458,7 +462,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
     private void fetchUpdatedUserInfo() {
         checkGPS();
         getLongitude = 77.62916017;
-        final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(query,
+        int rest_id = Integer.parseInt(query);
+        final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
                 getLatitude, getLongitude, waitTimeId, buzzTypeId);
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         String tokenType = SignUpActivity.getTokenType();

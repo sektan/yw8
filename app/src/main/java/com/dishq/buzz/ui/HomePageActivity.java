@@ -46,7 +46,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     private ShortUserDetailsFinder shortUserDetailsFinder;
 
-    private static String serverAccessToken = "", facebookOrGoogle;
+    private static String serverAccessToken = "", facebookOrGoogle = "";
     private GoogleApiClient mGoogleApiClient;
     private Button searchButton, updateButton;
     private CardView userProfileCard;
@@ -64,26 +64,28 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
         Intent intent = getIntent();
         if (intent != null) {
-            facebookOrGoogle = intent.getExtras().getString("signup_option");
-        }
-        if (facebookOrGoogle.equals("google")) {
-            String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
-            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestEmail()
-                    .requestServerAuthCode(serverClientId)
-                    .requestIdToken(serverClientId)
-                    .build();
 
-            // [START build_client]
-            // Build a GoogleApiClient with access to the Google Sign-In API and the
-            // options specified by gso.
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this, this)
-                    .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                    .addOnConnectionFailedListener(this).
-                            addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                    .addApi(Plus.API)
-                    .build();
+        } if(intent.getExtras().equals("signup_option")) {
+            facebookOrGoogle = intent.getExtras().getString("signup_option");
+            if (facebookOrGoogle.equals("google")) {
+                String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
+                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestServerAuthCode(serverClientId)
+                        .requestIdToken(serverClientId)
+                        .build();
+
+                // [START build_client]
+                // Build a GoogleApiClient with access to the Google Sign-In API and the
+                // options specified by gso.
+                mGoogleApiClient = new GoogleApiClient.Builder(this)
+                        .enableAutoManage(this, this)
+                        .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                        .addOnConnectionFailedListener(this).
+                                addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                        .addApi(Plus.API)
+                        .build();
+            }
         }
 
         setTags();
@@ -107,6 +109,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             public void onClick(View view) {
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
                 intentSearch.putExtra("SEARCH_ACTIVITY", RESTAURANT_PROFILE);
+                intentSearch.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentSearch);
             }
         });
@@ -117,6 +120,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
                 intentSearch.putExtra("SEARCH_ACTIVITY", RESTAURANT_UPDATE);
+                intentSearch.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentSearch);
             }
         });
@@ -125,6 +129,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             @Override
             public void onClick(View view) {
                 Intent intentUserProf = new Intent(HomePageActivity.this, UserProfileActivity.class);
+                intentUserProf.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentUserProf);
             }
         });
@@ -193,6 +198,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 return true;
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
+                intentGetPoints.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:

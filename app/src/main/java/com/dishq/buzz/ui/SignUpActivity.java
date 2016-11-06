@@ -64,7 +64,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private static final int RC_SIGN_IN = 9001;
     final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private String facebookAccessToken = "";
-    private String facebookOrGoogle = "";
+    private static String facebookOrGoogle = "";
 
 
     String ace = "";
@@ -141,9 +141,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             logInText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-                    finish();
-                    startActivity(i);
+//                    Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+//                    finish();
+//                    startActivity(i);
                 }
             });
 
@@ -331,6 +331,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     public void startHomePageActivity() {
         Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
+        facebookOrGoogle = "google";
         i.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(i);
