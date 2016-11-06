@@ -3,6 +3,7 @@ package com.dishq.buzz.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +17,14 @@ import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,11 +40,12 @@ import server.api.Config;
  * Class contains the main page of the app
  */
 
-public class HomePageActivity extends BaseActivity {
+public class HomePageActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener{
 
     private ShortUserDetailsFinder shortUserDetailsFinder;
 
-    private static String serverAccessToken = "";
+    private static String serverAccessToken = "", facebookOrGoogle;
+    private GoogleApiClient mGoogleApiClient;
     private Button searchButton, updateButton;
     private CardView userProfileCard;
     private ImageView spBadgeImage;
@@ -49,6 +59,27 @@ public class HomePageActivity extends BaseActivity {
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
         setSupportActionBar(toolbar);
+
+        String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestServerAuthCode(serverClientId)
+                .requestIdToken(serverClientId)
+                .build();
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .addOnConnectionFailedListener(this).
+                        addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .addApi(Plus.API)
+                .build();
+
+        Intent intent = getIntent();
+        facebookOrGoogle = intent.getExtras().getString("signup_option");
 
         setTags();
         fetchShortUserProfile();
@@ -93,13 +124,15 @@ public class HomePageActivity extends BaseActivity {
             }
         });
 
-        int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
-        if (spUserPoints != null && lifetimePoints != 0) {
-            spUserPoints.setText(Integer.toString(lifetimePoints));
-        }
-        String displayName = shortUserDetailsFinder.getFullName();
-        if (spUserName != null && displayName != null) {
-            spUserName.setText(displayName);
+        if(shortUserDetailsFinder!=null) {
+            int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
+            if (spUserPoints != null && lifetimePoints != 0) {
+                spUserPoints.setText(Integer.toString(lifetimePoints));
+            }
+            String displayName = shortUserDetailsFinder.getFullName();
+            if (spUserName != null && displayName != null) {
+                spUserName.setText(displayName);
+            }
         }
     }
 
@@ -148,8 +181,12 @@ public class HomePageActivity extends BaseActivity {
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
-                Intent intentLogOut = new Intent(HomePageActivity.this, LoginActivity.class);
-                signOut();
+                Intent intentLogOut = new Intent(HomePageActivity.this, SignUpActivity.class);
+                if (facebookOrGoogle.equals("facebook")) {
+                    facebookSignOut();
+                }else {
+                    googleSignOut();
+                }
                 finish();
                 startActivity(intentLogOut);
                 return true;
@@ -159,7 +196,23 @@ public class HomePageActivity extends BaseActivity {
         }
     }
 
-    public void signOut() {
+    public void facebookSignOut() {
+        LoginManager.getInstance().logOut();
+    }
+
+    public void googleSignOut() {
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+
+                        }
+                    });
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 }

@@ -17,7 +17,12 @@ import android.widget.TextView;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -29,7 +34,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 
 import java.io.IOException;
@@ -50,13 +57,14 @@ import server.api.Config;
 public class SignUpActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "SignUpActivity";
-    private GoogleApiClient mGoogleApiClient;
+    private static GoogleApiClient mGoogleApiClient;
     private CallbackManager callbackManager;
     private SignUpInfoFinder signUpInfoFinder;
     private static String accessToken = "", tokenType = "";
     private static final int RC_SIGN_IN = 9001;
     final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
-    String facebookAccessToken = "EAAHRn85eTYMBAPTpyd7R6Ha4ZBrGtlxtXri4vWPpCGKUDj6618JXizpDUJ4wPDFIdHw0tnmLejHSkPKV6mCHASaD2seYI9KwesBrSdAPI144Ka6uwJJhOFhxIVhlHN2NQOZCzdd0ZAaDSEUcHSBifyFUd2iJ8wZD";
+    private String facebookAccessToken = "";
+    private String facebookOrGoogle = "";
 
 
     String ace = "";
@@ -69,7 +77,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Facebook SDK is initialized
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        facebookSDKInitialize();
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -92,10 +100,33 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 .addApi(Plus.API)
                 .build();
         // [END build_client]
+        setmGoogleApiClient(mGoogleApiClient);
         setContentView(R.layout.activity_signup);
         setTags(getApplicationContext());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Logs 'instal' and 'app acitvate'App events
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //logs "app deactivate" app Event
+        AppEventsLogger.deactivateApp(this);
+
+
+    }
+
+    //Intializing the facebook sdk
+    protected void facebookSDKInitialize() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+    }
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
         logInText = (TextView) findViewById(R.id.login_button_text);
@@ -119,10 +150,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         }
         if (loginButton != null) {
+            loginButton.setReadPermissions("email");
+            getLoginDetails(loginButton);
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     GOOGLE_BUTTON_SELECTED = false;
+                    facebookOrGoogle = "facebook";
                 }
             });
         }
@@ -133,10 +167,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 public void onClick(View v) {
                     GOOGLE_BUTTON_SELECTED = false;
                     FACEBOOK_BUTTON_SELECTED = true;
-                    Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
-                    finish();
-                    startActivity(i);
-                    // loginButton.performClick();
+                    loginButton.performClick();
                 }
             });
         }
@@ -144,6 +175,31 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (googleButton != null) {
             googleButton.setOnClickListener(this);
         }
+    }
+
+    protected void getLoginDetails(LoginButton loginButton) {
+        //Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+                facebookAccessToken = loginResult.getAccessToken().getToken();
+                fetchAccessToken(facebookAccessToken);
+                Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
+                finish();
+                startActivity(i);
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "OnCancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
     }
 
     @Override
@@ -222,6 +278,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 @Override
                 protected void onPostExecute(String token) {
                     Log.i(TAG, "Access token retrieved:" + ace);
+                    facebookOrGoogle = "google";
                     fetchAccessToken(ace);
                 }
 
@@ -229,7 +286,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             task.execute();
 
             Log.e("signin", acct.getDisplayName() + acct.getIdToken() + acct.getEmail());
-            // tv_username.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+
 
         } else {
             Log.e("google", result + "");
@@ -240,16 +297,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void fetchAccessToken(String accessToken) {
-
-        if(accessToken==null) {
-            accessToken = facebookAccessToken;
-        }
-
-        String backend;
-        if (GOOGLE_BUTTON_SELECTED) {
-            backend = getString(R.string.backend_google);
-        } else {
+        String backend = "";
+        if(FACEBOOK_BUTTON_SELECTED) {
             backend = getString(R.string.backend_facebook);
+        }else if (GOOGLE_BUTTON_SELECTED) {
+            backend = getString(R.string.backend_google);
         }
         //Creating an APIRequest
         final SignUpHelper signUpHelper = new SignUpHelper("convert_token", backend, "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
@@ -267,7 +319,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             body.getExpiresIn(), body.getRefreshToken(), body.getResponseScope());
                     setAccessToken(signUpInfoFinder.getAccessToken());
                     setTokenType(signUpInfoFinder.getTokenType());
-                    startHomePageActivity(signUpInfoFinder);
+                    startHomePageActivity();
                 }
             }
             @Override
@@ -277,12 +329,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         });
     }
 
-    public void startHomePageActivity(SignUpInfoFinder signUpInfoFinder) {
-        String tokenType = signUpInfoFinder.getTokenType();
-        String accessToken = signUpInfoFinder.getAccessToken();
-        String serverAccessToken = tokenType + " " + accessToken;
+    public void startHomePageActivity() {
         Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
-        //i.putExtra("SERVER_ACCESS_TOKEN", serverAccessToken);
+        i.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(i);
     }
@@ -349,5 +398,23 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     public void  setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    public static GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
+        this.mGoogleApiClient = mGoogleApiClient;
+    }
+
+    public void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+
+                    }
+                });
     }
 }

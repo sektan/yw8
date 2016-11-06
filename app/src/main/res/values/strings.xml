@@ -20,7 +20,7 @@
     <string name="backend_facebook">facebook</string>
     <string name="grant_type_conv_token">convert_token</string>
     <string name="backend_google">google-oauth2</string>
-
+    <string name="facebook_app_id">511959269002627</string>
     <!-- Menu Bar -->
     <string name="options">Options</string>
     <string name="get_points">Get Points</string>

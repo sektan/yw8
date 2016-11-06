@@ -93,7 +93,7 @@ public class UserProfileActivity extends BaseActivity {
             userProfName.setText(userName);
 
             String currBadgeName = fullUserDetailsFinder.getfCurrBadgeName();
-            if(currBadgeName!=null) {
+            if(currBadgeName!=null && currPoints>0) {
                 userProfBadgeName.setText(currBadgeName);
             }
 
