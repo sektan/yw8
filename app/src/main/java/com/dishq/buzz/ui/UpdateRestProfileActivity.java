@@ -461,6 +461,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private void fetchUpdatedUserInfo() {
         checkGPS();
+        getLatitude = 12.92907181;
+        getLongitude = 77.62916017;
         int rest_id = Integer.parseInt(query);
         final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
                 getLatitude, getLongitude, waitTimeId, buzzTypeId);
@@ -511,6 +513,15 @@ public class UpdateRestProfileActivity extends BaseActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
+        backButtonIntent.putExtra("signup_option", facebookOrGoogle);
+        finish();
+        startActivity(backButtonIntent);
     }
 
 }

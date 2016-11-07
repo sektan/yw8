@@ -103,6 +103,19 @@ public class UserProfileActivity extends BaseActivity {
             }
 
             if(currPoints!=0) {
+                if (currPoints >0 && currPoints <150){
+                    userProfBadge.setImageResource(R.drawable.profile_points_rookie);
+                } else if (currPoints >=150 && currPoints< 500) {
+                    userProfBadge.setImageResource(R.drawable.profile_points_soldier);
+                } else if (currPoints >=500 && currPoints< 1000) {
+                    userProfBadge.setImageResource(R.drawable.profile_points_agent);
+                }else if (currPoints >=1000 && currPoints< 2000) {
+                    userProfBadge.setImageResource(R.drawable.profile_points_captain);
+                }else if (currPoints >=2000 && currPoints< 4000) {
+                    userProfBadge.setImageResource(R.drawable.profile_points_knight);
+                }else if (currPoints >=4000) {
+                    userProfBadge.setImageResource(R.drawable.profile_points_general);
+                }
                 userProfPointsAlloted.setText(Integer.toString(currPoints));
             }
 
@@ -219,5 +232,14 @@ public class UserProfileActivity extends BaseActivity {
                 Log.d(TAG, "fail");
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
+        intent.putExtra("signup_option", facebookOrGoogle);
+        finish();
+        startActivity(intent);
     }
 }

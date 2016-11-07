@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
 
@@ -62,29 +64,31 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
         setSupportActionBar(toolbar);
 
+        String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestServerAuthCode(serverClientId)
+                .requestIdToken(serverClientId)
+                .build();
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .addOnConnectionFailedListener(this).
+                        addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .addApi(Plus.API)
+                .build();
+
         Intent intent = getIntent();
         if (intent != null) {
 
         } if(intent.getExtras().equals("signup_option")) {
             facebookOrGoogle = intent.getExtras().getString("signup_option");
             if (facebookOrGoogle.equals("google")) {
-                String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
-                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestEmail()
-                        .requestServerAuthCode(serverClientId)
-                        .requestIdToken(serverClientId)
-                        .build();
 
-                // [START build_client]
-                // Build a GoogleApiClient with access to the Google Sign-In API and the
-                // options specified by gso.
-                mGoogleApiClient = new GoogleApiClient.Builder(this)
-                        .enableAutoManage(this, this)
-                        .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                        .addOnConnectionFailedListener(this).
-                                addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                        .addApi(Plus.API)
-                        .build();
             }
         }
 
@@ -137,6 +141,19 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         if (shortUserDetailsFinder != null) {
             int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
             if (spUserPoints != null && lifetimePoints != 0) {
+                if (lifetimePoints >0 && lifetimePoints <150){
+                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_rookie);
+                } else if (lifetimePoints >=150 && lifetimePoints< 500) {
+                    spBadgeImage.setImageResource(R.drawable.profile_points_soldier);
+                } else if (lifetimePoints >=500 && lifetimePoints< 1000) {
+                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_agent);
+                }else if (lifetimePoints >=1000 && lifetimePoints< 2000) {
+                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_captain);
+                }else if (lifetimePoints >=2000 && lifetimePoints< 4000) {
+                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_knight);
+                }else if (lifetimePoints >=4000) {
+                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_general);
+                }
                 spUserPoints.setText(Integer.toString(lifetimePoints));
             }
             String displayName = shortUserDetailsFinder.getFullName();
@@ -222,13 +239,36 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     public void googleSignOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
 
+        if(mGoogleApiClient!=null) {
+            mGoogleApiClient.connect();
+            mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(@Nullable Bundle bundle) {
+
+                    FirebaseAuth.getInstance().signOut();
+                    if(mGoogleApiClient.isConnected()) {
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(@NonNull Status status) {
+                                if (status.isSuccess()) {
+                                    Log.d("HomePage", "User Logged out");
+                                    Intent intent = new Intent(HomePageActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+                        });
                     }
-                });
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+                    Log.d("HomePage", "Google API Client Connection Suspended");
+                }
+            });
+        }
+
 
     }
 

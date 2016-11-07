@@ -26,6 +26,7 @@ public class LeaderBoardActivity extends BaseActivity {
 
     private static String serverAccessToken = "";
     private String TAG = "LeaderBoardActivity";
+    private static String facebookOrGoogle = "";
     int monthNumber = 0, yearNumber = 0;
 
     ImageView ldBack, ldFinder;
@@ -39,6 +40,7 @@ public class LeaderBoardActivity extends BaseActivity {
 
         Intent intent = getIntent();
         if(intent!=null) {
+            facebookOrGoogle = intent.getExtras().getString("signup_option");
             monthNumber = intent.getExtras().getInt("month_number");
             yearNumber = intent.getExtras().getInt("year");
             yearNumber = 2016;
@@ -64,6 +66,7 @@ public class LeaderBoardActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LeaderBoardActivity.this, UserProfileActivity.class);
+                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -113,5 +116,14 @@ public class LeaderBoardActivity extends BaseActivity {
         String access = SignUpActivity.getAccessToken();
         serverAccessToken = tokenType + " " + access;
         return serverAccessToken;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(LeaderBoardActivity.this, UserProfileActivity.class);
+        intent.putExtra("signup_option", facebookOrGoogle);
+        finish();
+        startActivity(intent);
     }
 }

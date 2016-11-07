@@ -38,7 +38,7 @@ public class RestaurantProfileActivity extends BaseActivity {
     private SimilarRestInfoFinder similarRestInfoFinder;
     private TextView restToolbarName, noOfMins, foodTypeText, restaurantTypeText,
             restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr;
-    private ImageView backButton;
+    private ImageView backButton, userProfFinder;
     private CardView cardViewSuggestRes;
 
     @Override
@@ -67,6 +67,7 @@ public class RestaurantProfileActivity extends BaseActivity {
         suggestedRestAddr = (TextView) findViewById(R.id.cv_rest_addr);
         backButton = (ImageView) findViewById(R.id.back_button);
         cardViewSuggestRes = (CardView) findViewById(R.id.similar_restaurant);
+        userProfFinder = (ImageView) findViewById(R.id.tvMenuFinder);
     }
 
     private void setFunctionality(RestaurantInfoFinder restaurantInfoFinder) {
@@ -112,10 +113,20 @@ public class RestaurantProfileActivity extends BaseActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-                backButtonIntent.putExtra("signup_options", facebookOrGoogle);
+                Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
+                backButtonIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(backButtonIntent);
+            }
+        });
+
+        userProfFinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
+                finderIntent.putExtra("signup_option", facebookOrGoogle);
+                finish();
+                startActivity(finderIntent);
             }
         });
     }
@@ -200,5 +211,14 @@ public class RestaurantProfileActivity extends BaseActivity {
                 startActivity(intentSuggestRest);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
+        backButtonIntent.putExtra("signup_options", facebookOrGoogle);
+        finish();
+        startActivity(backButtonIntent);
     }
 }

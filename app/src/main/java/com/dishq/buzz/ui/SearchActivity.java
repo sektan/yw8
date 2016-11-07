@@ -230,4 +230,13 @@ public class SearchActivity extends BaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
+        searchBackIntent.putExtra("signup_option", facebookOrGoogle);
+        finish();
+        startActivity(searchBackIntent);
+    }
 }

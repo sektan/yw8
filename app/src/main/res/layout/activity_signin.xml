@@ -13,7 +13,7 @@
 
 
     <TextView
-        android:id="@+id/signintext"
+        android:id="@+id/signuptext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="73dp"
@@ -54,8 +54,10 @@
         android:layout_width="180dp"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
+        android:background="@drawable/facebook"
         android:layout_marginBottom="20dp"
         android:visibility="gone" />
+
 
     <ImageView
         android:id="@+id/fb"
@@ -66,7 +68,7 @@
         tools:ignore="ContentDescription" />
 
     <ImageView
-        android:id="@+id/google_sign_in"
+        android:id="@+id/google_sign_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -91,7 +93,7 @@
             android:text="@string/new_account" />
 
         <TextView
-            android:id="@+id/signup_button_text"
+            android:id="@+id/login_button_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"

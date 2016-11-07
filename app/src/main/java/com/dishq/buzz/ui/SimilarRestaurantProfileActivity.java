@@ -30,7 +30,7 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
 
     private TextView restToolbarName, foodTypeText, restaurantTypeText,
             restAddrText;
-    private ImageView backButton;
+    private ImageView backButton, userProfFinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +41,12 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
         Intent intentFromRestProf = getIntent();
         if (intentFromRestProf != null) {
             facebookOrGoogle = intentFromRestProf.getExtras().getString("signup_option");
-            similarRestCuisine = intentFromRestProf.getExtras().getString("restaurant_id");
-            similarRestAddr = intentFromRestProf.getExtras().getString("restaurant_id");
-            similarRestName = intentFromRestProf.getExtras().getString("restaurant_id");
+            similarRestCuisine = intentFromRestProf.getExtras().getString("similarRestCuisine");
+            similarRestAddr = intentFromRestProf.getExtras().getString("similarRestAddr");
+            similarRestName = intentFromRestProf.getExtras().getString("similarRestName");
             similarRestId = intentFromRestProf.getExtras().getString("restaurant_id");
-            similarRestIsOpenOn = intentFromRestProf.getExtras().getString("restaurant_id");
-            similarRestType = intentFromRestProf.getExtras().getString("restaurant_id");
+            similarRestIsOpenOn = intentFromRestProf.getExtras().getString("similarRestIsOpenOn");
+            similarRestType = intentFromRestProf.getExtras().getString("similarRestType");
 
             fetchRestaurantInfo();
         }
@@ -58,6 +58,7 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
         restaurantTypeText = (TextView) findViewById(R.id.restaurant_type_text);
         restAddrText = (TextView) findViewById(R.id.rest_addr_text);
         backButton = (ImageView) findViewById(R.id.back_button);
+        userProfFinder = (ImageView) findViewById(R.id.tvMenuFinder);
     }
 
     private void setFunctionality() {
@@ -81,15 +82,34 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
+                Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, HomePageActivity.class);
                 backButtonIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(backButtonIntent);
+            }
+        });
+
+        userProfFinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent finderIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
+                finderIntent.putExtra("signup_option", facebookOrGoogle);
+                finish();
+                startActivity(finderIntent);
             }
         });
     }
 
     private void fetchRestaurantInfo() {
         setFunctionality();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
+        backButtonIntent.putExtra("signup_option", facebookOrGoogle);
+        finish();
+        startActivity(backButtonIntent);
     }
 }

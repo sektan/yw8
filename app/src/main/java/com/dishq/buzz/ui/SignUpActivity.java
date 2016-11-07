@@ -141,9 +141,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             logInText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-//                    finish();
-//                    startActivity(i);
+                    Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+                    finish();
+                    startActivity(i);
                 }
             });
 
