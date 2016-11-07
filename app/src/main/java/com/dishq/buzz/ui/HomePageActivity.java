@@ -160,6 +160,8 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             if (spUserName != null && displayName != null) {
                 spUserName.setText(displayName);
             }
+            String badgeName = shortUserDetailsFinder.getShortUserName();
+            spBadgeName.setText(badgeName);
         }
     }
 

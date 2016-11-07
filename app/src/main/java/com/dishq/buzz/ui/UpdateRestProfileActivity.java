@@ -1,29 +1,24 @@
 package com.dishq.buzz.ui;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.services.GPSTrackerService;
 import com.dishq.buzz.util.Util;
-import com.dishq.buzz.util.YW8Application;
 
 import java.io.IOException;
 
@@ -40,7 +35,6 @@ import server.api.Config;
 
 import static com.dishq.buzz.util.Util.latitude;
 import static com.dishq.buzz.util.Util.longitude;
-import static java.security.AccessController.getContext;
 
 /**
  * Created by dishq on 03-11-2016.
@@ -50,10 +44,12 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private GPSTrackerService gps;
     private UpdateRestaurantFinder updateRestaurantFinder;
+    public int rest_id = 0;
     private static String facebookOrGoogle = "";
     public static Boolean no_gps = false;
     public static Boolean yes_gps = false;
     private boolean noNetwork, didPause, locationOff;
+    private ProgressDialog progressDialog;
 
     private double getLatitude, getLongitude;
 
@@ -436,6 +432,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     fetchUpdatedUserInfo();
+                    buttonUpdate.setEnabled(false);
                 }
             });
         }
@@ -461,46 +458,67 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private void fetchUpdatedUserInfo() {
         checkGPS();
-        getLatitude = 12.92907181;
-        getLongitude = 77.62916017;
-        int rest_id = Integer.parseInt(query);
-        final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
-                getLatitude, getLongitude, waitTimeId, buzzTypeId);
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        String tokenType = SignUpActivity.getTokenType();
-        String access = SignUpActivity.getAccessToken();
-        serverAccessToken = tokenType + " " + access;
-        Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
-                updateRestaurantHelper);
-        call.enqueue(new Callback<UpdateRestaurantResponse>() {
+        rest_id= Integer.parseInt(query);
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+
             @Override
-            public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
-                Log.d(TAG, "Success");
-                try {
-                    if(response.isSuccessful()) {
-                        UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
-                        if(body!=null) {
-                            updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
-                                    body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
-                            checkWhereToGo(updateRestaurantFinder);
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(UpdateRestProfileActivity.this);
+                progressDialog.show();
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
+                        getLatitude, getLongitude, waitTimeId, buzzTypeId);
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                String tokenType = SignUpActivity.getTokenType();
+                String access = SignUpActivity.getAccessToken();
+                serverAccessToken = tokenType + " " + access;
+                Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
+                        updateRestaurantHelper);
+                call.enqueue(new Callback<UpdateRestaurantResponse>() {
+                    @Override
+                    public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+                        Log.d(TAG, "Success");
+                        try {
+                            if(response.isSuccessful()) {
+                                UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
+                                if(body!=null) {
+                                    updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
+                                            body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+                                    checkWhereToGo(updateRestaurantFinder);
+
+                                }
+                            }else {
+                                String error = response.errorBody().string();
+                                Log.d("UpdateRestaurant", error);
+                                alertFarOff(UpdateRestProfileActivity.this);
+
+                            }
+                        } catch(IOException e) {
+                            e.printStackTrace();
                         }
-                    }else {
-                        String error = response.errorBody().string();
-                        Log.d("UpdateRestaurant", error);
-                        alertFarOff(UpdateRestProfileActivity.this);
 
                     }
-                } catch(IOException e) {
-                    e.printStackTrace();
-                }
 
+                    @Override
+                    public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
+                        Log.d(TAG, "Failure of connecting to the server");
+                    }
+                });
+                return true;
             }
 
             @Override
-            public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
-                Log.d(TAG, "Failure of connecting to the server");
+            protected void onPostExecute(Boolean b) {
+                super.onPostExecute(b);
+                progressDialog.dismiss();
             }
-        });
+        };
+        task.execute();
+
     }
 
     public void alertFarOff(final Activity activity) {
@@ -511,8 +529,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        System.exit(0);
+                        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                        backButtonIntent.putExtra("signup_option", facebookOrGoogle);
+                        finish();
+                        startActivity(backButtonIntent);
                     }
                 })
                 .create();
@@ -529,13 +549,15 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
                 finish();
                 startActivity(intent);
+            } else {
+                createAlertDialog(UpdateRestProfileActivity.this);
+                Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                goToHomePageIntent.putExtra("signup_option", facebookOrGoogle);
+                finish();
+                startActivity(goToHomePageIntent);
             }
-        }else {
-            createAlertDialog(UpdateRestProfileActivity.this);
-            Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-            goToHomePageIntent.putExtra("signup_option", facebookOrGoogle);
-            finish();
-            startActivity(goToHomePageIntent);
+        }else{
+            Log.d(TAG, "fail");
         }
 
     }

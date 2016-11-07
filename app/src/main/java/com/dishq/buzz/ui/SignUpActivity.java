@@ -9,10 +9,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
@@ -68,8 +71,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
 
     String ace = "";
-    private TextView logInText;
+    private TextView signupText;
     LoginButton loginButton;
+    private ToggleButton logInText;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
     private ImageView facebookButton, googleButton;
 
@@ -128,7 +132,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
-        logInText = (TextView) findViewById(R.id.login_button_text);
+        logInText = (ToggleButton) findViewById(R.id.login_button_text);
+        signupText = (TextView) findViewById(R.id.signuptext);
         loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         facebookButton = (ImageView) findViewById(R.id.fb);
         googleButton = (ImageView) findViewById(R.id.google_sign_up);
@@ -138,15 +143,16 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     //Setting up the clickables of the current activity
     public void setClickables(Context context) {
         if (logInText != null) {
-            logInText.setOnClickListener(new View.OnClickListener() {
+            logInText.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-                    finish();
-                    startActivity(i);
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(b) {
+                        signupText.setText(getResources().getString(R.string.start_signin_message));
+                    }else {
+                        signupText.setText(getResources().getString(R.string.start_signup_message));
+                    }
                 }
             });
-
         }
         if (loginButton != null) {
             loginButton.setReadPermissions("email");

@@ -52,17 +52,18 @@ import server.api.Config;
  * Contains the Log In clickable details
  */
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = "LoginActivity";
     private static GoogleApiClient mGoogleApiClient;
     private CallbackManager callbackManager;
     private SignUpInfoFinder signUpInfoFinder;
-    private static String accessToken = "", tokenType = "";
+    private static String accessToken, tokenType;
     private static final int RC_SIGN_IN = 9001;
     final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private String facebookAccessToken = "";
     private static String facebookOrGoogle = "";
+    String authCode ;
 
 
     String ace = "";
@@ -105,6 +106,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
+
         //Logs 'instal' and 'app acitvate'App events
         AppEventsLogger.activateApp(this);
     }
@@ -114,6 +116,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         super.onPause();
         //logs "app deactivate" app Event
         AppEventsLogger.deactivateApp(this);
+
+
     }
 
     //Intializing the facebook sdk
@@ -121,7 +125,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
     }
-
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
         logInText = (TextView) findViewById(R.id.login_button_text);
@@ -207,6 +210,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
             if (requestCode == RC_SIGN_IN) {
                 GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                if(result.isSuccess()) {
+
+                    GoogleSignInAccount acct = result.getSignInAccount();
+                    authCode = acct.getServerAuthCode();
+                }
                 try {
                     handleSignInResult(result);
                 } catch (IOException e) {
@@ -229,7 +237,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     signIn();
                 } else if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
                     selfPermission();
-                    // signIn();
+                    signIn();
                 }
 
                 break;
@@ -293,9 +301,36 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void fetchAccessToken(String accessToken) {
-
-        startHomePageActivity();
-
+        String backend = "";
+        if(FACEBOOK_BUTTON_SELECTED) {
+            backend = getString(R.string.backend_facebook);
+        }else if (GOOGLE_BUTTON_SELECTED) {
+            backend = getString(R.string.backend_google);
+        }
+        //Creating an APIRequest
+        final SignUpHelper signUpHelper = new SignUpHelper("convert_token", backend, "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
+                "aymffss0X4FP0k0A4A2qMJL5OdcTQckYxL9nlSA1M14DUXDGC5XuGfhUOjT7X888CQGd8XMbQONUpXTNj3wZd8cF0rFA9GsSj75jRWorPPGWTHSGi25rf45lMdZaEDAg",
+                accessToken);
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        Call<SignUpResponse> call = apiInterface.createNewUser(signUpHelper);
+        call.enqueue(new Callback<SignUpResponse>() {
+            @Override
+            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
+                Log.d("YW8", "success");
+                SignUpResponse body = response.body();
+                if(body!=null) {
+                    signUpInfoFinder = new SignUpInfoFinder(LoginActivity.this, body.getAccessToken(), body.getTokenType(),
+                            body.getExpiresIn(), body.getRefreshToken(), body.getResponseScope());
+                    setAccessToken(signUpInfoFinder.getAccessToken());
+                    setTokenType(signUpInfoFinder.getTokenType());
+                    startHomePageActivity();
+                }
+            }
+            @Override
+            public void onFailure(Call<SignUpResponse> call, Throwable t) {
+                Log.d("YW8", "failure");
+            }
+        });
     }
 
     public void startHomePageActivity() {
@@ -338,20 +373,32 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     signIn();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Log.e("yaay", "yaay");
+
                 } else {
                     // showAlert("","That permission is needed to use Google Signup. Tap retry or use Facebook to Signup.");
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
-                return;
+
+                // permissions this app might request
             }
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
+
+    public static String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public static String getTokenType() {
+        return tokenType;
+    }
+
+    public void  setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
 
 }

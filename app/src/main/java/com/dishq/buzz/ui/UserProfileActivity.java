@@ -1,6 +1,8 @@
 package com.dishq.buzz.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.CardView;
@@ -32,6 +34,7 @@ public class UserProfileActivity extends BaseActivity {
     private static String serverAccessToken = "", facebookOrGoogle = "";
     private String TAG = "UserProfileActivity";
     private FullUserDetailsFinder fullUserDetailsFinder;
+    private ProgressDialog progressDialog;
     private int progressStatus = 0;
     private Handler handler = new Handler();
 
@@ -199,39 +202,61 @@ public class UserProfileActivity extends BaseActivity {
         String tokenType = SignUpActivity.getTokenType();
         String access = SignUpActivity.getAccessToken();
         serverAccessToken = tokenType + " " + access;
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        Call<FullUserDetailsResponse> request = apiInterface.getFullUserDetails(serverAccessToken);
-        request.enqueue(new Callback<FullUserDetailsResponse>() {
-            @Override
-            public void onResponse(Call<FullUserDetailsResponse> call, Response<FullUserDetailsResponse> response) {
-                Log.d(TAG, "success");
-                try {
-                        if (response.isSuccessful()) {
-                            FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
-                            if(body!=null) {
-                                fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
-                                        body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
-                                        body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
-                                        body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
-                                        body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
 
-                                setFunctionality(fullUserDetailsFinder);
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(UserProfileActivity.this);
+                progressDialog.show();
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                Call<FullUserDetailsResponse> request = apiInterface.getFullUserDetails(serverAccessToken);
+                request.enqueue(new Callback<FullUserDetailsResponse>() {
+                    @Override
+                    public void onResponse(Call<FullUserDetailsResponse> call, Response<FullUserDetailsResponse> response) {
+                        Log.d(TAG, "success");
+                        try {
+                            if (response.isSuccessful()) {
+                                FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
+                                if(body!=null) {
+                                    fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
+                                            body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
+                                            body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
+                                            body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
+                                            body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
+
+                                    setFunctionality(fullUserDetailsFinder);
+                                }
+                            }else {
+                                String error = response.errorBody().string();
+                                Log.d(TAG, error);
                             }
-                        }else {
-                            String error = response.errorBody().string();
-                            Log.d(TAG, error);
-                        }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FullUserDetailsResponse> call, Throwable t) {
+                        Log.d(TAG, "fail");
+                    }
+                });
+                return true;
             }
 
             @Override
-            public void onFailure(Call<FullUserDetailsResponse> call, Throwable t) {
-                Log.d(TAG, "fail");
+            protected void onPostExecute (Boolean b) {
+                super.onPostExecute(b);
+                progressDialog.dismiss();
             }
-        });
+        };
+        task.execute();
+
     }
 
     @Override
