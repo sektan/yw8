@@ -15,7 +15,7 @@ public class UpdateRestaurantResponse {
 
     @SerializedName("data")
     @Expose
-    private UserProfileUpdateInfo userProfileUpdateInfo;
+    public UserProfileUpdateInfo userProfileUpdateInfo;
 
     @SerializedName("response")
     @Expose
@@ -24,7 +24,7 @@ public class UpdateRestaurantResponse {
     public class UserProfileUpdateInfo {
         @SerializedName("curr_badge")
         @Expose
-        private CurrentBadgeInfo currentBadgeInfo;
+        public CurrentBadgeInfo currentBadgeInfo;
 
         @SerializedName("has_badge_upgrade")
         @Expose

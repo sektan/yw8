@@ -25,10 +25,13 @@ import com.dishq.buzz.services.GPSTrackerService;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import server.Finder.SignUpInfoFinder;
+import server.Finder.UpdateRestaurantFinder;
 import server.Request.UpdateRestaurantHelper;
 import server.Response.UpdateRestaurantResponse;
 import server.Response.UpdateWaitTimeResponse;
@@ -46,6 +49,7 @@ import static java.security.AccessController.getContext;
 public class UpdateRestProfileActivity extends BaseActivity {
 
     private GPSTrackerService gps;
+    private UpdateRestaurantFinder updateRestaurantFinder;
     private static String facebookOrGoogle = "";
     public static Boolean no_gps = false;
     public static Boolean yes_gps = false;
@@ -432,10 +436,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     fetchUpdatedUserInfo();
-                    Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                    goToHomePageIntent.putExtra("signup_option", facebookOrGoogle);
-                    finish();
-                    startActivity(goToHomePageIntent);
                 }
             });
         }
@@ -476,6 +476,24 @@ public class UpdateRestProfileActivity extends BaseActivity {
             @Override
             public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
                 Log.d(TAG, "Success");
+                try {
+                    if(response.isSuccessful()) {
+                        UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
+                        if(body!=null) {
+                            updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
+                                    body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+                            checkWhereToGo(updateRestaurantFinder);
+                        }
+                    }else {
+                        String error = response.errorBody().string();
+                        Log.d("UpdateRestaurant", error);
+                        alertFarOff(UpdateRestProfileActivity.this);
+
+                    }
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -483,6 +501,54 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 Log.d(TAG, "Failure of connecting to the server");
             }
         });
+    }
+
+    public void alertFarOff(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("You can't give the waiting time unless you are at the place ")
+                .setCancelable(false)
+                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    public void checkWhereToGo(UpdateRestaurantFinder updateRestaurantFinder) {
+        if(updateRestaurantFinder!=null) {
+            Boolean badgeUpgrade = updateRestaurantFinder.getHasBadgeUpgrade();
+            if(badgeUpgrade==true) {
+                Intent intent = new Intent(UpdateRestProfileActivity.this, BigBadgeActivity.class);
+                intent.putExtra("signup_option", facebookOrGoogle);
+                intent.putExtra("badge_name", updateRestaurantFinder.getBadgeName());
+                intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
+                finish();
+                startActivity(intent);
+            }
+        }else {
+            createAlertDialog(UpdateRestProfileActivity.this);
+            Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+            goToHomePageIntent.putExtra("signup_option", facebookOrGoogle);
+            finish();
+            startActivity(goToHomePageIntent);
+        }
+
+    }
+
+    public void createAlertDialog(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("Thanks! You just Earned 20 points ")
+                .setCancelable(false)
+                .create();
+        dialog.show();
+
+        //TextView message = (TextView) dialog.findViewById(android.R.id.message);
+       // assert message != null;
     }
 
     public static boolean checkAndShowNetworkPopup(final Activity activity) {
