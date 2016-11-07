@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation = "horizontal"
+    android:layout_centerInParent="true"
+    android:padding = "10dp">
+
+    <TextView
+        android:id="@+id/lv_yrank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:textSize="@dimen/home_page_button_text"
+        android:text="&#35; &#45;&#45;"/>
+
+    <TextView
+        android:id="@+id/lv_yusername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/home_page_button_text"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/lv_ypoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/home_page_button_text"
+        android:layout_marginStart="110dp"/>
+
+    <TextView
+        android:id="@+id/lv_ypoints_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pts"
+        android:layout_marginStart="6dp"
+        android:textSize="@dimen/user_profile_points_text"/>
+
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_big_badge"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/blueGreen"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/congrats"
+        android:textColor="@color/white"
+        android:textSize="26sp"/>
+
+    <ImageView
+        android:id="@+id/big_badge_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:src="@drawable/badge_big_rookie"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/you_are_now_a"
+        android:textColor="@color/white"
+        android:layout_marginTop="38dp"
+        android:textSize="26sp"/>
+
+    <TextView
+        android:id="@+id/big_badge_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rookie"
+        android:layout_marginTop="28dp"
+        android:textColor="@color/white"
+        android:textSize="36sp"/>
+
+</LinearLayout>

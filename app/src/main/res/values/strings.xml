@@ -56,4 +56,8 @@
     <!-- Leader Board -->
     <string name="leaderboard">Leaderboard</string>
 
+    <!-- Big Badge -->
+    <string name="congrats">Congratulations &#33;</string>
+    <string name="you_are_now_a">You are now a</string>
+
 </resources>

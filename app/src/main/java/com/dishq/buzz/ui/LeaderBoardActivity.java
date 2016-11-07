@@ -1,13 +1,14 @@
 package com.dishq.buzz.ui;
 
+import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TabHost;
 import android.widget.TextView;
 
-import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 
 import retrofit2.Call;
@@ -22,20 +23,26 @@ import server.api.Config;
  * Created by dishq on 03-11-2016.
  */
 
-public class LeaderBoardActivity extends BaseActivity {
+public class LeaderBoardActivity extends TabActivity {
+
+    private static final String monthlySpec = "Monthly";
+    private static final String yearlySpec = "Year";
 
     private static String serverAccessToken = "";
     private String TAG = "LeaderBoardActivity";
     private static String facebookOrGoogle = "";
     int monthNumber = 0, yearNumber = 0;
+    private static final int noPages = 2;
 
     ImageView ldBack, ldFinder;
     TextView ldHeader;
+    TabHost tabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
+
         setTags();
 
         Intent intent = getIntent();
@@ -53,15 +60,29 @@ public class LeaderBoardActivity extends BaseActivity {
     }
 
     public void setTags() {
+        tabHost = getTabHost();
         ldBack = (ImageView) findViewById(R.id.back_button);
         ldFinder = (ImageView) findViewById(R.id.tvMenuFinder);
         ldHeader = (TextView) findViewById(R.id.toolbarTitle);
-
         setFunctionality();
 
     }
 
     public void setFunctionality() {
+
+        TabHost.TabSpec monthSpec = tabHost.newTabSpec(monthlySpec);
+        Intent monthIntent = new Intent(this, MonthlyLeaderBoardActivity.class);
+        monthSpec.setIndicator(monthlySpec);
+        monthSpec.setContent(monthIntent);
+
+        TabHost.TabSpec yearSpec = tabHost.newTabSpec(yearlySpec);
+        Intent yearIntent = new Intent(this, YearlyLeaderBoardActivity.class);
+        yearSpec.setIndicator(yearlySpec);
+        yearSpec.setContent(yearIntent);
+
+        tabHost.addTab(monthSpec);
+        tabHost.addTab(yearSpec);
+
         ldBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,7 +96,9 @@ public class LeaderBoardActivity extends BaseActivity {
         ldFinder.setVisibility(View.GONE);
 
         ldHeader.setText(getResources().getString(R.string.leaderboard));
+
     }
+
 
     private void fetchMonthlyDetails(int monthNumber, int yearNumber) {
         String header = fetchHeader();
