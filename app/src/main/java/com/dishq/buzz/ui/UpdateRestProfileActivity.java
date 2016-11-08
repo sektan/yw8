@@ -19,6 +19,7 @@ import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.services.GPSTrackerService;
 import com.dishq.buzz.util.Util;
+import com.dishq.buzz.util.YW8Application;
 
 import java.io.IOException;
 
@@ -45,7 +46,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
     private GPSTrackerService gps;
     private UpdateRestaurantFinder updateRestaurantFinder;
     public int rest_id = 0;
-    private static String facebookOrGoogle = "";
     public static Boolean no_gps = false;
     public static Boolean yes_gps = false;
     private boolean noNetwork, didPause, locationOff;
@@ -78,8 +78,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         if (intentFromSearch != null) {
             query = intentFromSearch.getExtras().getString("restaurant_id");
             restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
-            facebookOrGoogle = intentFromSearch.getExtras().getString("signup_option");
-        }
+            }
         setTags();
         fetchWaitTimeInfo();
     }
@@ -164,7 +163,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-                backButtonIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(backButtonIntent);
             }
@@ -473,9 +471,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
                         getLatitude, getLongitude, waitTimeId, buzzTypeId);
                 ApiInterface apiInterface = Config.createService(ApiInterface.class);
-                String tokenType = SignUpActivity.getTokenType();
-                String access = SignUpActivity.getAccessToken();
-                serverAccessToken = tokenType + " " + access;
+                serverAccessToken = YW8Application.getAccessToken();
                 Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
                         updateRestaurantHelper);
                 call.enqueue(new Callback<UpdateRestaurantResponse>() {
@@ -530,7 +526,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                        backButtonIntent.putExtra("signup_option", facebookOrGoogle);
                         finish();
                         startActivity(backButtonIntent);
                     }
@@ -544,7 +539,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
             Boolean badgeUpgrade = updateRestaurantFinder.getHasBadgeUpgrade();
             if(badgeUpgrade==true) {
                 Intent intent = new Intent(UpdateRestProfileActivity.this, BigBadgeActivity.class);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 intent.putExtra("badge_name", updateRestaurantFinder.getBadgeName());
                 intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
                 finish();
@@ -552,7 +546,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
             } else {
                 createAlertDialog(UpdateRestProfileActivity.this);
                 Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                goToHomePageIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(goToHomePageIntent);
             }
@@ -607,7 +600,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-        backButtonIntent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(backButtonIntent);
     }

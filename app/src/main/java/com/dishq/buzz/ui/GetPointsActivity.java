@@ -28,7 +28,6 @@ public class GetPointsActivity extends BaseActivity {
     private WebView webviewPointsInfo, webViewTermsConditions ;
     private RelativeLayout termsConditions;
     ImageView GetPointsBack, GetPointsFinder;
-    private static String facebookOrGoogle = "";
     TextView getPointsHeader;
     String url = "http://www.dishq.in/yw8/points";
 
@@ -36,11 +35,6 @@ public class GetPointsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_points);
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            facebookOrGoogle = intent.getExtras().getString("signup_option");
-        }
 
         setTags();
     }
@@ -60,7 +54,6 @@ public class GetPointsActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -111,7 +104,6 @@ public class GetPointsActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
-        intent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(intent);
     }

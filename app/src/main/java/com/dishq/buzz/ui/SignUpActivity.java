@@ -19,6 +19,9 @@ import android.widget.ToggleButton;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.YW8Application;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -172,6 +175,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     GOOGLE_BUTTON_SELECTED = false;
                     FACEBOOK_BUTTON_SELECTED = true;
                     facebookOrGoogle = "facebook";
+                    YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
+                    YW8Application.setFacebookOrGoogle(facebookOrGoogle);
                     loginButton.performClick();
                 }
             });
@@ -179,6 +184,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         if (googleButton != null) {
             googleButton.setOnClickListener(this);
+        }
+
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken != null && accessToken.getToken() != null) {
+            fetchAccessToken(accessToken.getToken());
         }
     }
 
@@ -188,10 +198,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onSuccess(LoginResult loginResult) {
                 facebookOrGoogle = "facebook";
+                YW8Application.setFacebookOrGoogle(facebookOrGoogle);
+                YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
                 facebookAccessToken = loginResult.getAccessToken().getToken();
                 fetchAccessToken(facebookAccessToken);
                 Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
-                i.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(i);
             }
@@ -285,6 +296,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 protected void onPostExecute(String token) {
                     Log.i(TAG, "Access token retrieved:" + ace);
                     facebookOrGoogle = "google";
+                    YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
+                    YW8Application.setFacebookOrGoogle(facebookOrGoogle);
                     fetchAccessToken(ace);
                 }
 
@@ -323,8 +336,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 if(body!=null) {
                     signUpInfoFinder = new SignUpInfoFinder(SignUpActivity.this, body.getAccessToken(), body.getTokenType(),
                             body.getExpiresIn(), body.getRefreshToken(), body.getResponseScope());
-                    setAccessToken(signUpInfoFinder.getAccessToken());
-                    setTokenType(signUpInfoFinder.getTokenType());
+
+                    YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, signUpInfoFinder.getAccessToken()).apply();
+                    YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN, signUpInfoFinder.getRefreshToken()).apply();
+                    YW8Application.getPrefs().edit().putString(Constants.TOKEN_TYPE, signUpInfoFinder.getTokenType()).apply();
+                    YW8Application.setAccessToken(signUpInfoFinder.getAccessToken(), signUpInfoFinder.getTokenType());
                     startHomePageActivity();
                 }
             }
@@ -336,9 +352,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void startHomePageActivity() {
-        Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
+        Intent i = new Intent(SignUpActivity.this.getApplicationContext(), HomePageActivity.class);
         facebookOrGoogle = "google";
-        i.putExtra("signup_option", facebookOrGoogle);
+        YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
+        YW8Application.setFacebookOrGoogle(facebookOrGoogle);
         finish();
         startActivity(i);
     }
@@ -390,21 +407,4 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             // permissions this app might request
         }
     }
-
-    public static String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public static String getTokenType() {
-        return tokenType;
-    }
-
-    public void  setTokenType(String tokenType) {
-        this.tokenType = tokenType;
-    }
-
 }

@@ -10,6 +10,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.YW8Application;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,7 +31,6 @@ public class LeaderBoardActivity extends TabActivity {
 
     private static String serverAccessToken = "";
     private String TAG = "LeaderBoardActivity";
-    private static String facebookOrGoogle = "";
     int monthNumber = 0, yearNumber = 0;
     private static final int noPages = 2;
 
@@ -47,7 +47,6 @@ public class LeaderBoardActivity extends TabActivity {
 
         Intent intent = getIntent();
         if(intent!=null) {
-            facebookOrGoogle = intent.getExtras().getString("signup_option");
             monthNumber = intent.getExtras().getInt("month_number");
             yearNumber = intent.getExtras().getInt("year");
             yearNumber = 2016;
@@ -87,7 +86,6 @@ public class LeaderBoardActivity extends TabActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LeaderBoardActivity.this, UserProfileActivity.class);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -135,9 +133,7 @@ public class LeaderBoardActivity extends TabActivity {
     }
 
     private String fetchHeader() {
-        String tokenType = SignUpActivity.getTokenType();
-        String access = SignUpActivity.getAccessToken();
-        serverAccessToken = tokenType + " " + access;
+        serverAccessToken = YW8Application.getAccessToken();
         return serverAccessToken;
     }
 
@@ -145,7 +141,6 @@ public class LeaderBoardActivity extends TabActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(LeaderBoardActivity.this, UserProfileActivity.class);
-        intent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(intent);
     }

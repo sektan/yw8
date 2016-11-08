@@ -17,6 +17,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 
 public class Util {
+    public static String ACCESS_TOKEN = "";
     public static double latitude = 17.77;
     public static double longitude;
 
@@ -51,12 +52,12 @@ public class Util {
     }
 
     public static boolean isOnline(boolean showToast) {
-        ConnectivityManager conMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager conMgr = (ConnectivityManager) YW8Application.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
         if (netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()) {
             if (showToast)
-                Toast.makeText(getApplicationContext(), "No Internet connection!", Toast.LENGTH_LONG).show();
+                Toast.makeText(YW8Application.getContext(), "No Internet connection!", Toast.LENGTH_LONG).show();
             return false;
         }
 

@@ -19,7 +19,7 @@ public class BigBadgeActivity extends BaseActivity {
     private TextView badgeName;
     private ImageView badgeImage;
     private LinearLayout llBadge;
-    private String facebookOrGoogle, nameBadge;
+    private String nameBadge;
     int badgeLevel;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,6 @@ public class BigBadgeActivity extends BaseActivity {
 
         Intent intent = getIntent();
         if(intent!= null) {
-            facebookOrGoogle = intent.getExtras().getString("signup_option");
             nameBadge = intent.getExtras().getString("badge_name");
             badgeLevel = intent.getExtras().getInt("badge_level");
         }
@@ -68,7 +67,6 @@ public class BigBadgeActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(BigBadgeActivity.this, UserProfileActivity.class);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -79,7 +77,6 @@ public class BigBadgeActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(BigBadgeActivity.this, HomePageActivity.class);
-        intent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(intent);
 

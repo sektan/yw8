@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.YW8Application;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -48,7 +50,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     private ShortUserDetailsFinder shortUserDetailsFinder;
 
-    private static String serverAccessToken = "", facebookOrGoogle = "";
+    private static String serverAccessToken = "";
     private GoogleApiClient mGoogleApiClient;
     private Button searchButton, updateButton;
     private CardView userProfileCard;
@@ -82,16 +84,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 .addApi(Plus.API)
                 .build();
 
-        Intent intent = getIntent();
-        if (intent != null) {
-
-        } if(intent.getExtras().equals("signup_option")) {
-            facebookOrGoogle = intent.getExtras().getString("signup_option");
-            if (facebookOrGoogle.equals("google")) {
-
-            }
-        }
-
         setTags();
         fetchShortUserProfile();
 
@@ -113,7 +105,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             public void onClick(View view) {
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
                 intentSearch.putExtra("SEARCH_ACTIVITY", RESTAURANT_PROFILE);
-                intentSearch.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentSearch);
             }
         });
@@ -124,7 +115,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
                 intentSearch.putExtra("SEARCH_ACTIVITY", RESTAURANT_UPDATE);
-                intentSearch.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentSearch);
             }
         });
@@ -133,7 +123,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             @Override
             public void onClick(View view) {
                 Intent intentUserProf = new Intent(HomePageActivity.this, UserProfileActivity.class);
-                intentUserProf.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentUserProf);
             }
         });
@@ -166,9 +155,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     public void fetchShortUserProfile() {
-        String tokenType = SignUpActivity.getTokenType();
-        String access = SignUpActivity.getAccessToken();
-        serverAccessToken = tokenType + " " + access;
+        serverAccessToken = YW8Application.getAccessToken();
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<ShortUserDetailsResponse> request = apiInterface.getShortUserDetails(serverAccessToken);
         request.enqueue(new Callback<ShortUserDetailsResponse>() {
@@ -217,11 +204,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 return true;
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
-                intentGetPoints.putExtra("signup_option", facebookOrGoogle);
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
                 Intent intentLogOut = new Intent(HomePageActivity.this, SignUpActivity.class);
+                String facebookOrGoogle = YW8Application.getFacebookOrGoogle();
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();
                 } else {
@@ -238,6 +225,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     public void facebookSignOut() {
         LoginManager.getInstance().logOut();
+        userLogOut();
     }
 
     public void googleSignOut() {
@@ -271,7 +259,16 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             });
         }
 
+        userLogOut();
+    }
 
+    public void userLogOut() {
+        YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, "").apply();
+        YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN,"").apply();
+        YW8Application.getPrefs().edit().putString(Constants.TOKEN_TYPE, "").apply();
+        YW8Application.setAccessToken(null, null);
+        YW8Application.getPrefs().edit().clear().apply();
+        getApplicationContext().getSharedPreferences("dish_app_prefs", MODE_PRIVATE).edit().clear().apply();
     }
 
     @Override

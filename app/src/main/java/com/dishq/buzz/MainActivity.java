@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.dishq.buzz.ui.HomePageActivity;
 import com.dishq.buzz.ui.SignUpActivity;
+import com.dishq.buzz.util.YW8Application;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,15 +35,20 @@ public class MainActivity extends AppCompatActivity {
             try {
                 sleep(2000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             finally
             {
-                //Intent to start the Signup Activity after the splash screen
-                Intent i=new Intent(MainActivity.this, SignUpActivity.class);
-                finish();
-                startActivity(i);
+                if (YW8Application.getAccessToken() != null) {
+                    Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
+                    finish();
+                    startActivity(startHomePageActivity);
+                }else {
+                    //Intent to start the Signup Activity after the splash screen
+                    Intent i = new Intent(MainActivity.this, SignUpActivity.class);
+                    finish();
+                    startActivity(i);
+                }
             }
         }
     };

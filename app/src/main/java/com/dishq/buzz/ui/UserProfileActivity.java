@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.YW8Application;
 
 import java.io.IOException;
 
@@ -31,7 +32,7 @@ import server.api.Config;
 
 public class UserProfileActivity extends BaseActivity {
 
-    private static String serverAccessToken = "", facebookOrGoogle = "";
+    private static String serverAccessToken = "";
     private String TAG = "UserProfileActivity";
     private FullUserDetailsFinder fullUserDetailsFinder;
     private ProgressDialog progressDialog;
@@ -51,9 +52,7 @@ public class UserProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        Intent i = getIntent();
-        facebookOrGoogle = i.getExtras().getString("signup_option");
-        setTags();
+         setTags();
         fetchFullUserDetails();
     }
 
@@ -86,7 +85,6 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -163,7 +161,6 @@ public class UserProfileActivity extends BaseActivity {
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("month_number", monthNumber);
                 intent.putExtra("year_number", yearNumber);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -175,7 +172,6 @@ public class UserProfileActivity extends BaseActivity {
                 int year = fullUserDetailsFinder.getyYear();
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("year_number", year);
-                intent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(intent);
             }
@@ -199,9 +195,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void fetchFullUserDetails() {
-        String tokenType = SignUpActivity.getTokenType();
-        String access = SignUpActivity.getAccessToken();
-        serverAccessToken = tokenType + " " + access;
+        serverAccessToken = YW8Application.getAccessToken();
         AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
 
             @Override
@@ -263,7 +257,6 @@ public class UserProfileActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
-        intent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(intent);
     }

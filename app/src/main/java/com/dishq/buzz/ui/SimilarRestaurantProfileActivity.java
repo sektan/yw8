@@ -25,7 +25,6 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
     public String similarRestId = "";
     public String similarRestIsOpenOn = "";
     public String similarRestType = "";
-    public static String facebookOrGoogle = "";
     private String TAG = "SimilarRestaurantProfileActivity";
 
     private TextView restToolbarName, foodTypeText, restaurantTypeText,
@@ -40,7 +39,6 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
         setTags();
         Intent intentFromRestProf = getIntent();
         if (intentFromRestProf != null) {
-            facebookOrGoogle = intentFromRestProf.getExtras().getString("signup_option");
             similarRestCuisine = intentFromRestProf.getExtras().getString("similarRestCuisine");
             similarRestAddr = intentFromRestProf.getExtras().getString("similarRestAddr");
             similarRestName = intentFromRestProf.getExtras().getString("similarRestName");
@@ -83,7 +81,6 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, HomePageActivity.class);
-                backButtonIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(backButtonIntent);
             }
@@ -93,7 +90,6 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent finderIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
-                finderIntent.putExtra("signup_option", facebookOrGoogle);
                 finish();
                 startActivity(finderIntent);
             }
@@ -108,7 +104,6 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
-        backButtonIntent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(backButtonIntent);
     }

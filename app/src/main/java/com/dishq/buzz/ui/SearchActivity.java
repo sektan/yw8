@@ -48,7 +48,6 @@ public class SearchActivity extends BaseActivity {
     AdapterClass myAdapter;
     JSONObject prop;
     private String SEARCH_FLOW_FROM_HOMEPAGE = "";
-    private static String facebookOrGoogle = "";
     private String sa="";
     private String restaurnat_id,restaurant_name;
     ArrayList<RestaurantFinderResponse> restaurantFinder = new ArrayList<RestaurantFinderResponse>();
@@ -63,7 +62,6 @@ public class SearchActivity extends BaseActivity {
 
             Intent receievedSearchIntent = getIntent();
             SEARCH_FLOW_FROM_HOMEPAGE = receievedSearchIntent.getExtras().getString("SEARCH_ACTIVITY");
-            facebookOrGoogle = receievedSearchIntent.getExtras().getString("signup_option");
 
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             txtAutoComplete=(EditText)findViewById(R.id.restaurant_autosuggest);
@@ -72,7 +70,6 @@ public class SearchActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
-                    searchBackIntent.putExtra("signup_option", facebookOrGoogle);
                     finish();
                     startActivity(searchBackIntent);
                 }
@@ -115,7 +112,6 @@ public class SearchActivity extends BaseActivity {
                     if (SEARCH_FLOW_FROM_HOMEPAGE.equals("RESTAURANT_PROFILE")){
                         Intent i = new Intent(SearchActivity.this,
                                 RestaurantProfileActivity.class);
-                        i.putExtra("signup_option", facebookOrGoogle);
                         i.putExtra("restaurant_id",restaurnat_id);
                         i.putExtra("restaurant_name",restaurant_name+"");
                         finish();
@@ -123,7 +119,6 @@ public class SearchActivity extends BaseActivity {
                     }else if (SEARCH_FLOW_FROM_HOMEPAGE.equals("RESTAURANT_UPDATE")){
                         Intent i = new Intent(SearchActivity.this,
                                 UpdateRestProfileActivity.class);
-                        i.putExtra("signup_option", facebookOrGoogle);
                         i.putExtra("restaurant_id",restaurnat_id);
                         i.putExtra("restaurant_name",restaurant_name+"");
                         finish();
@@ -235,7 +230,6 @@ public class SearchActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
-        searchBackIntent.putExtra("signup_option", facebookOrGoogle);
         finish();
         startActivity(searchBackIntent);
     }
