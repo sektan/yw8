@@ -269,6 +269,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         YW8Application.setAccessToken(null, null);
         YW8Application.getPrefs().edit().clear().apply();
         getApplicationContext().getSharedPreferences("dish_app_prefs", MODE_PRIVATE).edit().clear().apply();
+        this.finish();
     }
 
     @Override

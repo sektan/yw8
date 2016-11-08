@@ -3,9 +3,11 @@ package com.dishq.buzz.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
@@ -32,6 +34,9 @@ public class RestaurantProfileActivity extends BaseActivity {
     private String query = "";
     private String restaurantName = "";
     private String TAG = "RestaurantInfoResponse";
+    private Boolean isOpenNow, similarOpenNow = false;
+    private Toolbar restToolbar;
+    private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait;
 
     private RestaurantInfoFinder restaurantInfoFinder;
     private SimilarRestInfoFinder similarRestInfoFinder;
@@ -55,6 +60,10 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     private void setTags() {
+        restToolbar = (Toolbar) findViewById(R.id.restaurant_profile_toolbar);
+        rlRestWaitTime = (RelativeLayout) findViewById(R.id.restaurant_wait_time_info);
+        rlRestWait = (RelativeLayout) findViewById(R.id.restaurant_wait_info);
+        rlRestClosed = (RelativeLayout) findViewById(R.id.rl_rest_closed);
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
         noOfMins = (TextView) findViewById(R.id.no_of_mins);
         foodTypeText = (TextView) findViewById(R.id.food_type_text);
@@ -70,20 +79,47 @@ public class RestaurantProfileActivity extends BaseActivity {
 
     private void setFunctionality(RestaurantInfoFinder restaurantInfoFinder) {
         if (restaurantInfoFinder != null) {
-            if (noOfMins != null) {
-                String noOfmin = restaurantInfoFinder.getWaitTime();
-                noOfMins.setText(noOfmin);
-                if (noOfmin.equals("0")) {
-                    restaurantSuggestion.setVisibility(View.GONE);
-                    cardViewSuggestRes.setVisibility(View.GONE);
+            isOpenNow = restaurantInfoFinder.getIsOpenNow();
+            if(isOpenNow) {
+                if (noOfMins != null) {
+                    String noOfmin = restaurantInfoFinder.getWaitTime();
+                    noOfMins.setText(noOfmin);
+                    if (noOfmin.equals("0")) {
+                        restaurantSuggestion.setVisibility(View.GONE);
+                        cardViewSuggestRes.setVisibility(View.GONE);
 
-                } else {
-                    //method to call SimilarRestaurant API
-                    fetchSimilarRestInfo(query);
+                    } else {
+                        //method to call SimilarRestaurant API
+                        if (restaurantSuggestion != null) {
+                            restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
+                        }
+                        fetchSimilarRestInfo(query);
+                        restaurantSuggestion.setVisibility(View.VISIBLE);
+                        cardViewSuggestRes.setVisibility(View.VISIBLE);
+                    }
+                }
+            }else {
+                restToolbar.setBackgroundColor(getResources().getColor(R.color.red));
+                rlRestWaitTime.setBackgroundColor(getResources().getColor(R.color.red));
+                rlRestWait.setVisibility(View.GONE);
+                rlRestClosed.setVisibility(View.VISIBLE);
+                fetchSimilarRestInfo(query);
+                if(similarOpenNow) {
+                    if (restaurantSuggestion != null) {
+                        restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_closed));
+                    }
                     restaurantSuggestion.setVisibility(View.VISIBLE);
                     cardViewSuggestRes.setVisibility(View.VISIBLE);
+                }else {
+                    if (restaurantSuggestion != null) {
+                        restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
+                    }
+                    restaurantSuggestion.setVisibility(View.GONE);
+                    cardViewSuggestRes.setVisibility(View.GONE);
                 }
+
             }
+
 
             if (foodTypeText != null) {
                 String foodType = Arrays.toString(restaurantInfoFinder.getCuisine());
@@ -100,10 +136,6 @@ public class RestaurantProfileActivity extends BaseActivity {
                 restAddrText.setText(restAddr);
             }
 
-            if (restaurantSuggestion != null) {
-                restaurantSuggestion.setText("Similar restaurant nearby with no waiting time");
-            }
-        }
         if (restToolbarName != null) {
             restToolbarName.setText(restaurantName);
         }
@@ -125,7 +157,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 startActivity(finderIntent);
             }
         });
-    }
+    }}
 
     private void fetchRestaurantInfo(final String query) {
         final Call<RestaurantInfoResponse> request;
@@ -166,8 +198,10 @@ public class RestaurantProfileActivity extends BaseActivity {
                     similarRestInfoFinder = new SimilarRestInfoFinder(body.getSimilarRestCuisine(), body.getSimilarRestAddr(), body.getSimilarRestName(),
                             body.getSimilarRestId(), body.getSimilarRestIsOpenOn(), body.getSimilarRestType());
                     startSimilarRestInfoActivity(similarRestInfoFinder);
+                    similarOpenNow = similarRestInfoFinder.getSimilarRestIsOpenOn();
                 } else {
                     //show nothing
+                    similarOpenNow = false;
                     restaurantSuggestion.setVisibility(View.GONE);
                     cardViewSuggestRes.setVisibility(View.GONE);
                 }
@@ -185,7 +219,7 @@ public class RestaurantProfileActivity extends BaseActivity {
         final String similarRestAddr = similarRestInfoFinder.getSimilarRestAddr();
         final String similarRestName = similarRestInfoFinder.getSimilarRestName();
         final String similarRestId = similarRestInfoFinder.getSimilarRestId();
-        final String similarRestIsOpenOn = similarRestInfoFinder.getSimilarRestIsOpenOn();
+        final Boolean similarRestIsOpenOn = similarRestInfoFinder.getSimilarRestIsOpenOn();
         final String similarRestType = Arrays.toString(similarRestInfoFinder.getSimilarRestType());
 
         suggestedRestName.setText(similarRestName);

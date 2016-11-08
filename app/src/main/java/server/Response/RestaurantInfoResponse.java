@@ -23,7 +23,7 @@ public class RestaurantInfoResponse {
     public class RestaurantInfo {
         @SerializedName("is_open_now")
         @Expose
-        private String isOpenNow;
+        private Boolean isOpenNow;
 
         @SerializedName("display_address")
         @Expose
@@ -49,11 +49,11 @@ public class RestaurantInfoResponse {
         @Expose
         public WaitTimeData waitTimeData;
 
-        public String getIsOpenNow() {
+        public Boolean getIsOpenNow() {
             return isOpenNow;
         }
 
-        public void setIsOpenNow(String isOpenNow) {
+        public void setIsOpenNow(Boolean isOpenNow) {
             this.isOpenNow = isOpenNow;
         }
 

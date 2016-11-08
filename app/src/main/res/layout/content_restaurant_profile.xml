@@ -18,8 +18,27 @@
         android:layout_width="match_parent"
         android:layout_below="@+id/restaurant_profile_toolbar"
         android:layout_height="170dp"
-        android:elevation="4dp"
-        android:background="@color/blueGreen">
+        android:background="@color/blueGreen"
+        android:elevation="4dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_rest_closed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/rest_closed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:textSize="50sp"
+                android:text="Closed"
+                android:layout_marginTop="14dp" />
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/restaurant_wait_info"

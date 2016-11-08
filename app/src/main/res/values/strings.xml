@@ -52,6 +52,9 @@
     <string name="update">Update</string>
     <string name="current_wait">Current Waiting Time \?</string>
     <string name="ambiance">Ambiance \?</string>
+    <string name="similar_rest_text_wait">Similar restaurant nearby with no waiting time</string>
+    <string name="similar_rest_closed">Similar restaurant that\'s open with no waiting time</string>
+    <string name="similar_closed">There are no similar open restaurants nearby right now.</string>
 
     <!-- Leader Board -->
     <string name="leaderboard">Leaderboard</string>

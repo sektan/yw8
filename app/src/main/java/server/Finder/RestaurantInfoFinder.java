@@ -6,7 +6,7 @@ package server.Finder;
 
 public class RestaurantInfoFinder {
 
-    private String isOpenNow;
+    private Boolean isOpenNow;
     private String displayAddress;
     private String[] cuisine;
     private String restName;
@@ -16,7 +16,7 @@ public class RestaurantInfoFinder {
     private String waitTime;
     private String buzzTypeText;
 
-    public RestaurantInfoFinder(String isOpenNow, String displayAddress, String[] cuisine,
+    public RestaurantInfoFinder(Boolean isOpenNow, String displayAddress, String[] cuisine,
                                 String restName, String restId, String[] restaurantType,
                                 Boolean showBuzzTypeText, String waitTime, String buzzTypeText) {
         this.isOpenNow = isOpenNow;
@@ -30,11 +30,11 @@ public class RestaurantInfoFinder {
         this.buzzTypeText = buzzTypeText;
     }
 
-    public String getIsOpenNow() {
+    public Boolean getIsOpenNow() {
         return isOpenNow;
     }
 
-    public void setIsOpenNow(String isOpenNow) {
+    public void setIsOpenNow(Boolean isOpenNow) {
         this.isOpenNow = isOpenNow;
     }
 

@@ -9,11 +9,11 @@ public class SimilarRestInfoFinder {
     public String similarRestAddr;
     public String similarRestName;
     public String similarRestId;
-    public String similarRestIsOpenOn;
+    public Boolean similarRestIsOpenOn;
     public String[] similarRestType;
 
     public SimilarRestInfoFinder(String[] similarRestCuisine, String similarRestAddr, String similarRestName, String similarRestId,
-                                 String similarRestIsOpenOn, String[] similarRestType) {
+                                 Boolean similarRestIsOpenOn, String[] similarRestType) {
         this.similarRestCuisine = similarRestCuisine;
         this.similarRestAddr = similarRestAddr;
         this.similarRestName = similarRestName;
@@ -54,11 +54,11 @@ public class SimilarRestInfoFinder {
         this.similarRestId = similarRestId;
     }
 
-    public String getSimilarRestIsOpenOn() {
+    public Boolean getSimilarRestIsOpenOn() {
         return similarRestIsOpenOn;
     }
 
-    public void setSimilarRestIsOpenOn(String similarRestIsOpenOn) {
+    public void setSimilarRestIsOpenOn(Boolean similarRestIsOpenOn) {
         this.similarRestIsOpenOn = similarRestIsOpenOn;
     }
 

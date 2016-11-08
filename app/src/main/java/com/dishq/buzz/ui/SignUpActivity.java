@@ -186,9 +186,12 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             googleButton.setOnClickListener(this);
         }
 
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        if (accessToken != null && accessToken.getToken() != null) {
-            fetchAccessToken(accessToken.getToken());
+        if(!YW8Application.getAccessToken().equals("null null")) {
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            if (accessToken != null && accessToken.getToken() != null) {
+                FACEBOOK_BUTTON_SELECTED = true;
+                fetchAccessToken(accessToken.getToken());
+            }
         }
     }
 

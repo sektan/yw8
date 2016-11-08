@@ -23,7 +23,7 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
     public String similarRestAddr = "";
     public String similarRestName = "";
     public String similarRestId = "";
-    public String similarRestIsOpenOn = "";
+    public Boolean similarRestIsOpenOn;
     public String similarRestType = "";
     private String TAG = "SimilarRestaurantProfileActivity";
 
@@ -43,7 +43,7 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
             similarRestAddr = intentFromRestProf.getExtras().getString("similarRestAddr");
             similarRestName = intentFromRestProf.getExtras().getString("similarRestName");
             similarRestId = intentFromRestProf.getExtras().getString("restaurant_id");
-            similarRestIsOpenOn = intentFromRestProf.getExtras().getString("similarRestIsOpenOn");
+            similarRestIsOpenOn = intentFromRestProf.getExtras().getBoolean("similarRestIsOpenOn");
             similarRestType = intentFromRestProf.getExtras().getString("similarRestType");
 
             fetchRestaurantInfo();

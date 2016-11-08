@@ -36,7 +36,7 @@ public class SimilarRestaurantResponse {
 
         @SerializedName("is_open_on")
         @Expose
-        public String similarRestIsOpenOn;
+        public Boolean similarRestIsOpenOn;
 
         @SerializedName("restaurant_type")
         @Expose
@@ -74,11 +74,11 @@ public class SimilarRestaurantResponse {
             this.similarRestId = similarRestId;
         }
 
-        public String getSimilarRestIsOpenOn() {
+        public Boolean getSimilarRestIsOpenOn() {
             return similarRestIsOpenOn;
         }
 
-        public void setSimilarRestIsOpenOn(String similarRestIsOpenOn) {
+        public void setSimilarRestIsOpenOn(Boolean similarRestIsOpenOn) {
             this.similarRestIsOpenOn = similarRestIsOpenOn;
         }
 

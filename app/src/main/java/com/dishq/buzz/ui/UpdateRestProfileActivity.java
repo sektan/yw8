@@ -492,6 +492,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
                             }else {
                                 String error = response.errorBody().string();
                                 Log.d("UpdateRestaurant", error);
+                                progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                                progressDialoglert.show();
                                 alertFarOff(UpdateRestProfileActivity.this);
 
                             }
@@ -520,7 +522,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     public void alertFarOff(final Activity activity) {
-        progressDialoglert.dismiss();
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setMessage("You can't give the waiting time unless you are at the place ")
                 .setCancelable(false)
@@ -534,6 +535,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     }
                 })
                 .create();
+        if(progressDialoglert!=null) {
+            progressDialoglert.dismiss();
+        }
         dialog.show();
 
     }
@@ -560,6 +564,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     public void createAlertDialog(final Activity activity) {
+        if(progressDialoglert!=null) {
+            progressDialoglert.dismiss();
+        }
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setMessage("Thanks! You just Earned 20 points ")
                 .setCancelable(false)
