@@ -127,7 +127,7 @@ public class UserProfileActivity extends BaseActivity {
             userProfMonth.setText(monthName);
 
             int monthRank = fullUserDetailsFinder.getmRank();
-            if(monthRank!=0) {
+            if(monthRank!=0 && monthRank !=-1) {
                 String monthRankText = "# " + Integer.toString(monthRank);
                 userProfMonthRank.setText(monthRankText);
             }
