@@ -50,7 +50,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     private ShortUserDetailsFinder shortUserDetailsFinder;
 
-    private static String serverAccessToken = "";
+    private static String serverAccessToken;
     private GoogleApiClient mGoogleApiClient;
     private Button searchButton, updateButton;
     private CardView userProfileCard;

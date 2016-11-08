@@ -39,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
             }
             finally
             {
-                if (YW8Application.getAccessToken() != null) {
+                if (!YW8Application.getAccessToken().equals("null null")) {
+                    String token = YW8Application.getAccessToken();
+                    //Intent to start home page when access token
                     Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
                     finish();
                     startActivity(startHomePageActivity);

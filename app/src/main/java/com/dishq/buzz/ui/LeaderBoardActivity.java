@@ -29,7 +29,7 @@ public class LeaderBoardActivity extends TabActivity {
     private static final String monthlySpec = "Monthly";
     private static final String yearlySpec = "Year";
 
-    private static String serverAccessToken = "";
+    private static String serverAccessToken;
     private String TAG = "LeaderBoardActivity";
     int monthNumber = 0, yearNumber = 0;
     private static final int noPages = 2;

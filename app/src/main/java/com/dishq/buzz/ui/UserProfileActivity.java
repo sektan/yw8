@@ -32,7 +32,7 @@ import server.api.Config;
 
 public class UserProfileActivity extends BaseActivity {
 
-    private static String serverAccessToken = "";
+    private static String serverAccessToken;
     private String TAG = "UserProfileActivity";
     private FullUserDetailsFinder fullUserDetailsFinder;
     private ProgressDialog progressDialog;

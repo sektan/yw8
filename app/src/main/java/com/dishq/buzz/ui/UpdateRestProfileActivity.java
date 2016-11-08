@@ -49,7 +49,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
     public static Boolean no_gps = false;
     public static Boolean yes_gps = false;
     private boolean noNetwork, didPause, locationOff;
-    private ProgressDialog progressDialog;
+    private ProgressDialog progressDialog, progressDialoglert;
 
     private double getLatitude, getLongitude;
 
@@ -484,6 +484,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
                                 if(body!=null) {
                                     updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
                                             body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+                                    progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                                    progressDialoglert.show();
                                     checkWhereToGo(updateRestaurantFinder);
 
                                 }
@@ -518,6 +520,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     public void alertFarOff(final Activity activity) {
+        progressDialoglert.dismiss();
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setMessage("You can't give the waiting time unless you are at the place ")
                 .setCancelable(false)
@@ -532,6 +535,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 })
                 .create();
         dialog.show();
+
     }
 
     public void checkWhereToGo(UpdateRestaurantFinder updateRestaurantFinder) {
