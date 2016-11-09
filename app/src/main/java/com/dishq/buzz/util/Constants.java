@@ -1,5 +1,9 @@
 package com.dishq.buzz.util;
 
+import java.util.ArrayList;
+
+import server.Finder.YearlyLeaderBoardFinder;
+
 /**
  * Created by dishq on 06-11-2016.
  */
@@ -14,7 +18,7 @@ public class Constants {
     public static final String FACEBOOK_OR_GOOGLE = "facebook_or_google";
     public static final String CURR_MONTH = "curr_month";
     public static final String CURR_YEAR = "curr_year";
-    public static final String YEARLY_BOARD = "yearly_board";
+    public static final String MONTH_OR_YEAR = "month_or_year";
     public static final String NUM_POINTS_ADDED = "num_points_added";
     public static final String GOING_TO_SEARCH = "going_to_search";
 }

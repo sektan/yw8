@@ -10,4 +10,6 @@
     <color name="black">#000000</color>
     <color name="lightPurple">#7b53c0</color>
     <color name="red">#ff4d4d</color>
+    <color name="rowGreen">#e8f6f4</color>
+    <color name="rowPurple">#f1eef6</color>
 </resources>

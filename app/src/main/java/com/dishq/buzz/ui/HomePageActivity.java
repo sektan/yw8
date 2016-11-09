@@ -275,10 +275,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                             public void onResult(@NonNull Status status) {
                                 if (status.isSuccess()) {
                                     Log.d("HomePage", "User Logged out");
-                                    Intent intent = new Intent(HomePageActivity.this, LoginActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                    finish();
+                                    userLogOut();
                                 }
                             }
                         });
@@ -292,7 +289,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             });
         }
 
-        userLogOut();
     }
 
     public void userLogOut() {
@@ -302,7 +298,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         YW8Application.setAccessToken(null, null);
         YW8Application.getPrefs().edit().clear().apply();
         getApplicationContext().getSharedPreferences("dish_app_prefs", MODE_PRIVATE).edit().clear().apply();
-        this.finish();
+        Intent intent = new Intent(HomePageActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finish();
+        startActivity(intent);
+
     }
 
     @Override

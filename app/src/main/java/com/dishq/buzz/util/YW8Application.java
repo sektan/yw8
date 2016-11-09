@@ -25,6 +25,8 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
     private String currentBadgeName;
     private String facebookOrGoogle;
     private String currMonth;
+    private String monthOrYear;
+    private int currYear;
     private int numPointsAdded;
     private String goingToSearch;
 
@@ -41,6 +43,9 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
         facebookOrGoogle = getPrefs().getString(Constants.FACEBOOK_OR_GOOGLE, null);
         numPointsAdded = getPrefs().getInt(Constants.NUM_POINTS_ADDED, 0);
         goingToSearch = getPrefs().getString(Constants.GOING_TO_SEARCH, null);
+        currMonth = getPrefs().getString(Constants.CURR_MONTH, null);
+        currYear = getPrefs().getInt(Constants.CURR_YEAR, 0);
+        monthOrYear = getPrefs().getString(Constants.MONTH_OR_YEAR, null);
         Util.ACCESS_TOKEN = tokenType + " " + accessToken;
     }
 
@@ -107,6 +112,14 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
 
     public static void setGoingToSearch(String goingToSearch) {
         application.goingToSearch = goingToSearch;
+    }
+
+    public static String getMonthOrYear() {
+        return application.monthOrYear;
+    }
+
+    public static void setMonthOrYear(String monthOrYear) {
+        application.monthOrYear = monthOrYear;
     }
 
     public static synchronized YW8Application getInstance() {

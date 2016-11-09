@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.YW8Application;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private static String serverAccessToken;
     private String TAG = "UserProfileActivity";
+    private String monthOrYear = "";
     private FullUserDetailsFinder fullUserDetailsFinder;
     private ProgressDialog progressDialog;
     private int progressStatus = 0;
@@ -170,7 +172,9 @@ public class UserProfileActivity extends BaseActivity {
         monthCV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                monthOrYear = "month";
+                YW8Application.getPrefs().edit().putString(Constants.MONTH_OR_YEAR, monthOrYear).apply();
+                YW8Application.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("month_number", monthNumber);
                 intent.putExtra("year_number", yearNumber);
@@ -182,6 +186,9 @@ public class UserProfileActivity extends BaseActivity {
         yearCV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                monthOrYear = "year";
+                YW8Application.getPrefs().edit().putString(Constants.MONTH_OR_YEAR, monthOrYear).apply();
+                YW8Application.setMonthOrYear(monthOrYear);
                 int year = fullUserDetailsFinder.getyYear();
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("year_number", year);

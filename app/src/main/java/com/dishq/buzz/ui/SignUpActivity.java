@@ -253,10 +253,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 } else if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
                     selfPermission();
                 }
-
                 break;
         }
-
     }
 
     @Override

@@ -63,4 +63,7 @@
     <string name="congrats">Congratulations &#33;</string>
     <string name="you_are_now_a">You are now a</string>
 
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+
+
 </resources>

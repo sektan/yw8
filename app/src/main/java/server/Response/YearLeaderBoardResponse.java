@@ -3,6 +3,7 @@ package server.Response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,10 @@ public class YearLeaderBoardResponse {
     @SerializedName("data")
     @Expose
     public List<YearPointsInfo> yearPointsInfo;
+
+    public YearLeaderBoardResponse (ArrayList<YearPointsInfo> yearPointsInfo) {
+        this.yearPointsInfo = yearPointsInfo;
+    }
 
     public class YearPointsInfo {
         @SerializedName("num_points")

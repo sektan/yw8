@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
+import java.util.ArrayList;
+
+import server.Finder.MonthlyLeaderBoardFinder;
+import server.Finder.YearlyLeaderBoardFinder;
 
 /**
  * Created by dishq on 02-11-2016.

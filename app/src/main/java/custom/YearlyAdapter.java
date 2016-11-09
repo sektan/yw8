@@ -5,27 +5,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dishq.buzz.R;
 
 import java.util.ArrayList;
-
 import server.Finder.YearlyLeaderBoardFinder;
 
 /**
  * Created by dishq on 08-11-2016.
  */
 
-public class YearlyAdapter extends BaseAdapter{
+public class YearlyAdapter extends BaseAdapter {
+
     LayoutInflater layoutInflater;
     Context context;
     ArrayList<YearlyLeaderBoardFinder> yearlyFinder;
-    public YearlyAdapter(Context context, ArrayList<YearlyLeaderBoardFinder> yearlyFinder) {
+
+    public YearlyAdapter(Context context, ArrayList<YearlyLeaderBoardFinder> yearlyFinder){
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
         this.yearlyFinder = yearlyFinder;
     }
+
     @Override
     public int getCount() {
         return yearlyFinder.size();
@@ -42,19 +45,39 @@ public class YearlyAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
+    public View getView(int position, View ConverterView, ViewGroup viewGroup) {
         View view = null;
         if(view == null) {
-            view = layoutInflater.inflate(R.layout.yearly_row_item, parent, false);
+            view = layoutInflater.inflate(R.layout.yearly_row_item, viewGroup, false);
         }
         TextView yearlyRank = (TextView) view.findViewById(R.id.lv_yrank);
         TextView yearlyUserName = (TextView) view.findViewById(R.id.lv_yusername);
         TextView yearlyPoints = (TextView) view.findViewById(R.id.lv_ypoints);
+        LinearLayout llayout = (LinearLayout) view.findViewById(R.id.ll_year_row);
 
-        yearlyRank.setText(yearlyFinder.get(position).getYearRank());
-        yearlyUserName.setText(yearlyFinder.get(position).getYearUserName());
-        yearlyPoints.setText(yearlyFinder.get(position).getYearPoints());
+        if(llayout!=null) {
+            if(position%2 == 1) {
+                llayout.setBackgroundColor(context.getResources().getColor(R.color.rowPurple));
+            }else {
+                llayout.setBackgroundColor(context.getResources().getColor(R.color.rowGreen));
+            }
+        }
+
+        if(yearlyRank != null) {
+            if(Integer.toString(yearlyFinder.get(position).getYearRank())!=null) {
+                String rank = "#" + Integer.toString(yearlyFinder.get(position).getYearRank());
+                yearlyRank.setText(rank);
+            }
+        }
+        if(yearlyUserName != null) {
+            yearlyUserName.setText(yearlyFinder.get(position).getYearUserName());
+        }
+        if(yearlyPoints != null) {
+            if(Integer.toString(yearlyFinder.get(position).getYearPoints())!=null) {
+                String points = Integer.toString(yearlyFinder.get(position).getYearPoints());
+                yearlyPoints.setText(points);
+            }
+        }
         return view;
     }
 }

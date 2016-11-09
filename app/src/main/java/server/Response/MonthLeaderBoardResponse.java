@@ -22,15 +22,15 @@ public class MonthLeaderBoardResponse {
     public class MonthPointsInfo {
         @SerializedName("num_points")
         @Expose
-        private int monthPoints;
+        public int monthPoints;
 
         @SerializedName("user_details")
         @Expose
-        private MonthUserDetails monthUserDetails;
+        public MonthUserDetails monthUserDetails;
 
         @SerializedName("rank")
         @Expose
-        private int monthRank;
+        public int monthRank;
 
         public int getMonthPoints() {
             return monthPoints;
@@ -51,15 +51,15 @@ public class MonthLeaderBoardResponse {
         public class MonthUserDetails {
             @SerializedName("username")
             @Expose
-            private String monthUserName;
+            public String monthUserName;
 
             @SerializedName("is_current_user")
             @Expose
-            private Boolean monthIsCurrentUser;
+            public Boolean monthIsCurrentUser;
 
             @SerializedName("user_id")
             @Expose
-            private int monthUserId;
+            public int monthUserId;
 
             public String getMonthUserName() {
                 return monthUserName;
