@@ -2,6 +2,7 @@ package com.dishq.buzz.ui;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,11 +11,20 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.ObjectSerializer;
 import com.dishq.buzz.util.YW8Application;
+import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
+import custom.YearlyAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import server.Finder.YearlyLeaderBoardFinder;
 import server.Response.MonthLeaderBoardResponse;
 import server.Response.YearLeaderBoardResponse;
 import server.api.ApiInterface;
@@ -28,6 +38,9 @@ public class LeaderBoardActivity extends TabActivity {
 
     private static final String monthlySpec = "Monthly";
     private static final String yearlySpec = "Year";
+    ArrayList<YearlyLeaderBoardFinder> yearlyLeaderBoardFinder = new ArrayList<>();
+    YearlyAdapter yearlyAdapter;
+    private YearlyLeaderBoardActivity yearlyActivity;
 
     private static String serverAccessToken;
     private String TAG = "LeaderBoardActivity";
@@ -49,7 +62,6 @@ public class LeaderBoardActivity extends TabActivity {
         if(intent!=null) {
             monthNumber = intent.getExtras().getInt("month_number");
             yearNumber = intent.getExtras().getInt("year");
-            yearNumber = 2016;
             if(monthNumber!=0) {
                 fetchMonthlyDetails(monthNumber, yearNumber);
             }else {
@@ -64,13 +76,13 @@ public class LeaderBoardActivity extends TabActivity {
         ldFinder = (ImageView) findViewById(R.id.tvMenuFinder);
         ldHeader = (TextView) findViewById(R.id.toolbarTitle);
         setFunctionality();
-
     }
 
     public void setFunctionality() {
 
         TabHost.TabSpec monthSpec = tabHost.newTabSpec(monthlySpec);
         Intent monthIntent = new Intent(this, MonthlyLeaderBoardActivity.class);
+
         monthSpec.setIndicator(monthlySpec);
         monthSpec.setContent(monthIntent);
 
@@ -123,6 +135,25 @@ public class LeaderBoardActivity extends TabActivity {
             @Override
             public void onResponse(Call<YearLeaderBoardResponse> call, Response<YearLeaderBoardResponse> response) {
                 Log.d(TAG, "Success");
+                try {
+                    if(response.isSuccessful()) {
+                        for(YearLeaderBoardResponse.YearPointsInfo data: response.body().yearPointsInfo) {
+                            yearlyLeaderBoardFinder.add(new YearlyLeaderBoardFinder(data.yearPoints, data.yearRank, data.yearUserDetails.yearUserName,
+                                    data.yearUserDetails.yearIsCurrentUser, data.yearUserDetails.yearUserId));
+
+                            //addTask(yearlyLeaderBoardFinder);
+                        }
+                        yearlyAdapter = new YearlyAdapter(LeaderBoardActivity.this, yearlyLeaderBoardFinder);
+                        yearlyActivity.getYearlyListView().setAdapter(yearlyAdapter);
+                    }else {
+                        String error = response.errorBody().string();
+                        Log.d("LeaderBoard", error);
+                    }
+
+                    return;
+                }catch(IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -131,6 +162,21 @@ public class LeaderBoardActivity extends TabActivity {
             }
         });
     }
+
+//    public void addTask(ArrayList<Task> t){
+//        if(null == yearlyLeaderBoardFinder) {
+//            yearlyLeaderBoardFinder = new ArrayList<>();
+//        }
+//        yearlyLeaderBoardFinder.add(t);
+//
+//        SharedPreferences.Editor editor = YW8Application.getPrefs().edit();
+//        try {
+//            editor.putString(Constants.YEARLY_BOARD, ObjectSerializer.serialize(yearlyLeaderBoardFinder));
+//        }catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        editor.commit();
+//    }
 
     private String fetchHeader() {
         serverAccessToken = YW8Application.getAccessToken();

@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -14,10 +18,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.Manifest;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.services.GPSTrackerService;
+import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 
@@ -57,6 +63,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
     private SignUpInfoFinder signUpInfoFinder;
     private String restaurantName = "";
     private Boolean SHOW_BUZZ_TYPE_OPTIONS = false;
+    final int MY_PERMISSIONS_REQUEST_GPS_ACCESS = 0;
     String waitTimeUpdate, serverAccessToken, buzzTypeLabel;
     int waitTime, waitTimeId = 0, buzzTypeId = 0;
     private String TAG = "UpdateRestProfile";
@@ -98,6 +105,15 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     void checkGPS() {
+        if(ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getGPS();
+        }else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            selfPermission();
+        }
+
+    }
+
+    public void getGPS() {
         if (!no_gps || (latitude == 17.77)) {
             gps = new GPSTrackerService(this);
             if (gps.canGetLocation()) {
@@ -110,6 +126,70 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 gps.showSettingsAlert();
             }
         }
+    }
+
+    public void selfPermission() {
+        if(ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(UpdateRestProfileActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.e("accept", "accept");
+            } else {
+                //request the permission
+                Log.e("accept", "not accept");
+                ActivityCompat.requestPermissions(UpdateRestProfileActivity.this,
+                        new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_GPS_ACCESS);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_GPS_ACCESS: {
+
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getGPS();
+                } else {
+                    showAlert("", "That permission is needed in order to update wait time. Tap Retry.");
+                }
+            }
+        }
+    }
+
+    public void showAlert(String title, String message) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
+        builder.setTitle(title);
+        builder.setMessage(message).setCancelable(false)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+
+                })
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
+                            ActivityCompat.requestPermissions(UpdateRestProfileActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    MY_PERMISSIONS_REQUEST_GPS_ACCESS);
+                        }
+                    }
+                });
+
+
+        android.app.AlertDialog alert = builder.create();
+        alert.show();
+        TextView message1 = (TextView) alert.findViewById(android.R.id.message);
+        assert message != null;
+        message1.setLineSpacing(0,1.5f);
+
     }
 
     @Override
@@ -484,6 +564,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
                                 if(body!=null) {
                                     updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
                                             body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+
+                                    YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded());
+                                    YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
                                     progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
                                     progressDialoglert.show();
                                     checkWhereToGo(updateRestaurantFinder);
@@ -530,6 +613,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         finish();
                         startActivity(backButtonIntent);
                     }
@@ -554,6 +638,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             } else {
                 createAlertDialog(UpdateRestProfileActivity.this);
                 Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                goToHomePageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
                 startActivity(goToHomePageIntent);
             }
@@ -567,11 +652,20 @@ public class UpdateRestProfileActivity extends BaseActivity {
         if(progressDialoglert!=null) {
             progressDialoglert.dismiss();
         }
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Thanks! You just Earned 20 points ")
-                .setCancelable(false)
-                .create();
-        dialog.show();
+
+        if(YW8Application.getNumPointsAdded() == 20) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("Thanks! You just Earned 20 points ")
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+        }else {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("Thanks! You just Earned 10 points ")
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+        }
 
         //TextView message = (TextView) dialog.findViewById(android.R.id.message);
        // assert message != null;

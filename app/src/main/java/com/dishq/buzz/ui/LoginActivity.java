@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private static GoogleApiClient mGoogleApiClient;
     private CallbackManager callbackManager;
     private SignUpInfoFinder signUpInfoFinder;
-    private static String accessToken, tokenType;
+    private ProgressDialog progressDialog;
     private static final int RC_SIGN_IN = 9001;
     final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private String facebookAccessToken = "";
@@ -170,21 +170,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     facebookOrGoogle = "facebook";
                     YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
                     YW8Application.setFacebookOrGoogle(facebookOrGoogle);
-                    loginButton.performClick();
+                    if(!YW8Application.getAccessToken().equals("null null")) {
+                        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                        if (accessToken != null && accessToken.getToken() != null) {
+                            FACEBOOK_BUTTON_SELECTED = true;
+                            fetchAccessToken(accessToken.getToken());
+                        }
+                    }else {
+                        loginButton.performClick();
+                    }
                 }
             });
         }
 
         if (googleButton != null) {
             googleButton.setOnClickListener(this);
-        }
-
-        if(!YW8Application.getAccessToken().equals("null null")) {
-            AccessToken accessToken = AccessToken.getCurrentAccessToken();
-            if (accessToken != null && accessToken.getToken() != null) {
-                FACEBOOK_BUTTON_SELECTED = true;
-                fetchAccessToken(accessToken.getToken());
-            }
         }
     }
 
@@ -251,9 +251,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     signIn();
                 } else if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
                     selfPermission();
-                    signIn();
                 }
-
                 break;
         }
 
@@ -316,47 +314,67 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    private void fetchAccessToken(String accessToken) {
+    private void fetchAccessToken(final String accessToken) {
         String backend = "";
         if(FACEBOOK_BUTTON_SELECTED) {
             backend = getString(R.string.backend_facebook);
         }else if (GOOGLE_BUTTON_SELECTED) {
             backend = getString(R.string.backend_google);
         }
-        //Creating an APIRequest
-        final SignUpHelper signUpHelper = new SignUpHelper("convert_token", backend, "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
-                "aymffss0X4FP0k0A4A2qMJL5OdcTQckYxL9nlSA1M14DUXDGC5XuGfhUOjT7X888CQGd8XMbQONUpXTNj3wZd8cF0rFA9GsSj75jRWorPPGWTHSGi25rf45lMdZaEDAg",
-                accessToken);
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        Call<SignUpResponse> call = apiInterface.createNewUser(signUpHelper);
-        call.enqueue(new Callback<SignUpResponse>() {
-            @Override
-            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
-                Log.d("YW8", "success");
-                SignUpResponse body = response.body();
-                if(body!=null) {
-                    signUpInfoFinder = new SignUpInfoFinder(LoginActivity.this, body.getAccessToken(), body.getTokenType(),
-                            body.getExpiresIn(), body.getRefreshToken(), body.getResponseScope());
+        final String finalBackend = backend;
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
 
-                    YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, signUpInfoFinder.getAccessToken()).apply();
-                    YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN, signUpInfoFinder.getRefreshToken()).apply();
-                    YW8Application.getPrefs().edit().putString(Constants.TOKEN_TYPE, signUpInfoFinder.getTokenType()).apply();
-                    YW8Application.setAccessToken(signUpInfoFinder.getAccessToken(), signUpInfoFinder.getTokenType());
-                    startHomePageActivity();
-                }
-            }
             @Override
-            public void onFailure(Call<SignUpResponse> call, Throwable t) {
-                Log.d("YW8", "failure");
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(LoginActivity.this);
+                progressDialog.show();
             }
-        });
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                //Creating an APIRequest
+                final SignUpHelper signUpHelper = new SignUpHelper("convert_token", finalBackend, "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
+                        "aymffss0X4FP0k0A4A2qMJL5OdcTQckYxL9nlSA1M14DUXDGC5XuGfhUOjT7X888CQGd8XMbQONUpXTNj3wZd8cF0rFA9GsSj75jRWorPPGWTHSGi25rf45lMdZaEDAg",
+                        accessToken);
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                Call<SignUpResponse> call = apiInterface.createNewUser(signUpHelper);
+                call.enqueue(new Callback<SignUpResponse>() {
+                    @Override
+                    public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
+                        Log.d("YW8", "success");
+                        SignUpResponse body = response.body();
+                        if(body!=null) {
+                            signUpInfoFinder = new SignUpInfoFinder(LoginActivity.this, body.getAccessToken(), body.getTokenType(),
+                                    body.getExpiresIn(), body.getRefreshToken(), body.getResponseScope());
+
+                            YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, signUpInfoFinder.getAccessToken()).apply();
+                            YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN, signUpInfoFinder.getRefreshToken()).apply();
+                            YW8Application.getPrefs().edit().putString(Constants.TOKEN_TYPE, signUpInfoFinder.getTokenType()).apply();
+                            YW8Application.setAccessToken(signUpInfoFinder.getAccessToken(), signUpInfoFinder.getTokenType());
+                            startHomePageActivity();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<SignUpResponse> call, Throwable t) {
+                        Log.d("YW8", "failure");
+                    }
+                });
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean b) {
+                super.onPostExecute(b);
+                progressDialog.dismiss();
+            }
+        };
+        task.execute();
     }
 
     public void startHomePageActivity() {
         Intent i = new Intent(LoginActivity.this.getApplicationContext(), HomePageActivity.class);
-        facebookOrGoogle = "google";
-        YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
-        YW8Application.setFacebookOrGoogle(facebookOrGoogle);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(i);
     }
@@ -395,12 +413,51 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     signIn();
 
                 } else {
-                    // showAlert("","That permission is needed to use Google Signup. Tap retry or use Facebook to Signup.");
+                     showAlert("","That permission is needed to use Google Signup. Tap retry or use Facebook to Signup.");
 
                 }
 
                 // permissions this app might request
             }
         }
+    }
+
+    public void showAlert(String title, String message) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(LoginActivity.this);
+        builder.setTitle(title);
+        builder.setMessage(message).setCancelable(false)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+
+                })
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
+                            ActivityCompat.requestPermissions(LoginActivity.this,
+                                    new String[]{Manifest.permission.GET_ACCOUNTS},
+                                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                        }
+                    }
+                });
+
+
+        android.app.AlertDialog alert = builder.create();
+        alert.show();
+        TextView message1 = (TextView) alert.findViewById(android.R.id.message);
+        assert message != null;
+        message1.setLineSpacing(0,1.5f);
+
+    }
+
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

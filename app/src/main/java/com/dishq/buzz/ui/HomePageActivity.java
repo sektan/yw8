@@ -1,6 +1,8 @@
 package com.dishq.buzz.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +22,7 @@ import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.YW8Application;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -49,15 +52,15 @@ import server.api.Config;
 public class HomePageActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private ShortUserDetailsFinder shortUserDetailsFinder;
+    private ProgressDialog progressDialog;
 
     private static String serverAccessToken;
+    private String goingToSearch = "";
     private GoogleApiClient mGoogleApiClient;
     private Button searchButton, updateButton;
     private CardView userProfileCard;
     private ImageView spBadgeImage;
     private TextView spBadgeName, spUserName, spUserPoints;
-    private static final String RESTAURANT_PROFILE = "RESTAURANT_PROFILE";
-    private static final String RESTAURANT_UPDATE = "RESTAURANT_UPDATE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +106,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                goingToSearch = "restaurant";
+                YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
+                YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.putExtra("SEARCH_ACTIVITY", RESTAURANT_PROFILE);
+                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intentSearch);
             }
         });
@@ -112,9 +118,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                goingToSearch = "update";
+                YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
+                YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.putExtra("SEARCH_ACTIVITY", RESTAURANT_UPDATE);
+                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intentSearch);
             }
         });
@@ -123,6 +131,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             @Override
             public void onClick(View view) {
                 Intent intentUserProf = new Intent(HomePageActivity.this, UserProfileActivity.class);
+                intentUserProf.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intentUserProf);
             }
         });
@@ -156,37 +165,57 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     public void fetchShortUserProfile() {
         serverAccessToken = YW8Application.getAccessToken();
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        Call<ShortUserDetailsResponse> request = apiInterface.getShortUserDetails(serverAccessToken);
-        request.enqueue(new Callback<ShortUserDetailsResponse>() {
-            @Override
-            public void onResponse(Call<ShortUserDetailsResponse> call, Response<ShortUserDetailsResponse> response) {
-                Log.d("YW8", "Success");
-                try {
-                    if (response.isSuccessful()) {
-                        ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
-                        if (body != null) {
-                            shortUserDetailsFinder = new ShortUserDetailsFinder(body.getLifeTimePoints(), body.shortUserDetails.getFullName(),
-                                    body.shortUserDetails.getDisplayName(), body.shortUserCurrBadge.getShortUserName(), body.shortUserCurrBadge.getBadgeLevel());
-                            setFunctionality(shortUserDetailsFinder);
-                        }
-                    }else {
-                        String error = response.errorBody().string();
-                        Log.d("HomePage", error);
 
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(HomePageActivity.this);
+                progressDialog.show();
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                Call<ShortUserDetailsResponse> request = apiInterface.getShortUserDetails(serverAccessToken);
+                request.enqueue(new Callback<ShortUserDetailsResponse>() {
+                    @Override
+                    public void onResponse(Call<ShortUserDetailsResponse> call, Response<ShortUserDetailsResponse> response) {
+                        Log.d("YW8", "Success");
+                        try {
+                            if (response.isSuccessful()) {
+                                ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
+                                if (body != null) {
+                                    shortUserDetailsFinder = new ShortUserDetailsFinder(body.getLifeTimePoints(), body.shortUserDetails.getFullName(),
+                                            body.shortUserDetails.getDisplayName(), body.shortUserCurrBadge.getShortUserName(), body.shortUserCurrBadge.getBadgeLevel());
+                                    setFunctionality(shortUserDetailsFinder);
+                                }
+                            }else {
+                                String error = response.errorBody().string();
+                                Log.d("HomePage", error);
+
+                            }
+
+                            return;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
-                    return;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onFailure(Call<ShortUserDetailsResponse> call, Throwable t) {
+                        Log.d("YW8", "Fail");
+                    }
+                });
+                return true;
             }
-
             @Override
-            public void onFailure(Call<ShortUserDetailsResponse> call, Throwable t) {
-                Log.d("YW8", "Fail");
+            protected void onPostExecute (Boolean b) {
+                super.onPostExecute(b);
+                progressDialog.dismiss();
             }
-        });
+        };
+        task.execute();
     }
 
     @Override
@@ -204,10 +233,12 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 return true;
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
+                intentGetPoints.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
-                Intent intentLogOut = new Intent(HomePageActivity.this, SignUpActivity.class);
+                Intent intentLogOut = new Intent(HomePageActivity.this, LoginActivity.class);
+                intentLogOut.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 String facebookOrGoogle = YW8Application.getFacebookOrGoogle();
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();
@@ -224,6 +255,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     public void facebookSignOut() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().logOut();
         userLogOut();
     }
@@ -244,6 +276,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                                 if (status.isSuccess()) {
                                     Log.d("HomePage", "User Logged out");
                                     Intent intent = new Intent(HomePageActivity.this, LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     finish();
                                 }

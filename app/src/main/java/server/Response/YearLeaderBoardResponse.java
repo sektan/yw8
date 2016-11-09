@@ -22,15 +22,15 @@ public class YearLeaderBoardResponse {
     public class YearPointsInfo {
         @SerializedName("num_points")
         @Expose
-        private int yearPoints;
+        public int yearPoints;
 
         @SerializedName("user_details")
         @Expose
-        private YearUserDetails yearUserDetails;
+        public YearUserDetails yearUserDetails;
 
         @SerializedName("rank")
         @Expose
-        private int yearRank;
+        public int yearRank;
 
         public int getYearPoints() {
             return yearPoints;
@@ -51,15 +51,15 @@ public class YearLeaderBoardResponse {
         public class YearUserDetails {
             @SerializedName("username")
             @Expose
-            private String yearUserName;
+            public String yearUserName;
 
             @SerializedName("is_current_user")
             @Expose
-            private Boolean yearIsCurrentUser;
+            public Boolean yearIsCurrentUser;
 
             @SerializedName("user_id")
             @Expose
-            private int yearUserId;
+            public int yearUserId;
 
             public String getYearUserName() {
                 return yearUserName;

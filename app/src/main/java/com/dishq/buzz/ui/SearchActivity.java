@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import custom.AdapterClass;
 import server.Finder.RestaurantFinderResponse;
 import com.dishq.buzz.util.Util;
+import com.dishq.buzz.util.YW8Application;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,9 +62,6 @@ public class SearchActivity extends BaseActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_search);
 
-            Intent receievedSearchIntent = getIntent();
-            SEARCH_FLOW_FROM_HOMEPAGE = receievedSearchIntent.getExtras().getString("SEARCH_ACTIVITY");
-
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             txtAutoComplete=(EditText)findViewById(R.id.restaurant_autosuggest);
             backButton=(ImageView) findViewById(R.id.autosuggest_back);
@@ -70,6 +69,7 @@ public class SearchActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
+                    searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     finish();
                     startActivity(searchBackIntent);
                 }
@@ -109,14 +109,14 @@ public class SearchActivity extends BaseActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (SEARCH_FLOW_FROM_HOMEPAGE.equals("RESTAURANT_PROFILE")){
+                    if (YW8Application.getGoingToSearch().equals("restaurant")){
                         Intent i = new Intent(SearchActivity.this,
                                 RestaurantProfileActivity.class);
                         i.putExtra("restaurant_id",restaurnat_id);
                         i.putExtra("restaurant_name",restaurant_name+"");
                         finish();
                         startActivity(i);
-                    }else if (SEARCH_FLOW_FROM_HOMEPAGE.equals("RESTAURANT_UPDATE")){
+                    }else if (YW8Application.getGoingToSearch().equals("update")){
                         Intent i = new Intent(SearchActivity.this,
                                 UpdateRestProfileActivity.class);
                         i.putExtra("restaurant_id",restaurnat_id);
@@ -230,6 +230,7 @@ public class SearchActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
+        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(searchBackIntent);
     }

@@ -98,25 +98,38 @@
                 android:text="@string/lifetime_points"
                 android:textSize="@dimen/user_profile_points_info_text" />
 
-            <ProgressBar
-                android:id="@+id/up_progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
+            <LinearLayout
+                android:id="@+id/ll_progress"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_below="@+id/up_lifetime_points"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
-                android:drawableEnd="@drawable/profile_points_soldier" />
+                android:layout_marginStart="20dp"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/up_progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="265dp"
+                    android:layout_height="6dp"
+                    android:drawableEnd="@drawable/profile_points_soldier" />
+
+                <ImageView
+                    android:id="@+id/progress_image"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/profile_points_soldier"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/up_info_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/up_progressBar"
+                android:layout_below="@+id/ll_progress"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:maxLines="2"
                 android:text="Give your first waiting time to become a Rookie"

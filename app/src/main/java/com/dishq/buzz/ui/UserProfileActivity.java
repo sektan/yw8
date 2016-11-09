@@ -39,7 +39,7 @@ public class UserProfileActivity extends BaseActivity {
     private int progressStatus = 0;
     private Handler handler = new Handler();
 
-    ImageView userProfBack, userProfFinder, userProfBadge;
+    ImageView userProfBack, userProfFinder, userProfBadge, progressImage;
     TextView userProfileHeader, userProfName, userProfBadgeName,
             userProfPointsAlloted, userProfInfoText, userProfMonth,
             userProfMonthRank, userProfMonthPoints, userProfYear,
@@ -51,15 +51,20 @@ public class UserProfileActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-
-         setTags();
+        setTags();
         fetchFullUserDetails();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void setTags() {
         userProfBack = (ImageView) findViewById(R.id.back_button);
         userProfFinder = (ImageView) findViewById(R.id.tvMenuFinder);
         userProfBadge = (ImageView) findViewById(R.id.up_badge_image);
+        progressImage = (ImageView) findViewById(R.id.progress_image);
         userProfileHeader = (TextView) findViewById(R.id.toolbarTitle);
         userProfName = (TextView) findViewById(R.id.up_user_name);
         userProfBadgeName = (TextView) findViewById(R.id.up_badge_name);
@@ -81,10 +86,12 @@ public class UserProfileActivity extends BaseActivity {
         final int monthNumber = fullUserDetailsFinder.getmMonthNo();
         final int yearNumber = fullUserDetailsFinder.getyYear();
         final int currPoints = fullUserDetailsFinder.getfLifeTimePoints();
+        final int nextBadge = fullUserDetailsFinder.getNextBadgeLevel();
         userProfBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
                 startActivity(intent);
             }
@@ -94,28 +101,34 @@ public class UserProfileActivity extends BaseActivity {
 
         userProfileHeader.setText(getResources().getString(R.string.profile));
 
-        if(fullUserDetailsFinder!=null) {
+        if (fullUserDetailsFinder != null) {
             String userName = fullUserDetailsFinder.getfFullName();
             userProfName.setText(userName);
 
             String currBadgeName = fullUserDetailsFinder.getfCurrBadgeName();
-            if(currBadgeName!=null && currPoints>0) {
+            if (currBadgeName != null && currPoints > 0) {
                 userProfBadgeName.setText(currBadgeName);
             }
 
-            if(currPoints!=0) {
-                if (currPoints >0 && currPoints <150){
+            if (currPoints != 0) {
+                if (currPoints > 0 && currPoints < 150) {
                     userProfBadge.setImageResource(R.drawable.profile_points_rookie);
-                } else if (currPoints >=150 && currPoints< 500) {
+                    progressImage.setImageResource(R.drawable.profile_points_soldier);
+                } else if (currPoints >= 150 && currPoints < 500) {
                     userProfBadge.setImageResource(R.drawable.profile_points_soldier);
-                } else if (currPoints >=500 && currPoints< 1000) {
+                    progressImage.setImageResource(R.drawable.profile_points_agent);
+                } else if (currPoints >= 500 && currPoints < 1000) {
                     userProfBadge.setImageResource(R.drawable.profile_points_agent);
-                }else if (currPoints >=1000 && currPoints< 2000) {
+                    progressImage.setImageResource(R.drawable.profile_points_captain);
+                } else if (currPoints >= 1000 && currPoints < 2000) {
                     userProfBadge.setImageResource(R.drawable.profile_points_captain);
-                }else if (currPoints >=2000 && currPoints< 4000) {
+                    progressImage.setImageResource(R.drawable.profile_points_knight);
+                } else if (currPoints >= 2000 && currPoints < 4000) {
                     userProfBadge.setImageResource(R.drawable.profile_points_knight);
-                }else if (currPoints >=4000) {
+                    progressImage.setImageResource(R.drawable.profile_points_general);
+                } else if (currPoints >= 4000) {
                     userProfBadge.setImageResource(R.drawable.profile_points_general);
+                    progressImage.setImageResource(R.drawable.profile_points_general);
                 }
                 userProfPointsAlloted.setText(Integer.toString(currPoints));
             }
@@ -127,29 +140,29 @@ public class UserProfileActivity extends BaseActivity {
             userProfMonth.setText(monthName);
 
             int monthRank = fullUserDetailsFinder.getmRank();
-            if(monthRank!=0 && monthRank !=-1) {
+            if (monthRank != 0 && monthRank != -1) {
                 String monthRankText = "# " + Integer.toString(monthRank);
                 userProfMonthRank.setText(monthRankText);
             }
 
             int monthPoints = fullUserDetailsFinder.getmNoOfPoints();
-            if(monthPoints!=0) {
+            if (monthPoints != 0) {
                 userProfMonthPoints.setText(Integer.toString(monthPoints));
             }
 
             int year = fullUserDetailsFinder.getyYear();
-            if(year!=0) {
+            if (year != 0) {
                 userProfYear.setText(Integer.toString(year));
             }
 
             int yearRank = fullUserDetailsFinder.getyRank();
-            if(yearRank!=0) {
+            if (yearRank != 0 && yearRank != -1) {
                 String yearRankText = "# " + Integer.toString(yearRank);
                 userProfYearRank.setText(yearRankText);
             }
 
             int yearPoints = fullUserDetailsFinder.getyNoOfPoints();
-            if(yearPoints!=0) {
+            if (yearPoints != 0) {
                 userProfYearPoints.setText(Integer.toString(yearPoints));
             }
         }
@@ -180,15 +193,31 @@ public class UserProfileActivity extends BaseActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (progressStatus <200) {
-                    progressStatus = currPoints;
+                if (nextBadge!=0) {
+                    int totalPoints = 0;
+                    if (nextBadge == 1){
+                        totalPoints = 149;
+                    }else if(nextBadge == 2) {
+                        totalPoints = 499;
+                    }else if(nextBadge == 3) {
+                        totalPoints = 999;
+                    }else if(nextBadge == 4) {
+                        totalPoints = 1999;
+                    }else if(nextBadge == 5) {
+                        totalPoints = 3999;
+                    }else {
+                        totalPoints = 6000;
+                    }
+                    while (progressStatus < totalPoints) {
+                        progressStatus = currPoints;
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            userProfProgress.setProgress(progressStatus);
-                        }
-                    });
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                userProfProgress.setProgress(progressStatus);
+                            }
+                        });
+                    }
                 }
             }
         }).start();
@@ -216,16 +245,17 @@ public class UserProfileActivity extends BaseActivity {
                         try {
                             if (response.isSuccessful()) {
                                 FullUserDetailsResponse.FullUserDetailsInfo body = response.body().fullUserDetailsInfo;
-                                if(body!=null) {
+                                if (body != null) {
                                     fullUserDetailsFinder = new FullUserDetailsFinder(body.getfLifeTimePoints(), body.getfPointsToUgrade(), body.nextBadgeInfo.getNextBadgeName(),
                                             body.nextBadgeInfo.getNextBadgeLevel(), body.monthBuzzPointsInfo.getmNoOfPoints(), body.monthBuzzPointsInfo.getmMonthName(),
                                             body.monthBuzzPointsInfo.getmRank(), body.monthBuzzPointsInfo.getmMonthNo(), body.fullUserNameInfo.getfFullName(),
                                             body.fullUserNameInfo.getfDisplayName(), body.yearBuzzPointsInfo.getyNoOfPoints(), body.yearBuzzPointsInfo.getyRank(),
                                             body.yearBuzzPointsInfo.getyYear(), body.fullCurrBadgeInfo.getfCurrBadgeName(), body.fullCurrBadgeInfo.getfCurrBadgeLevel());
 
+
                                     setFunctionality(fullUserDetailsFinder);
                                 }
-                            }else {
+                            } else {
                                 String error = response.errorBody().string();
                                 Log.d(TAG, error);
                             }
@@ -244,7 +274,7 @@ public class UserProfileActivity extends BaseActivity {
             }
 
             @Override
-            protected void onPostExecute (Boolean b) {
+            protected void onPostExecute(Boolean b) {
                 super.onPostExecute(b);
                 progressDialog.dismiss();
             }
@@ -256,8 +286,5 @@ public class UserProfileActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
-        finish();
-        startActivity(intent);
     }
 }

@@ -1,6 +1,8 @@
 package com.dishq.buzz.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +39,7 @@ public class RestaurantProfileActivity extends BaseActivity {
     private Boolean isOpenNow, similarOpenNow = false;
     private Toolbar restToolbar;
     private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait;
+    private ProgressDialog progressDialog;
 
     private RestaurantInfoFinder restaurantInfoFinder;
     private SimilarRestInfoFinder similarRestInfoFinder;
@@ -60,7 +63,7 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     private void setTags() {
-        restToolbar = (Toolbar) findViewById(R.id.restaurant_profile_toolbar);
+        restToolbar = (Toolbar) findViewById(R.id.toolbar);
         rlRestWaitTime = (RelativeLayout) findViewById(R.id.restaurant_wait_time_info);
         rlRestWait = (RelativeLayout) findViewById(R.id.restaurant_wait_info);
         rlRestClosed = (RelativeLayout) findViewById(R.id.rl_rest_closed);
@@ -80,7 +83,7 @@ public class RestaurantProfileActivity extends BaseActivity {
     private void setFunctionality(RestaurantInfoFinder restaurantInfoFinder) {
         if (restaurantInfoFinder != null) {
             isOpenNow = restaurantInfoFinder.getIsOpenNow();
-            if(isOpenNow) {
+            if (isOpenNow) {
                 if (noOfMins != null) {
                     String noOfmin = restaurantInfoFinder.getWaitTime();
                     noOfMins.setText(noOfmin);
@@ -98,19 +101,19 @@ public class RestaurantProfileActivity extends BaseActivity {
                         cardViewSuggestRes.setVisibility(View.VISIBLE);
                     }
                 }
-            }else {
+            } else {
                 restToolbar.setBackgroundColor(getResources().getColor(R.color.red));
                 rlRestWaitTime.setBackgroundColor(getResources().getColor(R.color.red));
                 rlRestWait.setVisibility(View.GONE);
                 rlRestClosed.setVisibility(View.VISIBLE);
                 fetchSimilarRestInfo(query);
-                if(similarOpenNow) {
+                if (similarOpenNow) {
                     if (restaurantSuggestion != null) {
                         restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_closed));
                     }
                     restaurantSuggestion.setVisibility(View.VISIBLE);
                     cardViewSuggestRes.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     if (restaurantSuggestion != null) {
                         restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
                     }
@@ -136,82 +139,128 @@ public class RestaurantProfileActivity extends BaseActivity {
                 restAddrText.setText(restAddr);
             }
 
-        if (restToolbarName != null) {
-            restToolbarName.setText(restaurantName);
-        }
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
-                finish();
-                startActivity(backButtonIntent);
+            if (restToolbarName != null) {
+                restToolbarName.setText(restaurantName);
             }
-        });
 
-        userProfFinder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-                finish();
-                startActivity(finderIntent);
-            }
-        });
-    }}
-
-    private void fetchRestaurantInfo(final String query) {
-        final Call<RestaurantInfoResponse> request;
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        request = apiInterface.getRestaurantInfo(query);
-        request.enqueue(new Callback<RestaurantInfoResponse>() {
-
-            @Override
-            public void onResponse(Call<RestaurantInfoResponse> call, Response<RestaurantInfoResponse> response) {
-                Log.d(TAG, "s");
-                RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
-                if (body != null) {
-                    restaurantInfoFinder = new RestaurantInfoFinder(body.getIsOpenNow(), body.getDisplayAddress(), body.getCuisine(),
-                            body.getRestName(), body.getRestId(), body.getRestaurantType(), body.waitTimeData.getShowBuzzTypeText(),
-                            body.waitTimeData.getWaitTime(), body.waitTimeData.getBuzzTypeText());
-                    setFunctionality(restaurantInfoFinder);
+            backButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
+                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    finish();
+                    startActivity(backButtonIntent);
                 }
-            }
+            });
 
-            @Override
-            public void onFailure(Call<RestaurantInfoResponse> call, Throwable t) {
-                Log.d(TAG, "f");
-            }
-
-        });
+            userProfFinder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
+                    finish();
+                    startActivity(finderIntent);
+                }
+            });
+        }
     }
 
-    private void fetchSimilarRestInfo(String query) {
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        final Call<SimilarRestaurantResponse> request = apiInterface.getSimilarRestaurantInfo(query);
-        request.enqueue(new Callback<SimilarRestaurantResponse>() {
-            @Override
-            public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {
-                Log.d(TAG, "Success");
+    private void fetchRestaurantInfo(final String query) {
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
 
-                SimilarRestaurantResponse.SimilarRestaurant body = response.body().similarRestaurant;
-                if (body != null) {
-                    similarRestInfoFinder = new SimilarRestInfoFinder(body.getSimilarRestCuisine(), body.getSimilarRestAddr(), body.getSimilarRestName(),
-                            body.getSimilarRestId(), body.getSimilarRestIsOpenOn(), body.getSimilarRestType());
-                    startSimilarRestInfoActivity(similarRestInfoFinder);
-                    similarOpenNow = similarRestInfoFinder.getSimilarRestIsOpenOn();
-                } else {
-                    //show nothing
-                    similarOpenNow = false;
-                    restaurantSuggestion.setVisibility(View.GONE);
-                    cardViewSuggestRes.setVisibility(View.GONE);
-                }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
+                progressDialog.show();
             }
 
             @Override
-            public void onFailure(Call<SimilarRestaurantResponse> call, Throwable t) {
-                Log.d(TAG, "Fail");
+            protected Boolean doInBackground(Void... voids) {
+                final Call<RestaurantInfoResponse> request;
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                request = apiInterface.getRestaurantInfo(query);
+                request.enqueue(new Callback<RestaurantInfoResponse>() {
+
+                    @Override
+                    public void onResponse(Call<RestaurantInfoResponse> call, Response<RestaurantInfoResponse> response) {
+                        Log.d(TAG, "s");
+                        RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
+                        if (body != null) {
+                            restaurantInfoFinder = new RestaurantInfoFinder(body.getIsOpenNow(), body.getDisplayAddress(), body.getCuisine(),
+                                    body.getRestName(), body.getRestId(), body.getRestaurantType(), body.waitTimeData.getShowBuzzTypeText(),
+                                    body.waitTimeData.getWaitTime(), body.waitTimeData.getBuzzTypeText());
+                            setFunctionality(restaurantInfoFinder);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RestaurantInfoResponse> call, Throwable t) {
+                        Log.d(TAG, "f");
+                    }
+
+                });
+                return true;
             }
-        });
+
+            @Override
+            protected void onPostExecute(Boolean b) {
+                super.onPostExecute(b);
+                progressDialog.dismiss();
+            }
+        };
+        task.execute();
+    }
+
+    private void fetchSimilarRestInfo(final String query) {
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
+                progressDialog.show();
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                final Call<SimilarRestaurantResponse> request = apiInterface.getSimilarRestaurantInfo(query);
+                request.enqueue(new Callback<SimilarRestaurantResponse>() {
+                    @Override
+                    public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {
+                        Log.d(TAG, "Success");
+
+                        SimilarRestaurantResponse.SimilarRestaurant body = response.body().similarRestaurant;
+                        if (body != null) {
+                            similarRestInfoFinder = new SimilarRestInfoFinder(body.getSimilarRestCuisine(), body.getSimilarRestAddr(), body.getSimilarRestName(),
+                                    body.getSimilarRestId(), body.getSimilarRestIsOpenOn(), body.getSimilarRestType());
+                            startSimilarRestInfoActivity(similarRestInfoFinder);
+                            similarOpenNow = similarRestInfoFinder.getSimilarRestIsOpenOn();
+                        } else {
+                            //show nothing
+                            similarOpenNow = false;
+                            restaurantSuggestion.setVisibility(View.GONE);
+                            cardViewSuggestRes.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<SimilarRestaurantResponse> call, Throwable t) {
+                        Log.d(TAG, "Fail");
+                    }
+                });
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean b) {
+                super.onPostExecute(b);
+                progressDialog.dismiss();
+            }
+
+        };
+        task.execute();
+
     }
 
     public void startSimilarRestInfoActivity(SimilarRestInfoFinder similarRestInfoFinder) {

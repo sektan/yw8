@@ -6,7 +6,19 @@
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_leaderboard">
 
+    <Button
+        android:id="@+id/monthly_button"
+        android:layout_marginTop="24dp"
+        android:layout_width="80dp"
+        android:layout_height="14dp"
+        android:layout_centerHorizontal="true"
+        android:background="@null"
+        android:textColor="@color/blueGreen"
+        android:clickable="true"
+        android:alpha="0.8"/>
+
     <ListView
+        android:layout_marginTop="18dp"
         android:id="@android:id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">

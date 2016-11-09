@@ -54,6 +54,7 @@ public class GetPointsActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
                 startActivity(intent);
             }
@@ -104,6 +105,7 @@ public class GetPointsActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(intent);
     }

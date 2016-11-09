@@ -24,6 +24,9 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
     private int currentBadgeLevel;
     private String currentBadgeName;
     private String facebookOrGoogle;
+    private String currMonth;
+    private int numPointsAdded;
+    private String goingToSearch;
 
     @Override
     public void onCreate() {
@@ -36,6 +39,8 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
         currentBadgeLevel = getPrefs().getInt(Constants.CURRENT_BADGE_LEVEL, 0);
         currentBadgeName = getPrefs().getString(Constants.CURRENT_BADGE_NAME, null);
         facebookOrGoogle = getPrefs().getString(Constants.FACEBOOK_OR_GOOGLE, null);
+        numPointsAdded = getPrefs().getInt(Constants.NUM_POINTS_ADDED, 0);
+        goingToSearch = getPrefs().getString(Constants.GOING_TO_SEARCH, null);
         Util.ACCESS_TOKEN = tokenType + " " + accessToken;
     }
 
@@ -55,6 +60,14 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
         public void execute(@NonNull Runnable command) {
             mHandler.post(command);
         }
+    }
+
+    public static int getNumPointsAdded() {
+        return application.numPointsAdded;
+    }
+
+    public static void setNumPointsAdded( int numPointsAdded) {
+        application.numPointsAdded = numPointsAdded;
     }
 
     public static void setFacebookOrGoogle(String facebookOrGoogle) {
@@ -86,6 +99,14 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
 
     public static String getAccessToken(){
         return Util.ACCESS_TOKEN;
+    }
+
+    public static String getGoingToSearch() {
+        return application.goingToSearch;
+    }
+
+    public static void setGoingToSearch(String goingToSearch) {
+        application.goingToSearch = goingToSearch;
     }
 
     public static synchronized YW8Application getInstance() {

@@ -179,11 +179,13 @@
                 android:layout_marginTop="11dp"
                 android:paddingStart="14dp"
                 android:paddingEnd="15dp"
+                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/restaurant_suggestion"
                 card_view:cardCornerRadius="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
