@@ -10,16 +10,16 @@
 
     <TextView
         android:id="@+id/lv_yrank"
-        android:layout_width="50dp"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="10dp"
         android:maxLines="1"
         android:textSize="@dimen/home_page_button_text"
         android:text="&#35; &#45;&#45;"/>
 
     <TextView
         android:id="@+id/lv_yusername"
-        android:layout_width="200dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:textSize="@dimen/home_page_button_text"
