@@ -31,6 +31,7 @@
     <string name="waiting_time_search">SEARCH</string>
     <string name="give_wait_time">Give current\nwaiting time</string>
     <string name="give_time_update">UPDATE</string>
+    <string name="sp_lifetime_points">Lifetime Points</string>
     <string name="give_time_win_prizes">Give waiting time &amp; win prizes</string>
 
     <!-- Get Points -->

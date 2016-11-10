@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightGray">
@@ -8,8 +10,9 @@
         android:id="@+id/home_page_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        app:theme="@style/AppTheme.Toolbar"
         android:background="@color/blueGreen"
-        android:elevation="4dp"
+        app:titleTextAppearance="@style/AppTheme.Toolbar.Title"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
 
     <!-- CardView for searching for restaurants -->
@@ -72,7 +75,7 @@
         android:id= "@+id/cv_give_wait_time"
         android:layout_gravity ="center"
         android:layout_below= "@+id/cv_search_restaurants"
-        android:layout_marginTop="10.3dp"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         android:layout_width = "330dp"
         android:layout_height= "190dp"
@@ -124,7 +127,7 @@
         android:id= "@+id/cv_user_profile"
         android:layout_gravity ="center"
         android:layout_below= "@+id/cv_give_wait_time"
-        android:layout_marginTop="10.3dp"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         android:layout_width = "330dp"
         android:layout_height= "124dp"
@@ -142,17 +145,17 @@
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id= "@+id/cv_user_badge_info"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.4"
+                card_view:cardBackgroundColor="@color/rowGreen"
                 android:background="@color/white"
                 android:layout_width = "115dp"
-                android:layout_height= "124dp"
+                card_view:cardElevation="0dp"
+                android:layout_height= "match_parent"
                 card_view:cardCornerRadius="0dp">
 
                 <RelativeLayout
                     android:id="@+id/cv_badge_info"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerInParent="true">
 
                     <ImageView
@@ -172,6 +175,7 @@
                         android:textColor="@color/black"
                         android:layout_marginTop="8dp"
                         android:layout_centerHorizontal="true"
+                        android:alpha="0.64"
                         android:layout_below="@+id/cv_badge_image"
                         android:textSize="@dimen/user_profile_points_text"/>
 
@@ -184,6 +188,7 @@
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id= "@+id/cv_short_user_info"
                 android:layout_gravity ="center"
+                card_view:cardElevation="0dp"
                 card_view:cardBackgroundColor="@color/white"
                 android:background="@color/white"
                 android:layout_width = "match_parent"
@@ -193,7 +198,7 @@
                 <RelativeLayout
                     android:id="@+id/cv_short_user_details"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerInParent="true">
 
                     <TextView
@@ -215,9 +220,9 @@
                         android:text="&#45; &#45; &#45;"
                         android:textColor="@color/blueGreen"
                         android:layout_below="@+id/cv_short_user_name"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:layout_centerHorizontal="true"
-                        android:textSize="32sp"/>
+                        android:textSize="34sp"/>
 
                     <TextView
                         android:id="@+id/cv_short_user_points_info"
@@ -228,7 +233,7 @@
                         android:textColor="@color/black"
                         android:alpha="0.5"
                         android:layout_below="@+id/cv_short_user_points"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:layout_centerHorizontal="true"
                         android:textSize="@dimen/user_profile_points_text"/>
 

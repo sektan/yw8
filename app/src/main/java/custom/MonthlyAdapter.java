@@ -1,6 +1,7 @@
 package custom;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dishq.buzz.R;
+import com.dishq.buzz.ui.UserProfileActivity;
 
 import java.util.ArrayList;
 
@@ -57,6 +59,17 @@ public class MonthlyAdapter extends BaseAdapter{
         LinearLayout lllayout = (LinearLayout) view.findViewById(R.id.ll_monthly_row);
 
         if(lllayout!= null) {
+            if(monthlyFinder.get(position).getMonthIsCurrentUser()) {
+                lllayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, UserProfileActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+            }else {
+
+            }
             if(position%2 == 1) {
                 lllayout.setBackgroundColor(context.getResources().getColor(R.color.rowPurple));
             }else {

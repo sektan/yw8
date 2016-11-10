@@ -20,7 +20,7 @@
         android:layout_below="@+id/leaderboard_toolbar"
         android:orientation="horizontal">
 
-    <TextView android:id="@+id/tv_monthly"
+    <Button android:id="@+id/tv_monthly"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:textColor="#ffffff"
@@ -28,14 +28,16 @@
         android:layout_weight="1"
         android:padding="5dp"
         android:text="Monthly"
+        android:background="@null"
         android:textSize="22sp"
         />
 
-    <TextView android:id="@+id/tv_year"
+    <Button android:id="@+id/tv_year"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:textColor="#ffffff"
         android:layout_weight="1"
+        android:background="@null"
         android:padding="5dp"
         android:text="Year"
         android:gravity="center"

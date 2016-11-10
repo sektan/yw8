@@ -51,6 +51,8 @@ public class RestaurantProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
+        progressDialog.show();
 
         Intent intentFromSearch = getIntent();
 
@@ -156,7 +158,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
-                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(backButtonIntent);
                 }
             });
@@ -165,7 +167,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-                    finderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    finderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(finderIntent);
                 }
             });
@@ -173,50 +175,29 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     private void fetchRestaurantInfo(final String query) {
-        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+
+        final Call<RestaurantInfoResponse> request;
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        request = apiInterface.getRestaurantInfo(query);
+        request.enqueue(new Callback<RestaurantInfoResponse>() {
 
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
-                progressDialog.show();
-            }
-
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                final Call<RestaurantInfoResponse> request;
-                ApiInterface apiInterface = Config.createService(ApiInterface.class);
-                request = apiInterface.getRestaurantInfo(query);
-                request.enqueue(new Callback<RestaurantInfoResponse>() {
-
-                    @Override
-                    public void onResponse(Call<RestaurantInfoResponse> call, Response<RestaurantInfoResponse> response) {
-                        Log.d(TAG, "s");
-                        RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
-                        if (body != null) {
-                            restaurantInfoFinder = new RestaurantInfoFinder(body.getIsOpenNow(), body.getDisplayAddress(), body.getCuisine(),
-                                    body.getRestName(), body.getRestId(), body.getRestaurantType(), body.waitTimeData.getShowBuzzTypeText(),
-                                    body.waitTimeData.getWaitTime(), body.waitTimeData.getBuzzTypeText());
-                            setFunctionality(restaurantInfoFinder);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<RestaurantInfoResponse> call, Throwable t) {
-                        Log.d(TAG, "f");
-                    }
-
-                });
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean b) {
-                super.onPostExecute(b);
+            public void onResponse(Call<RestaurantInfoResponse> call, Response<RestaurantInfoResponse> response) {
+                Log.d(TAG, "s");
                 progressDialog.dismiss();
+                RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
+                if (body != null) {
+                    restaurantInfoFinder = new RestaurantInfoFinder(body.getIsOpenNow(), body.getDisplayAddress(), body.getCuisine(),
+                            body.getRestName(), body.getRestId(), body.getRestaurantType(), body.waitTimeData.getShowBuzzTypeText(),
+                            body.waitTimeData.getWaitTime(), body.waitTimeData.getBuzzTypeText());
+                    setFunctionality(restaurantInfoFinder);
+                }
             }
-        };
-        task.execute();
+            @Override
+            public void onFailure(Call<RestaurantInfoResponse> call, Throwable t) {
+                Log.d(TAG, "f");
+            }
+        });
     }
 
     private void fetchSimilarRestInfo(final String query) {
@@ -287,7 +268,7 @@ public class RestaurantProfileActivity extends BaseActivity {
             public void onClick(View view) {
 
                 Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, SimilarRestaurantProfileActivity.class);
-                intentSuggestRest.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intentSuggestRest.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 intentSuggestRest.putExtra("similarRestCuisine", similarRestCuisine);
                 intentSuggestRest.putExtra("similarRestAddr", similarRestAddr);

@@ -73,6 +73,10 @@ public class FullUserDetailsResponse {
         @Expose
         private int nextBadgeLevel;
 
+        @SerializedName("threshold_points")
+        @Expose
+        private int thresholdPoints;
+
         public String getNextBadgeName() {
             return nextBadgeName;
         }
@@ -87,6 +91,14 @@ public class FullUserDetailsResponse {
 
         public void setNextBadgeLevel(int nextBadgeLevel) {
             this.nextBadgeLevel = nextBadgeLevel;
+        }
+
+        public int getThresholdPoints() {
+            return thresholdPoints;
+        }
+
+        public void setThresholdPoints(int thresholdPoints) {
+            this.thresholdPoints = thresholdPoints;
         }
     }
 

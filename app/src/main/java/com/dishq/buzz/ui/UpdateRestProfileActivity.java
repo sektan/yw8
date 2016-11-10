@@ -84,7 +84,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         if (intentFromSearch != null) {
             query = intentFromSearch.getExtras().getString("restaurant_id");
             restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
-            }
+        }
         setContentView(R.layout.activity_update_rest_profile);
         setTags();
         fetchWaitTimeInfo();
@@ -105,9 +105,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     void checkGPS() {
-        if(ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getGPS();
-        }else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+        } else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             selfPermission();
         }
 
@@ -129,16 +129,16 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     public void selfPermission() {
-        if(ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
+        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if(ActivityCompat.shouldShowRequestPermissionRationale(UpdateRestProfileActivity.this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(UpdateRestProfileActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.e("accept", "accept");
             } else {
                 //request the permission
                 Log.e("accept", "not accept");
                 ActivityCompat.requestPermissions(UpdateRestProfileActivity.this,
-                        new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_GPS_ACCESS);
             }
         }
@@ -151,7 +151,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_GPS_ACCESS: {
 
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getGPS();
                 } else {
                     showAlert("", "That permission is needed in order to update wait time. Tap Retry.");
@@ -164,8 +164,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
         builder.setTitle(title);
         builder.setMessage(message).setCancelable(false)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-                {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -187,8 +186,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
         android.app.AlertDialog alert = builder.create();
         alert.show();
         TextView message1 = (TextView) alert.findViewById(android.R.id.message);
-        assert message != null;
-        message1.setLineSpacing(0,1.5f);
+        //assert message != null;
+        message1.setLineSpacing(0, 1.5f);
 
     }
 
@@ -200,9 +199,19 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private void setTags() {
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
+        restToolbarName.setText(getResources().getString(R.string.update));
         updateRestName = (TextView) findViewById(R.id.cv_up_rest_name);
         restToolBarSearch = (ImageView) findViewById(R.id.tvMenuFinder);
+        restToolBarSearch.setVisibility(View.GONE);
         backButton = (ImageView) findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
+                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(backButtonIntent);
+            }
+        });
         waitTimeOne = (CardView) findViewById(R.id.cv_wait_one);
         waitTimeTwo = (CardView) findViewById(R.id.cv_wait_two);
         waitTimeThree = (CardView) findViewById(R.id.cv_wait_three);
@@ -229,24 +238,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     private void setFunctionality() {
-        if (restToolBarSearch != null) {
-            restToolBarSearch.setVisibility(View.GONE);
-        }
-        if (restToolbarName != null) {
-            restToolbarName.setText(getResources().getString(R.string.update));
-        }
         if (restaurantName != null && updateRestName != null) {
             updateRestName.setText(restaurantName);
         }
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(backButtonIntent);
-            }
-        });
 
         if (waitTimeOne != null) {
             waitTimeOne.setOnClickListener(new View.OnClickListener() {
@@ -536,71 +530,51 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private void fetchUpdatedUserInfo() {
         checkGPS();
-        rest_id= Integer.parseInt(query);
-        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
-
+        rest_id = Integer.parseInt(query);
+        final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
+                getLatitude, getLongitude, waitTimeId, buzzTypeId);
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        serverAccessToken = YW8Application.getAccessToken();
+        Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
+                updateRestaurantHelper);
+        call.enqueue(new Callback<UpdateRestaurantResponse>() {
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = new ProgressDialog(UpdateRestProfileActivity.this);
-                progressDialog.show();
-            }
+            public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+                Log.d(TAG, "Success");
+                try {
+                    if (response.isSuccessful()) {
+                        UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
+                        if (body != null) {
+                            updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
+                                    body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
 
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
-                        getLatitude, getLongitude, waitTimeId, buzzTypeId);
-                ApiInterface apiInterface = Config.createService(ApiInterface.class);
-                serverAccessToken = YW8Application.getAccessToken();
-                Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
-                        updateRestaurantHelper);
-                call.enqueue(new Callback<UpdateRestaurantResponse>() {
-                    @Override
-                    public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
-                        Log.d(TAG, "Success");
-                        try {
-                            if(response.isSuccessful()) {
-                                UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
-                                if(body!=null) {
-                                    updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
-                                            body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+                            YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded());
+                            YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
+                            progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                            progressDialoglert.show();
+                            checkWhereToGo(updateRestaurantFinder);
 
-                                    YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded());
-                                    YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
-                                    progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
-                                    progressDialoglert.show();
-                                    checkWhereToGo(updateRestaurantFinder);
-
-                                }
-                            }else {
-                                String error = response.errorBody().string();
-                                Log.d("UpdateRestaurant", error);
-                                progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
-                                progressDialoglert.show();
-                                alertFarOff(UpdateRestProfileActivity.this);
-
-                            }
-                        } catch(IOException e) {
-                            e.printStackTrace();
                         }
+                    } else {
+                        String error = response.errorBody().string();
+                        Log.d("UpdateRestaurant", error);
+                        progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                        progressDialoglert.show();
+                        alertFarOff(UpdateRestProfileActivity.this);
 
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                    @Override
-                    public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
-                        Log.d(TAG, "Failure of connecting to the server");
-                    }
-                });
-                return true;
             }
 
             @Override
-            protected void onPostExecute(Boolean b) {
-                super.onPostExecute(b);
-                progressDialog.dismiss();
+            public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
+                Log.d(TAG, "Failure of connecting to the server");
             }
-        };
-        task.execute();
+        });
+
 
     }
 
@@ -613,12 +587,12 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(backButtonIntent);
                     }
                 })
                 .create();
-        if(progressDialoglert!=null) {
+        if (progressDialoglert != null) {
             progressDialoglert.dismiss();
         }
         dialog.show();
@@ -626,40 +600,40 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     public void checkWhereToGo(UpdateRestaurantFinder updateRestaurantFinder) {
-        if(updateRestaurantFinder!=null) {
+        if (updateRestaurantFinder != null) {
             Boolean badgeUpgrade = updateRestaurantFinder.getHasBadgeUpgrade();
-            if(badgeUpgrade==true) {
+            if (badgeUpgrade == true) {
                 Intent intent = new Intent(UpdateRestProfileActivity.this, BigBadgeActivity.class);
                 intent.putExtra("badge_name", updateRestaurantFinder.getBadgeName());
                 intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(intent);
             } else {
                 createAlertDialog(UpdateRestProfileActivity.this);
                 Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                goToHomePageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                goToHomePageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(goToHomePageIntent);
             }
-        }else{
+        } else {
             Log.d(TAG, "fail");
         }
 
     }
 
     public void createAlertDialog(final Activity activity) {
-        if(progressDialoglert!=null) {
+        if (progressDialoglert != null) {
             progressDialoglert.dismiss();
         }
 
-        if(YW8Application.getNumPointsAdded() == 20) {
+        if (YW8Application.getNumPointsAdded() == 20) {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setMessage("Thanks! You just Earned 20 points ")
                     .setCancelable(false)
                     .create();
             dialog.show();
-        }else {
+        } else {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setMessage("Thanks! You just Earned 10 points ")
                     .setCancelable(false)
@@ -668,7 +642,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         }
 
         //TextView message = (TextView) dialog.findViewById(android.R.id.message);
-       // assert message != null;
+        // assert message != null;
     }
 
     public static boolean checkAndShowNetworkPopup(final Activity activity) {
@@ -699,6 +673,12 @@ public class UpdateRestProfileActivity extends BaseActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gps.stopUsingGPS();
     }
 
 }

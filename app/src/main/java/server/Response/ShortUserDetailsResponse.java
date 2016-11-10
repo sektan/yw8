@@ -70,18 +70,18 @@ public class ShortUserDetailsResponse {
 
         @SerializedName("name")
         @Expose
-        private String shortUserName;
+        private String shortUserBadgeName;
 
         @SerializedName("badge_level")
         @Expose
         private int badgeLevel;
 
-        public String getShortUserName() {
-            return shortUserName;
+        public String getShortUserBadgeName() {
+            return shortUserBadgeName;
         }
 
-        public void setShortUserName(String shortUserName) {
-            this.shortUserName = shortUserName;
+        public void setShortUserBadgeName(String shortUserBadgeName) {
+            this.shortUserBadgeName = shortUserBadgeName;
         }
 
         public int getBadgeLevel() {

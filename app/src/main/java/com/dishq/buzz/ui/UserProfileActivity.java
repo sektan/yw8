@@ -180,7 +180,8 @@ public class UserProfileActivity extends BaseActivity {
         });
 
         int thresholdPoints =body.nextBadgeInfo.getThresholdPoints()-1;
-        userProfProgress.setProgress(thresholdPoints);
+        userProfProgress.setMax(thresholdPoints);
+        userProfProgress.setProgress(currPoints);
 
     }
 

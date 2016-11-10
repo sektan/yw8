@@ -50,21 +50,20 @@ import server.api.Config;
  */
 
 public class HomePageActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
-
-    private ShortUserDetailsFinder shortUserDetailsFinder;
     private ProgressDialog progressDialog;
-
     private static String serverAccessToken;
     private String goingToSearch = "";
     private GoogleApiClient mGoogleApiClient;
     private Button searchButton, updateButton;
     private CardView userProfileCard;
     private ImageView spBadgeImage;
-    private TextView spBadgeName, spUserName, spUserPoints;
+    private TextView spBadgeName, spUserName, spUserPoints, spPointsInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        progressDialog = new ProgressDialog(HomePageActivity.this);
+        progressDialog.show();
 
         String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -93,15 +92,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     void setTags() {
         searchButton = (Button) findViewById(R.id.waiting_time_search);
-        updateButton = (Button) findViewById(R.id.give_time_update);
-        userProfileCard = (CardView) findViewById(R.id.cv_user_profile);
-        spBadgeImage = (ImageView) findViewById(R.id.cv_badge_image);
-        spBadgeName = (TextView) findViewById(R.id.cv_badge_name);
-        spUserName = (TextView) findViewById(R.id.cv_short_user_name);
-        spUserPoints = (TextView) findViewById(R.id.cv_short_user_points);
-    }
-
-    void setFunctionality(ShortUserDetailsFinder shortUserDetailsFinder) {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,11 +99,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intentSearch.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentSearch);
             }
         });
-
+        updateButton = (Button) findViewById(R.id.give_time_update);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,100 +111,89 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intentSearch.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentSearch);
             }
         });
+        userProfileCard = (CardView) findViewById(R.id.cv_user_profile);
+        spBadgeImage = (ImageView) findViewById(R.id.cv_badge_image);
+        spBadgeName = (TextView) findViewById(R.id.cv_badge_name);
+        spUserName = (TextView) findViewById(R.id.cv_short_user_name);
+        spUserPoints = (TextView) findViewById(R.id.cv_short_user_points);
+        spPointsInfo = (TextView) findViewById(R.id.cv_short_user_points_info);
+    }
 
+    void setFunctionality(ShortUserDetailsResponse.ShortUserDetailsInfo body) {
         userProfileCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intentUserProf = new Intent(HomePageActivity.this, UserProfileActivity.class);
-                intentUserProf.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intentUserProf.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentUserProf);
             }
         });
 
-        if (shortUserDetailsFinder != null) {
-            int lifetimePoints = shortUserDetailsFinder.getLifeTimePoints();
+        if (body != null) {
+            int lifetimePoints = body.getLifeTimePoints();
             if (spUserPoints != null && lifetimePoints != 0) {
-                if (lifetimePoints >0 && lifetimePoints <150){
+                if (lifetimePoints > 0 && lifetimePoints < 150) {
                     spBadgeImage.setImageResource(R.drawable.homescreen_profile_rookie);
-                } else if (lifetimePoints >=150 && lifetimePoints< 500) {
+                } else if (lifetimePoints >= 150 && lifetimePoints < 500) {
                     spBadgeImage.setImageResource(R.drawable.profile_points_soldier);
-                } else if (lifetimePoints >=500 && lifetimePoints< 1000) {
+                } else if (lifetimePoints >= 500 && lifetimePoints < 1000) {
                     spBadgeImage.setImageResource(R.drawable.homescreen_profile_agent);
-                }else if (lifetimePoints >=1000 && lifetimePoints< 2000) {
+                } else if (lifetimePoints >= 1000 && lifetimePoints < 2000) {
                     spBadgeImage.setImageResource(R.drawable.homescreen_profile_captain);
-                }else if (lifetimePoints >=2000 && lifetimePoints< 4000) {
+                } else if (lifetimePoints >= 2000 && lifetimePoints < 4000) {
                     spBadgeImage.setImageResource(R.drawable.homescreen_profile_knight);
-                }else if (lifetimePoints >=4000) {
+                } else if (lifetimePoints >= 4000) {
                     spBadgeImage.setImageResource(R.drawable.homescreen_profile_general);
                 }
                 spUserPoints.setText(Integer.toString(lifetimePoints));
+                spPointsInfo.setText(getResources().getString(R.string.sp_lifetime_points));
+            } else {
+                spPointsInfo.setText(getResources().getString(R.string.give_time_win_prizes));
             }
-            String displayName = shortUserDetailsFinder.getFullName();
+            String displayName = body.shortUserDetails.getFullName();
             if (spUserName != null && displayName != null) {
                 spUserName.setText(displayName);
             }
-            String badgeName = shortUserDetailsFinder.getShortUserName();
+            String badgeName = body.shortUserCurrBadge.getShortUserBadgeName();
             spBadgeName.setText(badgeName);
         }
     }
 
     public void fetchShortUserProfile() {
         serverAccessToken = YW8Application.getAccessToken();
-
-        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        Call<ShortUserDetailsResponse> request = apiInterface.getShortUserDetails(serverAccessToken);
+        request.enqueue(new Callback<ShortUserDetailsResponse>() {
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = new ProgressDialog(HomePageActivity.this);
-                progressDialog.show();
-            }
-
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                ApiInterface apiInterface = Config.createService(ApiInterface.class);
-                Call<ShortUserDetailsResponse> request = apiInterface.getShortUserDetails(serverAccessToken);
-                request.enqueue(new Callback<ShortUserDetailsResponse>() {
-                    @Override
-                    public void onResponse(Call<ShortUserDetailsResponse> call, Response<ShortUserDetailsResponse> response) {
-                        Log.d("YW8", "Success");
-                        try {
-                            if (response.isSuccessful()) {
-                                ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
-                                if (body != null) {
-                                    shortUserDetailsFinder = new ShortUserDetailsFinder(body.getLifeTimePoints(), body.shortUserDetails.getFullName(),
-                                            body.shortUserDetails.getDisplayName(), body.shortUserCurrBadge.getShortUserName(), body.shortUserCurrBadge.getBadgeLevel());
-                                    setFunctionality(shortUserDetailsFinder);
-                                }
-                            }else {
-                                String error = response.errorBody().string();
-                                Log.d("HomePage", error);
-
-                            }
-
-                            return;
-                        } catch (IOException e) {
-                            e.printStackTrace();
+            public void onResponse(Call<ShortUserDetailsResponse> call, Response<ShortUserDetailsResponse> response) {
+                Log.d("YW8", "Success");
+                progressDialog.dismiss();
+                try {
+                    if (response.isSuccessful()) {
+                        ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
+                        if (body != null) {
+                            setFunctionality(body);
                         }
+                    } else {
+                        String error = response.errorBody().string();
+                        Log.d("HomePage", error);
                     }
-
-                    @Override
-                    public void onFailure(Call<ShortUserDetailsResponse> call, Throwable t) {
-                        Log.d("YW8", "Fail");
-                    }
-                });
-                return true;
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
             @Override
-            protected void onPostExecute (Boolean b) {
-                super.onPostExecute(b);
+            public void onFailure(Call<ShortUserDetailsResponse> call, Throwable t) {
+                Log.d("YW8", "Fail");
                 progressDialog.dismiss();
             }
-        };
-        task.execute();
+        });
     }
 
     @Override
@@ -232,12 +211,12 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 return true;
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
-                intentGetPoints.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intentGetPoints.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
                 Intent intentLogOut = new Intent(HomePageActivity.this, LoginActivity.class);
-                intentLogOut.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intentLogOut.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 String facebookOrGoogle = YW8Application.getFacebookOrGoogle();
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();
@@ -261,14 +240,14 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     public void googleSignOut() {
 
-        if(mGoogleApiClient!=null) {
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
             mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(@Nullable Bundle bundle) {
 
                     FirebaseAuth.getInstance().signOut();
-                    if(mGoogleApiClient.isConnected()) {
+                    if (mGoogleApiClient.isConnected()) {
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                             @Override
                             public void onResult(@NonNull Status status) {
@@ -292,7 +271,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     public void userLogOut() {
         YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, "").apply();
-        YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN,"").apply();
+        YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN, "").apply();
         YW8Application.getPrefs().edit().putString(Constants.TOKEN_TYPE, "").apply();
         YW8Application.setAccessToken(null, null);
         YW8Application.getPrefs().edit().clear().apply();
