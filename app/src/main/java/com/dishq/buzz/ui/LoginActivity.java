@@ -144,6 +144,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     finish();
                     startActivity(i);
                 }
@@ -199,6 +200,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 facebookAccessToken = loginResult.getAccessToken().getToken();
                 fetchAccessToken(facebookAccessToken);
                 Intent i = new Intent(LoginActivity.this, HomePageActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(i);
             }
@@ -374,7 +376,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     public void startHomePageActivity() {
         Intent i = new Intent(LoginActivity.this.getApplicationContext(), HomePageActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         finish();
         startActivity(i);
     }

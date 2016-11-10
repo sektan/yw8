@@ -51,12 +51,12 @@ public class RestaurantProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_profile);
 
         Intent intentFromSearch = getIntent();
 
         query = intentFromSearch.getExtras().getString("restaurant_id");
         restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
+        setContentView(R.layout.activity_restaurant_profile);
         setTags();
 
         fetchRestaurantInfo(query);
@@ -147,8 +147,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
-                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    finish();
+                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(backButtonIntent);
                 }
             });
@@ -157,7 +156,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-                    finish();
+                    finderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(finderIntent);
                 }
             });
@@ -279,6 +278,7 @@ public class RestaurantProfileActivity extends BaseActivity {
             public void onClick(View view) {
 
                 Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, SimilarRestaurantProfileActivity.class);
+                intentSuggestRest.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 intentSuggestRest.putExtra("similarRestCuisine", similarRestCuisine);
                 intentSuggestRest.putExtra("similarRestAddr", similarRestAddr);
@@ -289,13 +289,5 @@ public class RestaurantProfileActivity extends BaseActivity {
                 startActivity(intentSuggestRest);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-        finish();
-        startActivity(backButtonIntent);
     }
 }

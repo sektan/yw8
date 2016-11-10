@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 
 import java.io.IOException;
@@ -94,7 +95,6 @@ public class UserProfileActivity extends BaseActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                finish();
                 startActivity(intent);
             }
         });
@@ -173,12 +173,11 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 monthOrYear = "month";
-                YW8Application.getPrefs().edit().putString(Constants.MONTH_OR_YEAR, monthOrYear).apply();
-                YW8Application.setMonthOrYear(monthOrYear);
+                Util.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("month_number", monthNumber);
                 intent.putExtra("year_number", yearNumber);
-                finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
@@ -187,12 +186,11 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 monthOrYear = "year";
-                YW8Application.getPrefs().edit().putString(Constants.MONTH_OR_YEAR, monthOrYear).apply();
-                YW8Application.setMonthOrYear(monthOrYear);
+                Util.setMonthOrYear(monthOrYear);
                 int year = fullUserDetailsFinder.getyYear();
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("year_number", year);
-                finish();
                 startActivity(intent);
             }
         });
@@ -288,10 +286,5 @@ public class UserProfileActivity extends BaseActivity {
         };
         task.execute();
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 }

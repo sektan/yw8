@@ -3,7 +3,6 @@
     package="com.dishq.buzz">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -60,6 +59,14 @@
         android:label="Get Points"
         android:screenOrientation="portrait"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs "com.example.myapp://" -->
+                <data android:scheme="com.dishq.buzz" />
+            </intent-filter>
     </activity>
 
         <activity
@@ -93,18 +100,6 @@
 
         <activity
             android:name=".ui.LeaderBoardActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".ui.MonthlyLeaderBoardActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".ui.YearlyLeaderBoardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>

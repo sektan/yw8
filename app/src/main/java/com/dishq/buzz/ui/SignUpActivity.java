@@ -204,7 +204,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 facebookAccessToken = loginResult.getAccessToken().getToken();
                 fetchAccessToken(facebookAccessToken);
                 Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(i);
             }
@@ -377,7 +377,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     public void startHomePageActivity() {
         Intent i = new Intent(SignUpActivity.this.getApplicationContext(), HomePageActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         finish();
         startActivity(i);
     }

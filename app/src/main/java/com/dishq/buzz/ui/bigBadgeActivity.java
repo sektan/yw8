@@ -24,14 +24,13 @@ public class BigBadgeActivity extends BaseActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.big_badge);
 
         Intent intent = getIntent();
         if(intent!= null) {
             nameBadge = intent.getExtras().getString("badge_name");
             badgeLevel = intent.getExtras().getInt("badge_level");
         }
-
+        setContentView(R.layout.big_badge);
         setTags();
     }
 
@@ -67,19 +66,9 @@ public class BigBadgeActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(BigBadgeActivity.this, UserProfileActivity.class);
-                finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(BigBadgeActivity.this, HomePageActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        finish();
-        startActivity(intent);
-
     }
 }

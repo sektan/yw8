@@ -79,13 +79,13 @@ public class UpdateRestProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_rest_profile);
 
         Intent intentFromSearch = getIntent();
         if (intentFromSearch != null) {
             query = intentFromSearch.getExtras().getString("restaurant_id");
             restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
             }
+        setContentView(R.layout.activity_update_rest_profile);
         setTags();
         fetchWaitTimeInfo();
     }
@@ -243,7 +243,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-                finish();
+                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(backButtonIntent);
             }
         });
@@ -613,8 +613,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        finish();
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(backButtonIntent);
                     }
                 })
@@ -633,12 +632,13 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 Intent intent = new Intent(UpdateRestProfileActivity.this, BigBadgeActivity.class);
                 intent.putExtra("badge_name", updateRestaurantFinder.getBadgeName());
                 intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(intent);
             } else {
                 createAlertDialog(UpdateRestProfileActivity.this);
                 Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                goToHomePageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                goToHomePageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(goToHomePageIntent);
             }
@@ -699,14 +699,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-        finish();
-        startActivity(backButtonIntent);
     }
 
 }

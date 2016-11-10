@@ -35,9 +35,8 @@ public class GetPointsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_points);
-
         setTags();
-    }
+            }
 
     public void setTags() {
         GetPointsBack = (ImageView) findViewById(R.id.back_button);
@@ -54,8 +53,7 @@ public class GetPointsActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
@@ -99,14 +97,5 @@ public class GetPointsActivity extends BaseActivity {
             view.loadUrl(url);
             return true;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        finish();
-        startActivity(intent);
     }
 }

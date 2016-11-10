@@ -34,9 +34,8 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_similar_rest_prof);
 
-        setTags();
+
         Intent intentFromRestProf = getIntent();
         if (intentFromRestProf != null) {
             similarRestCuisine = intentFromRestProf.getExtras().getString("similarRestCuisine");
@@ -45,9 +44,11 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
             similarRestId = intentFromRestProf.getExtras().getString("restaurant_id");
             similarRestIsOpenOn = intentFromRestProf.getExtras().getBoolean("similarRestIsOpenOn");
             similarRestType = intentFromRestProf.getExtras().getString("similarRestType");
-
-            fetchRestaurantInfo();
         }
+        setContentView(R.layout.activity_similar_rest_prof);
+        setTags();
+        fetchRestaurantInfo();
+
     }
 
     private void setTags() {
@@ -81,7 +82,7 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, HomePageActivity.class);
-                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(backButtonIntent);
             }
@@ -91,6 +92,7 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent finderIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
+                finderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(finderIntent);
             }
@@ -99,13 +101,5 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
 
     private void fetchRestaurantInfo() {
         setFunctionality();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent backButtonIntent = new Intent(SimilarRestaurantProfileActivity.this, SearchActivity.class);
-        finish();
-        startActivity(backButtonIntent);
     }
 }

@@ -65,8 +65,10 @@ public class YearlyAdapter extends BaseAdapter {
 
         if(yearlyRank != null) {
             if(Integer.toString(yearlyFinder.get(position).getYearRank())!=null) {
-                String rank = "#" + Integer.toString(yearlyFinder.get(position).getYearRank());
-                yearlyRank.setText(rank);
+                if(yearlyFinder.get(position).getYearRank()!= -1) {
+                    String rank = "#" + Integer.toString(yearlyFinder.get(position).getYearRank());
+                    yearlyRank.setText(rank);
+                }
             }
         }
         if(yearlyUserName != null) {

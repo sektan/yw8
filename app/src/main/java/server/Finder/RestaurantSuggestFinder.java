@@ -4,17 +4,20 @@ package server.Finder;
  * Created by dishq on 03-11-2016.
  */
 
-public class RestaurantFinderResponse {
+public class RestaurantSuggestFinder {
 
     int restaurantId ;
     String restaurantName;
-    String restaurantAddress ;
+    String restaurantAddress;
+    Boolean IS_OPEN_NOW;
 
-    public RestaurantFinderResponse(int restaurantId, String restaurantName, String restaurantAddress) {
+    public RestaurantSuggestFinder(int restaurantId, String restaurantName, String restaurantAddress,
+                                   Boolean IS_OPEN_NOW) {
         super();
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
+        this.IS_OPEN_NOW = IS_OPEN_NOW;
     }
 
     public int getRestaurantId() {
@@ -41,4 +44,11 @@ public class RestaurantFinderResponse {
         this.restaurantAddress = restaurantAddress;
     }
 
+    public Boolean getIsOpenNowSearch() {
+        return IS_OPEN_NOW;
+    }
+
+    public void setIsOpenNowSearch(Boolean IS_OPEN_NOW) {
+        this.IS_OPEN_NOW = IS_OPEN_NOW;
+    }
 }

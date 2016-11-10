@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-               android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginRight="10dp"
     android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="2dp"
+    android:background="@color/white"
     android:elevation="3dp"
-    android:background="@color/white">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,33 +17,47 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
             android:layout_marginStart="10dp"
-            android:background="@drawable/search_dark"/>
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/search"
+            android:src="@drawable/search_dark" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:textSize="16sp"
-            android:layout_marginTop="6dp"
             android:id="@+id/restaurant_search_name"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:textColor="#86000000"/>
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#86000000"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/rest_closed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="end"
+            android:maxLines="1"
+            android:padding="7dp"
+            android:text="@string/closed"
+            android:textColor="@color/red"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:layout_weight="1"
-        android:textColor="#54000000"
-        android:drawablePadding="5dp"
         android:id="@+id/restaurant_search_address"
-        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="6dp"
-        android:layout_marginStart="26dp" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="1dp"
+        android:layout_weight="1"
+        android:drawablePadding="5dp"
+        android:textColor="#54000000"
+        android:textSize="12sp" />
 
 </LinearLayout>

@@ -66,8 +66,10 @@ public class MonthlyAdapter extends BaseAdapter{
 
         if(monthlyRank != null) {
             if(Integer.toString(monthlyFinder.get(position).getMonthRank())!=null) {
-                String rank = "#" + Integer.toString(monthlyFinder.get(position).getMonthRank());
-                monthlyRank.setText(rank);
+                if(monthlyFinder.get(position).getMonthRank()!= -1) {
+                    String rank = "#" + Integer.toString(monthlyFinder.get(position).getMonthRank());
+                    monthlyRank.setText(rank);
+                }
             }
         }
         if(monthlyUserName != null) {

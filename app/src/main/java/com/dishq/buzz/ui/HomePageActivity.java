@@ -65,9 +65,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_page);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
-        setSupportActionBar(toolbar);
 
         String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -86,7 +83,9 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                         addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
                 .addApi(Plus.API)
                 .build();
-
+        setContentView(R.layout.activity_home_page);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
+        setSupportActionBar(toolbar);
         setTags();
         fetchShortUserProfile();
 
@@ -110,7 +109,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentSearch);
             }
         });
@@ -122,7 +121,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentSearch.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentSearch);
             }
         });
@@ -131,7 +130,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             @Override
             public void onClick(View view) {
                 Intent intentUserProf = new Intent(HomePageActivity.this, UserProfileActivity.class);
-                intentUserProf.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentUserProf.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentUserProf);
             }
         });
@@ -233,12 +232,12 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 return true;
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
-                intentGetPoints.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentGetPoints.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
                 Intent intentLogOut = new Intent(HomePageActivity.this, LoginActivity.class);
-                intentLogOut.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentLogOut.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 String facebookOrGoogle = YW8Application.getFacebookOrGoogle();
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();

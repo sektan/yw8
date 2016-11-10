@@ -12,7 +12,7 @@ import com.dishq.buzz.R;
 
 import java.util.ArrayList;
 
-import server.Finder.RestaurantFinderResponse;
+import server.Finder.RestaurantSuggestFinder;
 
 /**
  * Created by dishq on 03-11-2016.
@@ -21,27 +21,24 @@ import server.Finder.RestaurantFinderResponse;
 public class AdapterClass extends BaseAdapter {
     LayoutInflater layoutInflater;
     Context context;
-    ArrayList<RestaurantFinderResponse> menu_finders;
-    public AdapterClass(Context context, ArrayList<RestaurantFinderResponse> menu_finders){
+    ArrayList<RestaurantSuggestFinder> restfinders;
+    public AdapterClass(Context context, ArrayList<RestaurantSuggestFinder> restfinders){
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
-        this.menu_finders = menu_finders;
+        this.restfinders = restfinders;
     }
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
-        return menu_finders.size();
+        return restfinders.size();
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
@@ -51,13 +48,21 @@ public class AdapterClass extends BaseAdapter {
         if (view == null) {
             view = layoutInflater.inflate(R.layout.acitivity_menu_finder_child, parent, false);
         }
-        TextView restaurant_search_name = (TextView) view.findViewById(R.id.restaurant_search_name);
-        TextView restaurant_search_drive_time = (TextView) view.findViewById(R.id.restaurant_search_address);
+        TextView restaurantSearchName = (TextView) view.findViewById(R.id.restaurant_search_name);
+        TextView isRestaurantOpen = (TextView) view.findViewById(R.id.rest_closed);
+        TextView restaurantSearchAddress = (TextView) view.findViewById(R.id.restaurant_search_address);
 
-        restaurant_search_name.setText(menu_finders.get(position).getRestaurantName());
+        Boolean isRestOpened = restfinders.get(position).getIsOpenNowSearch();
+        if(isRestOpened) {
+            isRestaurantOpen.setVisibility(View.GONE);
+        }else {
+            isRestaurantOpen.setVisibility(View.VISIBLE);
+        }
+
+        restaurantSearchName.setText(restfinders.get(position).getRestaurantName());
         Log.e("JSON Parser", "4");
 
-        restaurant_search_drive_time.setText(menu_finders.get(position).getRestaurantAddress());
+        restaurantSearchAddress.setText(restfinders.get(position).getRestaurantAddress());
         return view;
 
     }

@@ -29,5 +29,9 @@ public class RestaurantSuggestResponse {
         @SerializedName("restaurant_name")
         @Expose
         public String restaurantName;
+
+        @SerializedName("is_open_now")
+        @Expose
+        public Boolean IS_OPEN_NOW;
     }
 }

@@ -58,11 +58,8 @@ public class LeaderBoardActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leaderboard);
 
-        setTags();
-
-        monthOrYear = YW8Application.getMonthOrYear();
+        monthOrYear = Util.getMonthOrYear();
         yearNumber = 2016;
         monthNumber = 11;
         if (monthOrYear.equals("month")) {
@@ -71,7 +68,8 @@ public class LeaderBoardActivity extends BaseActivity {
         } else if(monthOrYear.equals("year")){
             fetchYearlyDetails(yearNumber);
         }
-
+        setContentView(R.layout.activity_leaderboard);
+        setTags();
     }
 
     public void setTags() {
@@ -104,7 +102,6 @@ public class LeaderBoardActivity extends BaseActivity {
                 fetchYearlyDetails(yearNumber);
                 //fetchMonthlyDetails(monthNumber, yearNumber);
                 Intent intent = getIntent();
-                finish();
                 startActivity(intent);
             }
         });
@@ -125,7 +122,7 @@ public class LeaderBoardActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LeaderBoardActivity.this, UserProfileActivity.class);
-                finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
@@ -249,14 +246,6 @@ public class LeaderBoardActivity extends BaseActivity {
         };
         task.execute();
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(LeaderBoardActivity.this, UserProfileActivity.class);
-        finish();
-        startActivity(intent);
     }
 
 }

@@ -24,6 +24,9 @@ public class Util {
     public static String ACCESS_TOKEN = "";
     public static double latitude = 17.77;
     public static double longitude;
+    public static String monthOrYear = "";
+
+    private static Util utilContent;
 
     public static boolean checkAndShowNetworkPopup(final Activity activity) {
         if (!isOnline(false)) {
@@ -69,4 +72,11 @@ public class Util {
     }
 
 
+    public static String getMonthOrYear() {
+        return utilContent.monthOrYear;
+    }
+
+    public static void setMonthOrYear(String monthOrYear) {
+        utilContent.monthOrYear = monthOrYear;
+    }
 }

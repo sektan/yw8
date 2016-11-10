@@ -29,7 +29,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 import custom.AdapterClass;
-import server.Finder.RestaurantFinderResponse;
+import server.Finder.RestaurantSuggestFinder;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 
@@ -49,10 +49,10 @@ public class SearchActivity extends BaseActivity {
     ListView listView;
     AdapterClass myAdapter;
     JSONObject prop;
-    private String SEARCH_FLOW_FROM_HOMEPAGE = "";
+    Boolean REST_IS_OPENED = false;
     private String sa="";
     private String restaurnat_id,restaurant_name;
-    ArrayList<RestaurantFinderResponse> restaurantFinder = new ArrayList<RestaurantFinderResponse>();
+    ArrayList<RestaurantSuggestFinder> restaurantFinder = new ArrayList<RestaurantSuggestFinder>();
     EditText txtAutoComplete;
     LinearLayout norestaurant ;
     ImageView backButton;
@@ -69,7 +69,7 @@ public class SearchActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
-                    searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     finish();
                     startActivity(searchBackIntent);
                 }
@@ -99,11 +99,14 @@ public class SearchActivity extends BaseActivity {
             });
 
             listView=(ListView)findViewById(R.id.list);
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    REST_IS_OPENED = restaurantFinder.get(position).getIsOpenNowSearch();
                     restaurnat_id=  restaurantFinder.get(position).getRestaurantId()+"";
                     restaurant_name=restaurantFinder.get(position).getRestaurantName();
+
                     try {
                         prop.put("Restaurant name",restaurant_name);
                     } catch (JSONException e) {
@@ -112,17 +115,24 @@ public class SearchActivity extends BaseActivity {
                     if (YW8Application.getGoingToSearch().equals("restaurant")){
                         Intent i = new Intent(SearchActivity.this,
                                 RestaurantProfileActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         i.putExtra("restaurant_id",restaurnat_id);
                         i.putExtra("restaurant_name",restaurant_name+"");
                         finish();
                         startActivity(i);
                     }else if (YW8Application.getGoingToSearch().equals("update")){
-                        Intent i = new Intent(SearchActivity.this,
-                                UpdateRestProfileActivity.class);
-                        i.putExtra("restaurant_id",restaurnat_id);
-                        i.putExtra("restaurant_name",restaurant_name+"");
-                        finish();
-                        startActivity(i);
+                        if(REST_IS_OPENED) {
+                            Intent i = new Intent(SearchActivity.this,
+                                    UpdateRestProfileActivity.class);
+                            i.putExtra("restaurant_id",restaurnat_id);
+                            i.putExtra("restaurant_name",restaurant_name+"");
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(i);
+                        }else {
+                            //don't go anywhere
+                        }
+
                     }
 
                 }
@@ -177,8 +187,8 @@ public class SearchActivity extends BaseActivity {
                 restaurantFinder.clear();
                 for (RestaurantSuggestResponse.restaurantSuggest data : response.body().ressuggest) {
 
-                    restaurantFinder.add(new RestaurantFinderResponse(data.restaurantId,  data.restaurantName,
-                            data.restaurantAddress));
+                    restaurantFinder.add(new RestaurantSuggestFinder(data.restaurantId,  data.restaurantName,
+                            data.restaurantAddress, data.IS_OPEN_NOW));
                 }
                 myAdapter = new AdapterClass(SearchActivity.this, restaurantFinder);
                 Log.e("JSON Parser", "5");
@@ -230,7 +240,7 @@ public class SearchActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
-        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         finish();
         startActivity(searchBackIntent);
     }

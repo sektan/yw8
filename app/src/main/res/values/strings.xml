@@ -40,6 +40,8 @@
 
     <!-- Search Activity -->
     <string name="suggestion_text">Restaurant, Pub, Bar</string>
+    <string name="closed">Closed</string>
+    <string name="search">Search</string>
 
     <!-- User Profile-->
     <string name="badge_type_rookie">ROOKIE</string>
