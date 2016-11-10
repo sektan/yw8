@@ -38,7 +38,7 @@ public class RestaurantProfileActivity extends BaseActivity {
     private String TAG = "RestaurantInfoResponse";
     private Boolean isOpenNow, similarOpenNow = false;
     private Toolbar restToolbar;
-    private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait;
+    private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait, rlNoWait;
     private ProgressDialog progressDialog;
 
     private RestaurantInfoFinder restaurantInfoFinder;
@@ -64,6 +64,7 @@ public class RestaurantProfileActivity extends BaseActivity {
 
     private void setTags() {
         restToolbar = (Toolbar) findViewById(R.id.toolbar);
+        rlNoWait = (RelativeLayout) findViewById(R.id.rest_no_wait_time);
         rlRestWaitTime = (RelativeLayout) findViewById(R.id.restaurant_wait_time_info);
         rlRestWait = (RelativeLayout) findViewById(R.id.restaurant_wait_info);
         rlRestClosed = (RelativeLayout) findViewById(R.id.rl_rest_closed);
@@ -88,11 +89,15 @@ public class RestaurantProfileActivity extends BaseActivity {
                     String noOfmin = restaurantInfoFinder.getWaitTime();
                     noOfMins.setText(noOfmin);
                     if (noOfmin.equals("0")) {
+                        rlNoWait.setVisibility(View.VISIBLE);
+                        rlRestWaitTime.setVisibility(View.GONE);
                         restaurantSuggestion.setVisibility(View.GONE);
                         cardViewSuggestRes.setVisibility(View.GONE);
 
                     } else {
                         //method to call SimilarRestaurant API
+                        rlNoWait.setVisibility(View.GONE);
+                        rlRestWaitTime.setVisibility(View.VISIBLE);
                         if (restaurantSuggestion != null) {
                             restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
                         }
@@ -103,6 +108,8 @@ public class RestaurantProfileActivity extends BaseActivity {
                 }
             } else {
                 restToolbar.setBackgroundColor(getResources().getColor(R.color.red));
+                rlRestWaitTime.setVisibility(View.VISIBLE);
+                rlNoWait.setVisibility(View.GONE);
                 rlRestWaitTime.setBackgroundColor(getResources().getColor(R.color.red));
                 rlRestWait.setVisibility(View.GONE);
                 rlRestClosed.setVisibility(View.VISIBLE);
@@ -126,12 +133,14 @@ public class RestaurantProfileActivity extends BaseActivity {
 
             if (foodTypeText != null) {
                 String foodType = Arrays.toString(restaurantInfoFinder.getCuisine());
-                foodTypeText.setText(foodType);
+                String type = foodType.replaceAll("\\[", "").replaceAll("\\]", "");
+                foodTypeText.setText(type);
             }
 
             if (restaurantTypeText != null) {
                 String restaurantType = Arrays.toString(restaurantInfoFinder.getRestaurantType());
-                restaurantTypeText.setText(restaurantType);
+                String restType = restaurantType.replaceAll("\\[", "").replaceAll("\\]", "");
+                restaurantTypeText.setText(restType);
             }
 
             if (restAddrText != null) {

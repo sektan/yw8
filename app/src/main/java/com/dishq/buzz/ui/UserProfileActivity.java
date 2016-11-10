@@ -94,7 +94,7 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -177,7 +177,7 @@ public class UserProfileActivity extends BaseActivity {
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.putExtra("month_number", monthNumber);
                 intent.putExtra("year_number", yearNumber);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -189,7 +189,7 @@ public class UserProfileActivity extends BaseActivity {
                 Util.setMonthOrYear(monthOrYear);
                 int year = fullUserDetailsFinder.getyYear();
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("year_number", year);
                 startActivity(intent);
             }

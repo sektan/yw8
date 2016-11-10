@@ -63,11 +63,13 @@ public class SimilarRestaurantProfileActivity extends BaseActivity {
     private void setFunctionality() {
 
         if (foodTypeText != null) {
-            foodTypeText.setText(similarRestCuisine);
+            String type = similarRestCuisine.replaceAll("\\[", "").replaceAll("\\]", "");
+            foodTypeText.setText(type);
         }
 
         if (restaurantTypeText != null) {
-            restaurantTypeText.setText(similarRestType);
+            String restType = similarRestType.replaceAll("\\[", "").replaceAll("\\]", "");
+            restaurantTypeText.setText(restType);
         }
 
         if (restAddrText != null) {

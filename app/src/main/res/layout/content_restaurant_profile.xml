@@ -13,10 +13,93 @@
         android:id="@+id/restaurant_profile_toolbar"
         layout="@layout/tool_bar"/>
 
+    <LinearLayout
+        android:id="@+id/ll_wait_time_info"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/restaurant_profile_toolbar"
+        android:layout_height="170dp"
+        android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rest_no_wait_time"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:elevation="4dp"
+        android:visibility="gone"
+        android:background="@color/blueGreen">
+
+            <LinearLayout
+                android:id="@+id/no_wait_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/no_wait_time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="2dp"
+                    android:text="Waiting time is"
+                    android:textSize="@dimen/wait_time_text_size"/>
+
+                <TextView
+                    android:id="@+id/nowait_no_of_mins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="50sp"
+                    android:layout_marginStart="2dp"
+                    android:text="0"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="mins."
+                    android:layout_marginStart="2dp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="2dp"
+                    android:textSize="@dimen/user_profile_reading_text"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/no_wait_time">
+
+                <TextView
+                    android:id="@+id/nowait_place_is"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="6dp"
+                    android:text="Place is"
+                    android:textSize="@dimen/wait_time_text_size"/>
+
+                <TextView
+                    android:id="@+id/nowait_quiet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="50sp"
+                    android:layout_marginStart="2dp"
+                    android:text="Quiet"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/restaurant_wait_time_info"
         android:layout_width="match_parent"
-        android:layout_below="@+id/restaurant_profile_toolbar"
         android:layout_height="170dp"
         android:background="@color/blueGreen"
         android:elevation="4dp">
@@ -81,13 +164,15 @@
         </RelativeLayout>
         </RelativeLayout>
 
+    </LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="14dp"
             android:layout_marginEnd="15dp"
             android:layout_marginTop="30dp"
-            android:layout_below="@+id/restaurant_wait_time_info">
+            android:layout_below="@+id/ll_wait_time_info">
 
             <LinearLayout
                 android:id="@+id/food_type"
@@ -100,7 +185,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="7dp"
                     android:src="@drawable/bullet_filled"/>
 
                 <TextView
@@ -108,6 +193,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
+                    android:textSize="@dimen/visible_text_reading_size"
+                    android:alpha="0.54"
                     android:textColor="@color/black"/>
 
             </LinearLayout>
@@ -125,7 +212,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="7dp"
                     android:src="@drawable/bullet_filled"/>
 
                 <TextView
@@ -133,6 +220,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
+                    android:textSize="@dimen/visible_text_reading_size"
+                    android:alpha="0.54"
                     android:textColor="@color/black"/>
 
             </LinearLayout>
@@ -150,7 +239,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="7dp"
                     android:src="@drawable/bullet_filled"/>
 
                 <TextView
@@ -158,6 +247,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
+                    android:textSize="@dimen/visible_text_reading_size"
+                    android:alpha="0.54"
                     android:textColor="@color/black"/>
 
             </LinearLayout>
@@ -168,6 +259,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rest_addr"
                 android:layout_marginTop="35dp"
+                android:textSize="@dimen/visible_text_reading_size"
+                android:alpha= "0.54"
                 android:textColor="@color/black"/>
 
             <android.support.v7.widget.CardView
@@ -191,11 +284,13 @@
 
                     <TextView
                         android:id="@+id/cv_rest_name"
+                        android:padding="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/cv_rest_addr"
+                        android:layout_marginTop="13dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>

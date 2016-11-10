@@ -29,9 +29,10 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
+            android:alpha="0.96"
             android:maxLines="2"
             android:textColor="#86000000"
-            android:textSize="16sp" />
+            android:textSize="@dimen/visible_text_reading_size" />
 
         <TextView
             android:id="@+id/rest_closed"
@@ -52,12 +53,13 @@
         android:id="@+id/restaurant_search_address"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="11dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="1dp"
         android:layout_weight="1"
         android:drawablePadding="5dp"
         android:textColor="#54000000"
-        android:textSize="12sp" />
+        android:alpha="0.64"
+        android:textSize="@dimen/user_profile_points_text" />
 
 </LinearLayout>
