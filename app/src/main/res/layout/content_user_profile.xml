@@ -119,7 +119,7 @@
                     android:id="@+id/progress_image"
                     android:layout_width="30dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/profile_points_soldier"/>
+                    android:src="@drawable/profile_points_rookie"/>
 
             </LinearLayout>
 

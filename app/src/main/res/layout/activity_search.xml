@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/restaurant_autosuggest"
                 android:hint="Restaurant, Pub, Bar"
-                android:textColorHint="#38000000"
+                android:textColorHint="#54000000"
                 android:paddingBottom="15dp"
                 android:singleLine="true"
                 android:imeOptions="actionDone"

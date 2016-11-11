@@ -64,6 +64,7 @@ public class SearchActivity extends BaseActivity {
 
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             txtAutoComplete=(EditText)findViewById(R.id.restaurant_autosuggest);
+            txtAutoComplete.setTypeface(Util.getFaceRoman());
             backButton=(ImageView) findViewById(R.id.autosuggest_back);
             backButton.setOnClickListener(new View.OnClickListener() {
                 @Override

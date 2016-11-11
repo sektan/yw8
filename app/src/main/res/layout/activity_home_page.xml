@@ -10,10 +10,9 @@
         android:id="@+id/home_page_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:theme="@style/AppTheme.Toolbar"
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:background="@color/blueGreen"
-        app:titleTextAppearance="@style/AppTheme.Toolbar.Title"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
+        app:titleTextAppearance="@style/AppTheme.Toolbar.Title" />
 
     <!-- CardView for searching for restaurants -->
     <android.support.v7.widget.CardView

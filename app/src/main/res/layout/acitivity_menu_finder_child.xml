@@ -29,7 +29,6 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
-            android:alpha="0.96"
             android:maxLines="2"
             android:textColor="#86000000"
             android:textSize="@dimen/visible_text_reading_size" />
