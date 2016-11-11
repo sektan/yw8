@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
@@ -57,7 +58,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     private Button searchButton, updateButton;
     private CardView userProfileCard;
     private ImageView spBadgeImage;
-    private TextView spBadgeName, spUserName, spUserPoints, spPointsInfo;
+    private TextView spBadgeName, spUserName, spUserPoints, spPointsInfo, tvCheckWaitTime, tvGiveWaitTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,10 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     void setTags() {
+        tvCheckWaitTime = (TextView) findViewById(R.id.check_waiting_time);
+        tvCheckWaitTime.setTypeface(Util.getFaceRoman());
+        tvGiveWaitTime = (TextView) findViewById(R.id.give_wait_time);
+        tvGiveWaitTime.setTypeface(Util.getFaceRoman());
         searchButton = (Button) findViewById(R.id.waiting_time_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,9 +123,13 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         userProfileCard = (CardView) findViewById(R.id.cv_user_profile);
         spBadgeImage = (ImageView) findViewById(R.id.cv_badge_image);
         spBadgeName = (TextView) findViewById(R.id.cv_badge_name);
+        spBadgeName.setTypeface(Util.getFaceRoman());
         spUserName = (TextView) findViewById(R.id.cv_short_user_name);
+        spUserName.setTypeface(Util.getFaceRoman());
         spUserPoints = (TextView) findViewById(R.id.cv_short_user_points);
+        spUserPoints.setTypeface(Util.getFaceRoman());
         spPointsInfo = (TextView) findViewById(R.id.cv_short_user_points_info);
+        spPointsInfo.setTypeface(Util.getFaceRoman());
     }
 
     void setFunctionality(ShortUserDetailsResponse.ShortUserDetailsInfo body) {

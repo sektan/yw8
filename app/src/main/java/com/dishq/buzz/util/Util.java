@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
@@ -25,8 +26,20 @@ public class Util {
     public static double latitude = 17.77;
     public static double longitude;
     public static String monthOrYear = "";
+    public static Typeface faceRoman = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
+            "avenirltstdroman.ttf"),
+            faceMedium = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
+                    "avenirltstdmedium.ttf");
 
     private static Util utilContent;
+
+    public static Typeface getFaceRoman() {
+        return faceRoman;
+    }
+
+    public static Typeface getFaceMedium() {
+        return faceMedium;
+    }
 
     public static boolean checkAndShowNetworkPopup(final Activity activity) {
         if (!isOnline(false)) {

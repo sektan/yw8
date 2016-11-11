@@ -19,6 +19,7 @@
         android:layout_marginTop="73dp"
         android:gravity="center_horizontal"
         android:lineSpacingExtra="3dp"
+        android:alpha="0.86"
         android:text="@string/start_signup_message"
         android:textSize="@dimen/visible_text_reading_size" />
 
@@ -29,6 +30,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center_horizontal"
         android:text="@string/restaurants"
+        android:alpha="0.86"
         android:textSize="@dimen/visible_text_reading_size" />
 
     <TextView
@@ -37,6 +39,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/pubs"
+        android:alpha="0.86"
         android:textSize="@dimen/visible_text_reading_size" />
 
     <TextView
@@ -46,6 +49,7 @@
         android:layout_marginBottom="63.3dp"
         android:gravity="center_horizontal"
         android:text="@string/bars"
+        android:alpha="0.86"
         android:textSize="@dimen/visible_text_reading_size" />
 
 
@@ -85,11 +89,14 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/have_an_acc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:ellipsize="end"
             android:maxLines="1"
+            android:alpha="0.86"
+            android:textSize="@dimen/visible_text_reading_size"
             android:text="@string/existing_account" />
 
         <ToggleButton
@@ -100,6 +107,7 @@
             android:gravity="center_horizontal"
             android:clickable="true"
             android:textOff="@string/text_login"
+            android:textSize="@dimen/visible_text_reading_size"
             android:textOn="@string/text_signup"
             android:textColor="@color/blueGreen" />
 

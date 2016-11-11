@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -70,7 +71,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
 
     String ace = "";
-    private TextView logInText;
+    private TextView logInText, signinText, restText, pubText, barText,noAccText;
     LoginButton loginButton;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
     private ImageView facebookButton, googleButton;
@@ -131,6 +132,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
         logInText = (TextView) findViewById(R.id.login_button_text);
+        logInText.setTypeface(Util.getFaceRoman());
+        signinText = (TextView) findViewById(R.id.signintext);
+        signinText.setTypeface(Util.getFaceRoman());
+        restText = (TextView) findViewById(R.id.restaurants);
+        restText.setTypeface(Util.getFaceRoman());
+        pubText = (TextView) findViewById(R.id.pubs);
+        pubText.setTypeface(Util.getFaceRoman());
+        barText = (TextView) findViewById(R.id.bars);
+        barText.setTypeface(Util.getFaceRoman());
+        noAccText = (TextView) findViewById(R.id.no_acc_text);
+        noAccText.setTypeface(Util.getFaceRoman());
         loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         facebookButton = (ImageView) findViewById(R.id.fb);
         googleButton = (ImageView) findViewById(R.id.google_sign_up);

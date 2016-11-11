@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.widget.ToggleButton;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
+import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -70,7 +72,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
 
     String ace = "";
-    private TextView signupText;
+    private TextView signupText, restText, pubText, barText,haveAnAccText;
     LoginButton loginButton;
     private ToggleButton logInText;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
@@ -133,10 +135,20 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
         logInText = (ToggleButton) findViewById(R.id.login_button_text);
+        logInText.setTypeface(Util.getFaceRoman());
         signupText = (TextView) findViewById(R.id.signuptext);
+        signupText.setTypeface(Util.getFaceRoman());
         loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         facebookButton = (ImageView) findViewById(R.id.fb);
         googleButton = (ImageView) findViewById(R.id.google_sign_up);
+        restText = (TextView) findViewById(R.id.restaurants);
+        restText.setTypeface(Util.getFaceRoman());
+        pubText = (TextView) findViewById(R.id.pubs);
+        pubText.setTypeface(Util.getFaceRoman());
+        barText = (TextView) findViewById(R.id.bars);
+        barText.setTypeface(Util.getFaceRoman());
+        haveAnAccText = (TextView) findViewById(R.id.have_an_acc);
+        haveAnAccText.setTypeface(Util.getFaceRoman());
         setClickables(context);
     }
 

@@ -42,6 +42,8 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginStart="68dp"
                 android:lineSpacingExtra="3dp"
+                android:alpha="0.86"
+                android:textColor="@color/black"
                 android:textSize="@dimen/home_page_reading_text"
                 android:gravity="center"
                 android:text="@string/check_waiting_time"/>
@@ -96,6 +98,8 @@
                 android:gravity="center"
                 android:layout_marginStart="111.3dp"
                 android:lineSpacingExtra="3dp"
+                android:alpha="0.86"
+                android:textColor="@color/black"
                 android:textSize="@dimen/home_page_reading_text"
                 android:layout_marginTop="30dp"
                 android:text="@string/give_wait_time"/>
@@ -175,7 +179,7 @@
                         android:textColor="@color/black"
                         android:layout_marginTop="8dp"
                         android:layout_centerHorizontal="true"
-                        android:alpha="0.64"
+                        android:alpha="0.38"
                         android:layout_below="@+id/cv_badge_image"
                         android:textSize="@dimen/user_profile_points_text"/>
 
@@ -209,6 +213,7 @@
                         android:text="name"
                         android:textColor="@color/black"
                         android:layout_marginTop="10dp"
+                        android:alpha="0.86"
                         android:layout_centerHorizontal="true"
                         android:textSize="@dimen/home_page_reading_text"/>
 
