@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
+import android.widget.Toast;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
@@ -28,11 +31,12 @@ import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Finder.SignUpInfoFinder;
 import server.Finder.UpdateRestaurantFinder;
 import server.Request.UpdateRestaurantHelper;
 import server.Response.UpdateRestaurantResponse;
@@ -49,6 +53,8 @@ import static com.dishq.buzz.util.Util.longitude;
 
 public class UpdateRestProfileActivity extends BaseActivity {
 
+    private final static int SETTINGS_RESULT_REQ_CODE = 100;
+
     private GPSTrackerService gps;
     private UpdateRestaurantFinder updateRestaurantFinder;
     public int rest_id = 0;
@@ -58,9 +64,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
     private ProgressDialog progressDialog, progressDialoglert;
 
     private double getLatitude, getLongitude;
-
+    AlertDialog closedialog = null;
     private String query = "";
-    private SignUpInfoFinder signUpInfoFinder;
     private String restaurantName = "";
     private Boolean SHOW_BUZZ_TYPE_OPTIONS = false;
     final int MY_PERMISSIONS_REQUEST_GPS_ACCESS = 0;
@@ -90,30 +95,18 @@ public class UpdateRestProfileActivity extends BaseActivity {
         fetchWaitTimeInfo();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!checkAndShowNetworkPopup(UpdateRestProfileActivity.this)) {
-            Log.e("sd", "4");
-            if (noNetwork || (didPause && locationOff)) {
-                Log.e("sd", "5");
-                if (!no_gps && !yes_gps) {
-                    checkGPS();
-                }
-            }
-        }
-    }
-
-    void checkGPS() {
-        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            getGPS();
-        } else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+    boolean checkGPS() {
+        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) { // first check okie?
+            return getGPS();
+        } else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             selfPermission();
         }
-
+        return false;
     }
 
-    public void getGPS() {
+    public boolean getGPS() {
         if (!no_gps || (latitude == 17.77)) {
             gps = new GPSTrackerService(this);
             if (gps.canGetLocation()) {
@@ -121,19 +114,77 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 getLatitude = latitude;
                 longitude = gps.getLongitude();
                 getLongitude = longitude;
+                return true;
             } else {
                 locationOff = true;
-                gps.showSettingsAlert();
+                showSettingsAlert();
+                return false;
             }
+        } else {
+            return false;
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case SETTINGS_RESULT_REQ_CODE:
+                fetchUpdatedUserInfo();
+                break;
+
+            default:
+                Log.w(TAG, "Request Code " + requestCode);
+                break;
+        }
+    }
+
+    public void showSettingsAlert() {
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Your GPS Is Off");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Want to see the drive time to restaurants? Turn on GPS.");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton("Turn on GPS", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent, SETTINGS_RESULT_REQ_CODE);
+//                getGPS();
+            }
+        });
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton("No thanks ", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                alertNoForward(UpdateRestProfileActivity.this);
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+    //TODO remove the checkSelfPermission (because it is repeated).
     public void selfPermission() {
-        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+         /*if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {*/ // ??? Why again?
             if (ActivityCompat.shouldShowRequestPermissionRationale(UpdateRestProfileActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.e("accept", "accept");
+                Toast.makeText(this, "Enable Location Permission to access this feature", Toast.LENGTH_SHORT).show(); // Something like this
+
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
             } else {
                 //request the permission
                 Log.e("accept", "not accept");
@@ -141,7 +192,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_GPS_ACCESS);
             }
-        }
+//        }
     }
 
     @Override
@@ -200,7 +251,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
     private void setTags() {
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
         restToolbarName.setText(getResources().getString(R.string.update));
+        restToolbarName.setTypeface(Util.getFaceMedium());
         updateRestName = (TextView) findViewById(R.id.cv_up_rest_name);
+        updateRestName.setTypeface(Util.getFaceRoman());
         restToolBarSearch = (ImageView) findViewById(R.id.tvMenuFinder);
         restToolBarSearch.setVisibility(View.GONE);
         backButton = (ImageView) findViewById(R.id.back_button);
@@ -210,23 +263,36 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
                 backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(backButtonIntent);
+                finish();
             }
         });
+        TextView currentWaitTime = (TextView) findViewById(R.id.tv_current_wait);
+        currentWaitTime.setTypeface(Util.getFaceRoman());
         waitTimeOne = (CardView) findViewById(R.id.cv_wait_one);
         waitTimeTwo = (CardView) findViewById(R.id.cv_wait_two);
         waitTimeThree = (CardView) findViewById(R.id.cv_wait_three);
         waitTimeFour = (CardView) findViewById(R.id.cv_wait_four);
         waitTimeFive = (CardView) findViewById(R.id.cv_wait_five);
         tvWaitTimeOne = (TextView) findViewById(R.id.cv_tv_wait_time_one);
+        tvWaitTimeOne.setTypeface(Util.getFaceMedium());
         tvWaitTimeTwo = (TextView) findViewById(R.id.cv_tv_wait_time_two);
+        tvWaitTimeTwo.setTypeface(Util.getFaceMedium());
         tvWaitTimeThree = (TextView) findViewById(R.id.cv_tv_wait_time_three);
+        tvWaitTimeThree.setTypeface(Util.getFaceMedium());
         tvWaitTimeFour = (TextView) findViewById(R.id.cv_tv_wait_time_four);
+        tvWaitTimeFour.setTypeface(Util.getFaceMedium());
         tvWaitTimeFive = (TextView) findViewById(R.id.cv_tv_wait_time_five);
+        tvWaitTimeFive.setTypeface(Util.getFaceMedium());
         tvMinOne = (TextView) findViewById(R.id.cv_tv_min_one);
+        tvMinOne.setTypeface(Util.getFaceMedium());
         tvMinTwo = (TextView) findViewById(R.id.cv_tv_min_two);
+        tvMinTwo.setTypeface(Util.getFaceMedium());
         tvMinThree = (TextView) findViewById(R.id.cv_tv_min_three);
+        tvMinThree.setTypeface(Util.getFaceMedium());
         tvMinFour = (TextView) findViewById(R.id.cv_tv_min_four);
+        tvMinFour.setTypeface(Util.getFaceMedium());
         tvMinFive = (TextView) findViewById(R.id.cv_tv_min_five);
+        tvMinFive.setTypeface(Util.getFaceMedium());
         ambianceOne = (CardView) findViewById(R.id.cv_ambiance_one);
         ambianceTwo = (CardView) findViewById(R.id.cv_ambiance_two);
         tvAmbianceOne = (TextView) findViewById(R.id.cv_tv_ambiance_one);
@@ -247,14 +313,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.1"));
-                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.3"));
-                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.4"));
-                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.6"));
+                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
+                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
+                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
+                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
 
                     tvWaitTimeOne.setTextColor(getResources().getColor(R.color.white));
                     tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
@@ -290,13 +352,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 public void onClick(View view) {
                     waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
                     waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    waitTimeTwo.setAlpha(Float.parseFloat("1"));
-                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.3"));
-                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.4"));
-                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.6"));
+                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
+                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
+                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
 
                     tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
                     tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.white));
@@ -331,14 +389,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.1"));
+                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
                     waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    waitTimeThree.setAlpha(Float.parseFloat("1"));
-                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.4"));
-                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.6"));
+                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
+                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
 
                     tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
                     tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
@@ -373,14 +427,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.1"));
-                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.3"));
+                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
+                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
                     waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    waitTimeFour.setAlpha(Float.parseFloat("1"));
-                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.6"));
+                    waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
 
                     tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
                     tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
@@ -415,14 +465,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.15"));
-                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.3"));
-                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    waitTimeTwo.setAlpha(Float.parseFloat("0.45"));
+                    waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
+                    waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
+                    waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
                     waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    waitTimeFive.setAlpha(Float.parseFloat("1"));
 
                     tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
                     tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
@@ -529,52 +575,106 @@ public class UpdateRestProfileActivity extends BaseActivity {
     }
 
     private void fetchUpdatedUserInfo() {
-        checkGPS();
-        rest_id = Integer.parseInt(query);
-        final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
-                getLatitude, getLongitude, waitTimeId, buzzTypeId);
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        serverAccessToken = YW8Application.getAccessToken();
-        Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
-                updateRestaurantHelper);
-        call.enqueue(new Callback<UpdateRestaurantResponse>() {
-            @Override
-            public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
-                Log.d(TAG, "Success");
-                try {
-                    if (response.isSuccessful()) {
-                        UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
-                        if (body != null) {
-                            updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
-                                    body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+        if (checkGPS()) {
+            if (getLongitude == 0 | getLatitude == 0) {
+//            fetchUpdatedUserInfo(); // TODO "TEMPORARY FIX" Can be optimized, bu structuring the whole implementation
+            } else {
+                rest_id = Integer.parseInt(query);
+                final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
+                        getLatitude, getLongitude, waitTimeId, buzzTypeId);
+                ApiInterface apiInterface = Config.createService(ApiInterface.class);
+                serverAccessToken = YW8Application.getAccessToken();
+                Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
+                        updateRestaurantHelper);
+                call.enqueue(new Callback<UpdateRestaurantResponse>() {
+                    @Override
+                    public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+                        Log.d(TAG, "Success");
+                        try {
+                            if (response.isSuccessful()) {
+                                UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
+                                if (body != null) {
+                                    updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
+                                            body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
 
-                            YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded());
-                            YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
-                            progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
-                            progressDialoglert.show();
-                            checkWhereToGo(updateRestaurantFinder);
+                                    YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded());
+                                    YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
+                                    progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                                    progressDialoglert.show();
+                                    checkWhereToGo(updateRestaurantFinder);
 
+                                }
+                            } else {
+                                String error = response.errorBody().string();
+                                Log.d("UpdateRestaurant", error);
+                                progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                                progressDialoglert.show();
+                                if (response.code() == 412) {
+                                    alertTooFrequent(UpdateRestProfileActivity.this);
+                                } else if (response.code() == 406) {
+                                    alertFarOff(UpdateRestProfileActivity.this);
+                                } else {
+
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } else {
-                        String error = response.errorBody().string();
-                        Log.d("UpdateRestaurant", error);
-                        progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
-                        progressDialoglert.show();
-                        alertFarOff(UpdateRestProfileActivity.this);
 
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
+                    @Override
+                    public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
+                        Log.d(TAG, "Failure of connecting to the server");
+                    }
+                });
             }
+        }
+    }
 
-            @Override
-            public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
-                Log.d(TAG, "Failure of connecting to the server");
+    public void alertNoForward(final Activity activity) {
+        if (progressDialoglert != null) {
+            progressDialoglert.dismiss();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("Can't update without GPS");
+        builder.setCancelable(true);
+
+        closedialog = builder.create();
+
+        closedialog.show();
+
+        final Timer timer2 = new Timer();
+        timer2.schedule(new TimerTask() {
+            public void run() {
+                closedialog.dismiss();
+                timer2.cancel(); //this will cancel the timer of the system
+                Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                finish();
+                startActivity(goToHomePageIntent);
             }
-        });
+        }, 3000); // the timer will count 3 seconds....
+    }
 
+    public void alertTooFrequent(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("You can't update buzz for same restaurant too often ")
+                .setCancelable(false)
+                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(backButtonIntent);
+                    }
+                })
+                .create();
+        if (progressDialoglert != null) {
+            progressDialoglert.dismiss();
+        }
+        dialog.show();
 
     }
 
@@ -606,15 +706,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 Intent intent = new Intent(UpdateRestProfileActivity.this, BigBadgeActivity.class);
                 intent.putExtra("badge_name", updateRestaurantFinder.getBadgeName());
                 intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
                 startActivity(intent);
             } else {
                 createAlertDialog(UpdateRestProfileActivity.this);
-                Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                goToHomePageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                finish();
-                startActivity(goToHomePageIntent);
             }
         } else {
             Log.d(TAG, "fail");
@@ -627,52 +722,25 @@ public class UpdateRestProfileActivity extends BaseActivity {
             progressDialoglert.dismiss();
         }
 
-        if (YW8Application.getNumPointsAdded() == 20) {
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setMessage("Thanks! You just Earned 20 points ")
-                    .setCancelable(false)
-                    .create();
-            dialog.show();
-        } else {
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setMessage("Thanks! You just Earned 10 points ")
-                    .setCancelable(false)
-                    .create();
-            dialog.show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(String.format(getResources().getString(R.string.num_of_points_added),
+                Integer.toString(YW8Application.getNumPointsAdded())));
+        builder.setCancelable(true);
 
-        //TextView message = (TextView) dialog.findViewById(android.R.id.message);
-        // assert message != null;
-    }
+        closedialog = builder.create();
 
-    public static boolean checkAndShowNetworkPopup(final Activity activity) {
-        if (!Util.isOnline(false)) {
+        closedialog.show();
 
-            AlertDialog dialog = new AlertDialog.Builder(activity).setTitle("No Internet Detected")
-                    .setMessage("Please try again when you're online. ")
-                    .setCancelable(false)
-                    .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            activity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            System.exit(0);
-                        }
-                    })
-                    .create();
-            dialog.show();
-
-            TextView message = (TextView) dialog.findViewById(android.R.id.message);
-            assert message != null;
-            return true;
-        }
-        return false;
+        final Timer timer2 = new Timer();
+        timer2.schedule(new TimerTask() {
+            public void run() {
+                closedialog.dismiss();
+                timer2.cancel(); //this will cancel the timer of the system
+                Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, UserProfileActivity.class);
+                finish();
+                startActivity(goToHomePageIntent);
+            }
+        }, 3000); // the timer will count 3 seconds....
     }
 
     @Override

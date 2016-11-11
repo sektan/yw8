@@ -27,23 +27,29 @@
                 android:id="@+id/autosuggest_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginStart="10dp"
+                android:alpha="0.54"
                 android:paddingBottom="15dp"
-                android:paddingRight="10dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:background="@drawable/back_dark"/>
             <EditText
                 android:layout_width="match_parent"
                 android:id="@+id/restaurant_autosuggest"
+                android:layout_marginTop="2dp"
+                android:layout_gravity="center"
                 android:hint="Restaurant, Pub, Bar"
                 android:textColorHint="#54000000"
                 android:paddingBottom="15dp"
                 android:singleLine="true"
                 android:imeOptions="actionDone"
-                android:paddingLeft="10dp"
+                android:alpha="0.86"
+                android:textColor="@color/black"
+                android:textSize="@dimen/home_page_reading_text"
+                android:paddingLeft="14dp"
                 android:background="@android:color/transparent"
                 android:paddingRight="10dp"
-                android:layout_marginTop="8dp"
                 android:layout_height="match_parent" />
 
         </LinearLayout>
@@ -80,10 +86,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="#000000"
+            android:textColor="@color/white"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="20sp"
+            android:textSize="@dimen/user_profile_points_info_text"
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
             android:text="Sorry, no results found"/>

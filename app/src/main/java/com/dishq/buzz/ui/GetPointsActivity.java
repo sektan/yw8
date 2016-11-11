@@ -1,6 +1,7 @@
 package com.dishq.buzz.ui;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Util;
 
 import retrofit2.http.Url;
 
@@ -25,16 +28,19 @@ import retrofit2.http.Url;
 
 public class GetPointsActivity extends BaseActivity {
 
-    private WebView webviewPointsInfo, webViewTermsConditions ;
+    private WebView webviewPointsInfo;
     private RelativeLayout termsConditions;
     ImageView GetPointsBack, GetPointsFinder;
     TextView getPointsHeader;
-    String url = "http://www.dishq.in/yw8/points";
+    private ProgressDialog progressDialog;
+    String url = "http://www.yw8.in/x/points";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_points);
+        progressDialog = new ProgressDialog(GetPointsActivity.this);
+        progressDialog.show();
         setTags();
             }
 
@@ -44,6 +50,8 @@ public class GetPointsActivity extends BaseActivity {
         getPointsHeader = (TextView) findViewById(R.id.toolbarTitle);
         webviewPointsInfo = (WebView) findViewById(R.id.wv_get_points);
         termsConditions = (RelativeLayout) findViewById(R.id.rl_gp_terms);
+        Button termsCond = (Button) findViewById(R.id.terms_and_cond);
+        termsCond.setTypeface(Util.getFaceRoman());
 
         setFunctionality();
     }
@@ -54,6 +62,7 @@ public class GetPointsActivity extends BaseActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                finish();
                 startActivity(intent);
             }
         });
@@ -61,35 +70,36 @@ public class GetPointsActivity extends BaseActivity {
         GetPointsFinder.setVisibility(View.GONE);
 
         getPointsHeader.setText(getResources().getString(R.string.get_points_heading));
+        getPointsHeader.setTypeface(Util.getFaceMedium());
 
         webviewPointsInfo.setWebViewClient(new webBrowser());
         webviewPointsInfo.getSettings().setLoadsImagesAutomatically(true);
         webviewPointsInfo.getSettings().setJavaScriptEnabled(true);
         webviewPointsInfo.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        progressDialog.dismiss();
         webviewPointsInfo.loadUrl(url);
 
         termsConditions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent internetIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.dishq.in/yw8/terms"));
-                internetIntent.setComponent(new ComponentName("com.android.browser","com.android.browser.BrowserActivity"));
-                internetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(internetIntent);
-
-//                webViewTermsConditions = new WebView(GetPointsActivity.this);
-//                webViewTermsConditions.getSettings().setJavaScriptEnabled(true);
-//                final Activity mActivity = GetPointsActivity.this;
-//                webViewTermsConditions.setWebViewClient(new WebViewClient() {
-//                    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-//                        Toast.makeText(mActivity, description, Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//                webViewTermsConditions .loadUrl("http://www.dishq.in/yw8/terms");
-//                setContentView(webViewTermsConditions );
+//                Uri uri = Uri.parse("http://www.yw8.in/x/terms");
+//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                startActivity(intent);
             }
         });
     }
+
+    public void goToTerms(View view) {
+        goToUrl ("http://www.yw8.in/x/terms");
+    }
+
+    private void goToUrl (String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+    }
+
 
     private class webBrowser extends WebViewClient {
         @Override

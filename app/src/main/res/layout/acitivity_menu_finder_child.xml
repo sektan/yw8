@@ -58,7 +58,6 @@
         android:layout_weight="1"
         android:drawablePadding="5dp"
         android:textColor="#54000000"
-        android:alpha="0.64"
         android:textSize="@dimen/user_profile_points_text" />
 
 </LinearLayout>

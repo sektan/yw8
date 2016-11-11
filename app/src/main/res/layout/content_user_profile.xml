@@ -110,10 +110,9 @@
                 <ProgressBar
                     android:id="@+id/up_progressBar"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="265dp"
-                    android:layout_height="6dp"
-                    android:drawableEnd="@drawable/profile_points_soldier" />
+                    android:layout_height="20dp" />
 
                 <ImageView
                     android:id="@+id/progress_image"
@@ -143,10 +142,10 @@
                 android:layout_below="@+id/up_info_text"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
+                card_view:cardElevation="0dp"
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
-                card_view:cardBackgroundColor="@color/lightGreen"
-                android:alpha= "0.5"
+                card_view:cardBackgroundColor="@color/cardGreen"
                 card_view:cardCornerRadius="4dp">
 
                 <LinearLayout
@@ -174,7 +173,8 @@
                             android:id="@+id/up_month_rank"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="46dp"
+                            android:layout_marginStart="40dp"
+                            android:textColor="@color/lightPurple"
                             android:text="&#35; &#45;&#45;"
                             android:textSize="@dimen/points_rank" />
 
@@ -182,7 +182,8 @@
                             android:id="@+id/up_month_points"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="153dp"
+                            android:layout_marginStart="120dp"
+                            android:textColor="@color/lightPurple"
                             android:text="0"
                             android:textSize="@dimen/points_rank" />
 
@@ -190,6 +191,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
+                            android:layout_marginEnd="30dp"
+                            android:textColor="@color/lightPurple"
                             android:text="Pts"
                             android:textSize="@dimen/user_profile_points_text" />
                     </LinearLayout>
@@ -200,14 +203,14 @@
                 android:id="@+id/cv_year_leaderboard"
                 android:layout_width="330dp"
                 android:layout_height="100dp"
+                card_view:cardElevation="0dp"
                 android:layout_below="@+id/cv_month_leaderboard"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
-                card_view:cardBackgroundColor="@color/lightGreen"
-                android:alpha= "0.5"
+                card_view:cardBackgroundColor="@color/cardGreen"
                 card_view:cardCornerRadius="4dp">
 
                 <LinearLayout
@@ -234,7 +237,8 @@
                             android:id="@+id/up_year_rank"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="46dp"
+                            android:layout_marginStart="40dp"
+                            android:textColor="@color/lightPurple"
                             android:text="&#35; &#45;&#45;"
                             android:textSize="@dimen/points_rank" />
 
@@ -242,7 +246,8 @@
                             android:id="@+id/up_year_points"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="153dp"
+                            android:layout_marginStart="120dp"
+                            android:textColor="@color/lightPurple"
                             android:text="0"
                             android:textSize="@dimen/points_rank" />
 
@@ -250,6 +255,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
+                            android:layout_marginEnd="30dp"
+                            android:textColor="@color/lightPurple"
                             android:text="Pts"
                             android:textSize="@dimen/user_profile_points_text" />
                     </LinearLayout>

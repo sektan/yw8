@@ -87,12 +87,6 @@
         </activity>
 
         <activity
-            android:name=".ui.SimilarRestaurantProfileActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".ui.UpdateRestProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

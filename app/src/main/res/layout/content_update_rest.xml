@@ -39,6 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:alpha="0.86"
                     android:textSize="@dimen/visible_text_reading_size"
                     android:textColor="@color/black"/>
 
@@ -49,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:alpha="0.86"
             android:layout_marginTop="30dp"
             android:layout_below="@+id/cv_update_rest_name"
             android:textSize="@dimen/visible_text_reading_size"
@@ -102,8 +104,7 @@
             <android.support.v7.widget.CardView
                 android:id= "@+id/cv_wait_two"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.1"
+                card_view:cardBackgroundColor="@color/cardOne"
                 android:layout_width = "62dp"
                 android:layout_height= "71dp"
                 android:layout_marginStart="5dp"
@@ -141,8 +142,7 @@
             <android.support.v7.widget.CardView
                 android:id= "@+id/cv_wait_three"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.3"
+                card_view:cardBackgroundColor="@color/cardTwo"
                 android:layout_width = "62dp"
                 android:layout_height= "71dp"
                 android:layout_marginStart="5dp"
@@ -180,8 +180,7 @@
             <android.support.v7.widget.CardView
                 android:id= "@+id/cv_wait_four"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.4"
+                card_view:cardBackgroundColor="@color/cardThree"
                 android:layout_width = "62dp"
                 android:layout_height= "71dp"
                 android:layout_marginStart="5dp"
@@ -219,8 +218,7 @@
             <android.support.v7.widget.CardView
                 android:id= "@+id/cv_wait_five"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.6"
+                card_view:cardBackgroundColor="@color/cardFour"
                 android:layout_width = "62dp"
                 android:layout_height= "71dp"
                 android:layout_marginStart="5dp"

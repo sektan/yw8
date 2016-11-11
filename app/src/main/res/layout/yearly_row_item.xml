@@ -12,7 +12,7 @@
         android:id="@+id/lv_yrank"
         android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="8dp"
         android:maxLines="1"
         android:textSize="@dimen/home_page_button_text"
         android:text="&#35; &#45;&#45;"/>
@@ -25,7 +25,7 @@
         android:textSize="@dimen/home_page_button_text"
         android:maxLength="50"
         android:ellipsize="end"
-        android:layout_marginStart="20dp"/>
+        android:layout_marginStart="10dp"/>
 
     <TextView
         android:id="@+id/lv_ypoints"

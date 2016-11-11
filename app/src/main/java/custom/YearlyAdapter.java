@@ -55,10 +55,15 @@ public class YearlyAdapter extends BaseAdapter {
         TextView yearlyRank = (TextView) view.findViewById(R.id.lv_yrank);
         TextView yearlyUserName = (TextView) view.findViewById(R.id.lv_yusername);
         TextView yearlyPoints = (TextView) view.findViewById(R.id.lv_ypoints);
+        TextView yearlyPointsText = (TextView) view.findViewById(R.id.lv_ypoints_text);
         LinearLayout llayout = (LinearLayout) view.findViewById(R.id.ll_year_row);
 
         if(llayout!=null) {
             if(yearlyFinder.get(position).getYearIsCurrentUser()){
+                yearlyRank.setTextColor(context.getResources().getColor(R.color.lightPurple));
+                yearlyUserName.setTextColor(context.getResources().getColor(R.color.lightPurple));
+                yearlyPoints.setTextColor(context.getResources().getColor(R.color.lightPurple));
+                yearlyPointsText.setTextColor(context.getResources().getColor(R.color.lightPurple));
                 llayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

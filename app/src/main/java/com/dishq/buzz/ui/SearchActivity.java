@@ -131,7 +131,13 @@ public class SearchActivity extends BaseActivity {
                             finish();
                             startActivity(i);
                         }else {
-                            //don't go anywhere
+                            Intent i = new Intent(SearchActivity.this,
+                                    RestaurantProfileActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            i.putExtra("restaurant_id",restaurnat_id);
+                            i.putExtra("restaurant_name",restaurant_name+"");
+                            finish();
+                            startActivity(i);
                         }
 
                     }

@@ -167,35 +167,7 @@ public class GPSTrackerService extends Service implements LocationListener {
      * Function to show settings alert dialog
      * On pressing Settings button will lauch Settings Options
      */
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
-        // Setting Dialog Title
-        alertDialog.setTitle("Your GPS Is Off");
-
-        // Setting Dialog Message
-        alertDialog.setMessage("Want to see the drive time to restaurants? Turn on GPS.");
-
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Turn on GPS", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
-                UpdateRestProfileActivity.yes_gps = true;
-            }
-        });
-
-        // on pressing cancel button
-        alertDialog.setNegativeButton("No thanks ", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                UpdateRestProfileActivity.no_gps = true;
-            }
-        });
-
-        // Showing Alert Message
-        alertDialog.show();
-    }
 
     @Override
     public void onLocationChanged(Location location) {

@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
                 if (!YW8Application.getAccessToken().equals("null null")) {
                     //Intent to start home page when access token
                     Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
-                    startHomePageActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startHomePageActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     finish();
                     startActivity(startHomePageActivity);
                 }else {
                     //Intent to start the Signup Activity after the splash screen
                     Intent i = new Intent(MainActivity.this, SignUpActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     finish();
                     startActivity(i);
                 }

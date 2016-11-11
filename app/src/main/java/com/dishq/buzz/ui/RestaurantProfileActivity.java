@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Util;
 
 import java.util.Arrays;
 
@@ -44,7 +45,8 @@ public class RestaurantProfileActivity extends BaseActivity {
     private RestaurantInfoFinder restaurantInfoFinder;
     private SimilarRestInfoFinder similarRestInfoFinder;
     private TextView restToolbarName, noOfMins, foodTypeText, restaurantTypeText,
-            restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr;
+            restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr,
+            noWaitQuiet;
     private ImageView backButton, userProfFinder;
     private CardView cardViewSuggestRes;
 
@@ -65,6 +67,20 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     private void setTags() {
+        TextView noWaitTime = (TextView) findViewById(R.id.no_wait_time_text);
+        noWaitTime.setTypeface(Util.getFaceRoman());
+        TextView noWaitNoOfMin = (TextView) findViewById(R.id.nowait_no_of_mins);
+        noWaitNoOfMin.setTypeface(Util.getFaceMedium());
+        TextView noWaitNoOfMinText = (TextView) findViewById(R.id.nowait_no_min_text);
+        noWaitNoOfMinText.setTypeface(Util.getFaceRoman());
+        TextView noWaitPlaceIs = (TextView) findViewById(R.id.nowait_place_is);
+        noWaitPlaceIs.setTypeface(Util.getFaceRoman());
+        noWaitQuiet = (TextView) findViewById(R.id.nowait_quiet);
+        noWaitQuiet.setTypeface(Util.getFaceMedium());
+        TextView restClosed = (TextView) findViewById(R.id.rest_closed);
+        restClosed.setTypeface(Util.getFaceMedium());
+        TextView waitTimeText = (TextView) findViewById(R.id.wait_time_text);
+        waitTimeText.setTypeface(Util.getFaceRoman());
         restToolbar = (Toolbar) findViewById(R.id.toolbar);
         rlNoWait = (RelativeLayout) findViewById(R.id.rest_no_wait_time);
         rlRestWaitTime = (RelativeLayout) findViewById(R.id.restaurant_wait_time_info);
@@ -72,12 +88,21 @@ public class RestaurantProfileActivity extends BaseActivity {
         rlRestClosed = (RelativeLayout) findViewById(R.id.rl_rest_closed);
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
         noOfMins = (TextView) findViewById(R.id.no_of_mins);
+        noOfMins.setTypeface(Util.getFaceMedium());
+        TextView waitTimeMinText = (TextView) findViewById(R.id.wait_time_min_text);
+        waitTimeMinText.setTypeface(Util.getFaceRoman());
         foodTypeText = (TextView) findViewById(R.id.food_type_text);
+        foodTypeText.setTypeface(Util.getFaceRoman());
         restaurantTypeText = (TextView) findViewById(R.id.restaurant_type_text);
+        restaurantTypeText.setTypeface(Util.getFaceRoman());
         restAddrText = (TextView) findViewById(R.id.rest_addr_text);
+        restAddrText.setTypeface(Util.getFaceRoman());
         restaurantSuggestion = (TextView) findViewById(R.id.restaurant_suggestion);
+        restaurantSuggestion.setTypeface(Util.getFaceRoman());
         suggestedRestName = (TextView) findViewById(R.id.cv_rest_name);
+        suggestedRestName.setTypeface(Util.getFaceRoman());
         suggestedRestAddr = (TextView) findViewById(R.id.cv_rest_addr);
+        suggestedRestAddr.setTypeface(Util.getFaceRoman());
         backButton = (ImageView) findViewById(R.id.back_button);
         cardViewSuggestRes = (CardView) findViewById(R.id.similar_restaurant);
         userProfFinder = (ImageView) findViewById(R.id.tvMenuFinder);
@@ -87,6 +112,7 @@ public class RestaurantProfileActivity extends BaseActivity {
         if (restaurantInfoFinder != null) {
             isOpenNow = restaurantInfoFinder.getIsOpenNow();
             if (isOpenNow) {
+                noWaitQuiet.setText(restaurantInfoFinder.getBuzzTypeText());
                 if (noOfMins != null) {
                     String noOfmin = restaurantInfoFinder.getWaitTime();
                     noOfMins.setText(noOfmin);
@@ -129,10 +155,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                     restaurantSuggestion.setVisibility(View.GONE);
                     cardViewSuggestRes.setVisibility(View.GONE);
                 }
-
             }
-
-
             if (foodTypeText != null) {
                 String foodType = Arrays.toString(restaurantInfoFinder.getCuisine());
                 String type = foodType.replaceAll("\\[", "").replaceAll("\\]", "");
@@ -167,7 +190,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-                    finderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    finish();
                     startActivity(finderIntent);
                 }
             });
@@ -253,12 +276,9 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     public void startSimilarRestInfoActivity(SimilarRestInfoFinder similarRestInfoFinder) {
-        final String similarRestCuisine = Arrays.toString(similarRestInfoFinder.getSimilarRestCuisine());
         final String similarRestAddr = similarRestInfoFinder.getSimilarRestAddr();
         final String similarRestName = similarRestInfoFinder.getSimilarRestName();
         final String similarRestId = similarRestInfoFinder.getSimilarRestId();
-        final Boolean similarRestIsOpenOn = similarRestInfoFinder.getSimilarRestIsOpenOn();
-        final String similarRestType = Arrays.toString(similarRestInfoFinder.getSimilarRestType());
 
         suggestedRestName.setText(similarRestName);
         suggestedRestAddr.setText(similarRestAddr);
@@ -267,15 +287,10 @@ public class RestaurantProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, SimilarRestaurantProfileActivity.class);
-                intentSuggestRest.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, RestaurantProfileActivity.class);
                 finish();
-                intentSuggestRest.putExtra("similarRestCuisine", similarRestCuisine);
-                intentSuggestRest.putExtra("similarRestAddr", similarRestAddr);
-                intentSuggestRest.putExtra("similarRestName", similarRestName);
-                intentSuggestRest.putExtra("similarRestId", similarRestId);
-                intentSuggestRest.putExtra("similarRestIsOpenOn", similarRestIsOpenOn);
-                intentSuggestRest.putExtra("similarRestType", similarRestType);
+                intentSuggestRest.putExtra("restaurant_name", similarRestName);
+                intentSuggestRest.putExtra("restaurant_id", similarRestId);
                 startActivity(intentSuggestRest);
             }
         });

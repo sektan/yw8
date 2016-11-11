@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Util;
 
 /**
  * Created by dishq on 07-11-2016.
@@ -35,8 +36,13 @@ public class BigBadgeActivity extends BaseActivity {
     }
 
     public void setTags() {
+        TextView bigBadgeText = (TextView) findViewById(R.id.big_badge_text);
+        bigBadgeText.setTypeface(Util.getFaceRoman());
+        TextView youAreNowA = (TextView) findViewById(R.id.you_are_now_a);
+        youAreNowA.setTypeface(Util.getFaceRoman());
         badgeImage = (ImageView) findViewById(R.id.big_badge_icon);
         badgeName = (TextView) findViewById(R.id.big_badge_name);
+        badgeName.setTypeface(Util.getFaceMedium());
         llBadge = (LinearLayout) findViewById(R.id.ll_big_badge);
         setFunctionality();
     }
@@ -65,7 +71,9 @@ public class BigBadgeActivity extends BaseActivity {
         llBadge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(BigBadgeActivity.this, UserProfileActivity.class);
                 finish();
+                startActivity(intent);
             }
         });
     }

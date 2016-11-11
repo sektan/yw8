@@ -98,33 +98,38 @@ public class UserProfileActivity extends BaseActivity {
 
         userProfName.setText(body.fullUserNameInfo.getfFullName());
 
-
-        int currPoints = body.getfLifeTimePoints();
-        if (body.fullCurrBadgeInfo.getfCurrBadgeName() != null && currPoints > 0) {
+        if (body.fullCurrBadgeInfo.getfCurrBadgeName() != null) {
             userProfBadgeName.setText(body.fullCurrBadgeInfo.getfCurrBadgeName());
         }
-        if (currPoints != 0) {
-            if (currPoints > 0 && currPoints < 150) {
+        if (body.fullCurrBadgeInfo.getfCurrBadgeLevel() != 0) {
+            if (body.fullCurrBadgeInfo.getfCurrBadgeLevel() == 1) {
                 userProfBadge.setImageResource(R.drawable.profile_points_rookie);
                 progressImage.setImageResource(R.drawable.profile_points_soldier);
-            } else if (currPoints >= 150 && currPoints < 500) {
+            } else if (body.fullCurrBadgeInfo.getfCurrBadgeLevel() == 2) {
                 userProfBadge.setImageResource(R.drawable.profile_points_soldier);
                 progressImage.setImageResource(R.drawable.profile_points_agent);
-            } else if (currPoints >= 500 && currPoints < 1000) {
+            } else if (body.fullCurrBadgeInfo.getfCurrBadgeLevel() == 3) {
                 userProfBadge.setImageResource(R.drawable.profile_points_agent);
                 progressImage.setImageResource(R.drawable.profile_points_captain);
-            } else if (currPoints >= 1000 && currPoints < 2000) {
+            } else if (body.fullCurrBadgeInfo.getfCurrBadgeLevel() == 4) {
                 userProfBadge.setImageResource(R.drawable.profile_points_captain);
                 progressImage.setImageResource(R.drawable.profile_points_knight);
-            } else if (currPoints >= 2000 && currPoints < 4000) {
+            } else if (body.fullCurrBadgeInfo.getfCurrBadgeLevel() == 5) {
                 userProfBadge.setImageResource(R.drawable.profile_points_knight);
                 progressImage.setImageResource(R.drawable.profile_points_general);
-            } else if (currPoints >= 4000) {
+            } else {
                 userProfBadge.setImageResource(R.drawable.profile_points_general);
                 progressImage.setImageResource(R.drawable.profile_points_general);
             }
-            userProfPointsAlloted.setText(Integer.toString(currPoints));
         }
+
+        int thresholdPoints =body.nextBadgeInfo.getThresholdPoints()-1;
+        int currPoints = body.getfLifeTimePoints();
+        userProfPointsAlloted.setText(Integer.toString(currPoints));
+        userProfProgress.setMax(thresholdPoints);
+        userProfProgress.setProgress(currPoints);
+        userProfProgress.getProgressDrawable().setColorFilter(
+                getResources().getColor(R.color.lightPurple), android.graphics.PorterDuff.Mode.SRC_IN);
 
         userProfInfoText.setText(body.getfPointsToUgrade());
 
@@ -178,10 +183,6 @@ public class UserProfileActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-        int thresholdPoints =body.nextBadgeInfo.getThresholdPoints()-1;
-        userProfProgress.setMax(thresholdPoints);
-        userProfProgress.setProgress(currPoints);
 
     }
 

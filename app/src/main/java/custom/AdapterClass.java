@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dishq.buzz.R;
+import com.dishq.buzz.util.Util;
 
 import java.util.ArrayList;
 
@@ -49,9 +50,11 @@ public class AdapterClass extends BaseAdapter {
             view = layoutInflater.inflate(R.layout.acitivity_menu_finder_child, parent, false);
         }
         TextView restaurantSearchName = (TextView) view.findViewById(R.id.restaurant_search_name);
+        restaurantSearchName.setTypeface(Util.getFaceRoman());
         TextView isRestaurantOpen = (TextView) view.findViewById(R.id.rest_closed);
+        isRestaurantOpen.setTypeface(Util.getFaceRoman());
         TextView restaurantSearchAddress = (TextView) view.findViewById(R.id.restaurant_search_address);
-
+        restaurantSearchAddress.setTypeface(Util.getFaceRoman());
         Boolean isRestOpened = restfinders.get(position).getIsOpenNowSearch();
         if(isRestOpened) {
             isRestaurantOpen.setVisibility(View.GONE);

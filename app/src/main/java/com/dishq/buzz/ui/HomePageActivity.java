@@ -39,8 +39,6 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Finder.ShortUserDetailsFinder;
-import server.Finder.SignUpInfoFinder;
 import server.Response.ShortUserDetailsResponse;
 import server.api.ApiInterface;
 import server.api.Config;
@@ -97,6 +95,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         tvGiveWaitTime = (TextView) findViewById(R.id.give_wait_time);
         tvGiveWaitTime.setTypeface(Util.getFaceRoman());
         searchButton = (Button) findViewById(R.id.waiting_time_search);
+        searchButton.setTypeface(Util.getFaceMedium());
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,6 +108,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             }
         });
         updateButton = (Button) findViewById(R.id.give_time_update);
+        updateButton.setTypeface(Util.getFaceMedium());
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,7 +123,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         userProfileCard = (CardView) findViewById(R.id.cv_user_profile);
         spBadgeImage = (ImageView) findViewById(R.id.cv_badge_image);
         spBadgeName = (TextView) findViewById(R.id.cv_badge_name);
-        spBadgeName.setTypeface(Util.getFaceRoman());
+        spBadgeName.setTypeface(Util.getFaceMedium());
         spUserName = (TextView) findViewById(R.id.cv_short_user_name);
         spUserName.setTypeface(Util.getFaceRoman());
         spUserPoints = (TextView) findViewById(R.id.cv_short_user_points);
