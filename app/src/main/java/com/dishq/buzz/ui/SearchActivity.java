@@ -247,7 +247,7 @@ public class SearchActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent searchBackIntent = new Intent(SearchActivity.this, HomePageActivity.class);
-        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(searchBackIntent);
     }

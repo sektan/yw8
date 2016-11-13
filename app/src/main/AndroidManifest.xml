@@ -19,6 +19,11 @@
         android:theme="@style/AppTheme.NoActionBar">
 
         <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="c8ad48328109a75e8b8208bf3c3f72c38d228d0b"
+            />
+
+        <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
 

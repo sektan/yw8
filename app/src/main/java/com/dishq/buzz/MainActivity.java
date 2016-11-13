@@ -3,25 +3,20 @@ package com.dishq.buzz;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 import com.dishq.buzz.ui.HomePageActivity;
 import com.dishq.buzz.ui.SignUpActivity;
 import com.dishq.buzz.util.YW8Application;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import server.Request.SignUpHelper;
-import server.Response.SignUpResponse;
-import server.api.ApiInterface;
-import server.api.Config;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         timer.start();

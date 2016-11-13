@@ -97,7 +97,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     boolean checkGPS() {
         if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) { // first check okie?
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) { // first check
             return getGPS();
         } else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
@@ -747,6 +747,14 @@ public class UpdateRestProfileActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         gps.stopUsingGPS();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, HomePageActivity.class);
+        finish();
+        startActivity(intent);
     }
 
 }
