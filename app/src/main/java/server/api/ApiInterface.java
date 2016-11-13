@@ -61,7 +61,7 @@ public interface ApiInterface {
 
     @GET("api/userprofile/monthleaderboard/")
     Call<MonthLeaderBoardResponse> getMonthLeaderBoardDetails(@Header("Authorization") String header,
-                                                              @Query("month_number") int monthNumber,
+                                                              @Query("month") int monthNumber,
                                                               @Query("year") int year);
 
     @GET("api/userprofile/yearleaderboard/")
