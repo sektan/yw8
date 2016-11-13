@@ -3,7 +3,6 @@ package com.dishq.buzz.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -35,8 +34,6 @@ public class UserProfileActivity extends BaseActivity {
     private String TAG = "UserProfileActivity";
     private String monthOrYear = "";
     private ProgressDialog progressDialog;
-    private int progressStatus = 0;
-    private Handler handler = new Handler();
 
     ImageView userProfBack, userProfFinder, userProfBadge, progressImage;
     TextView userProfileHeader, userProfName, userProfBadgeName,
@@ -134,6 +131,7 @@ public class UserProfileActivity extends BaseActivity {
         userProfInfoText.setText(body.getfPointsToUgrade());
 
         userProfMonth.setText(body.monthBuzzPointsInfo.getmMonthName());
+        Util.setMonthName(body.monthBuzzPointsInfo.getmMonthName());
 
         if (body.monthBuzzPointsInfo.getmRank() != 0 && body.monthBuzzPointsInfo.getmRank() != -1) {
             String monthRankText = "# " + Integer.toString(body.monthBuzzPointsInfo.getmRank());
@@ -146,6 +144,7 @@ public class UserProfileActivity extends BaseActivity {
 
         if (body.yearBuzzPointsInfo.getyYear() != 0) {
             userProfYear.setText(Integer.toString(body.yearBuzzPointsInfo.getyYear()));
+            Util.setYearNumber(body.yearBuzzPointsInfo.getyYear());
         }
 
         if (body.yearBuzzPointsInfo.getyRank() != 0 && body.yearBuzzPointsInfo.getyRank() != -1) {
@@ -157,16 +156,14 @@ public class UserProfileActivity extends BaseActivity {
             userProfYearPoints.setText(Integer.toString(body.yearBuzzPointsInfo.getyNoOfPoints()));
         }
 
+        Util.setMonthNumber(body.monthBuzzPointsInfo.getmMonthNo());
+
         monthCV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 monthOrYear = "month";
                 Util.setMonthOrYear(monthOrYear);
-                int monthNumber = body.monthBuzzPointsInfo.getmMonthNo();
-                int yearNumber = body.yearBuzzPointsInfo.getyYear();
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
-                intent.putExtra("month_number", monthNumber);
-                intent.putExtra("year_number", yearNumber);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -179,7 +176,6 @@ public class UserProfileActivity extends BaseActivity {
                 Util.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("year_number", body.yearBuzzPointsInfo.getyYear());
                 startActivity(intent);
             }
         });

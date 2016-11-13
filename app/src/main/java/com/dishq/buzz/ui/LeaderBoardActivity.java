@@ -1,16 +1,11 @@
 package com.dishq.buzz.ui;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,7 +42,7 @@ public class LeaderBoardActivity extends BaseActivity {
     MonthlyAdapter monthlyAdapter;
     private ProgressDialog progressDialog;
     private String TAG = "LeaderBoardActivity";
-    int monthNumber = 0, yearNumber = 0;
+    private static int monthNumber = 0, yearNumber = 0;
     String monthOrYear = "", monthOrYearText = "";
 
     ImageView ldBack, ldFinder;
@@ -62,12 +57,11 @@ public class LeaderBoardActivity extends BaseActivity {
         progressDialog.show();
 
         monthOrYear = Util.getMonthOrYear();
-        yearNumber = 2016;
-        monthNumber = 11;
+        yearNumber = Util.getYearNumber();
+        monthNumber = Util.getMonthNumber();
 
         if (monthOrYear.equals("month")) {
-            fetchYearlyDetails(yearNumber);
-            //fetchMonthlyDetails(monthNumber, yearNumber);
+            fetchMonthlyDetails(monthNumber, yearNumber);
         } else if (monthOrYear.equals("year")) {
             fetchYearlyDetails(yearNumber);
         }
@@ -103,8 +97,6 @@ public class LeaderBoardActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 tvMonth.setBackground(getResources().getDrawable(R.drawable.button_selector));
-                monthNumber = 11;
-                yearNumber = 2016;
                 fetchMonthlyDetails(monthNumber, yearNumber);
                 Intent intent = getIntent();
                 finish();
@@ -116,7 +108,6 @@ public class LeaderBoardActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 tvYear.setBackground(getResources().getDrawable(R.drawable.button_selector));
-                yearNumber = 2016;
                 fetchYearlyDetails(yearNumber);
                 Intent intent = getIntent();
                 finish();
@@ -127,7 +118,9 @@ public class LeaderBoardActivity extends BaseActivity {
     }
 
     private void fetchMonthlyDetails(final int monthNumber, final int yearNumber) {
-        monthOrYearText = "Nov 2016";
+        monthOrYear = "month";
+        Util.setMonthOrYear(monthOrYear);
+        monthOrYearText = Util.getMonthName();
         final String header = YW8Application.getAccessToken();
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<MonthLeaderBoardResponse> request = apiInterface.getMonthLeaderBoardDetails(header, monthNumber, yearNumber);
@@ -167,7 +160,9 @@ public class LeaderBoardActivity extends BaseActivity {
     }
 
     private void fetchYearlyDetails(final int yearNumber) {
-        monthOrYearText = "2016";
+        monthOrYearText = Integer.toString(Util.getYearNumber());
+        monthOrYear = "year";
+        Util.setMonthOrYear(monthOrYear);
         final String header = YW8Application.getAccessToken();
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<YearLeaderBoardResponse> request = apiInterface.getYearLeaderBoardDetails(header, yearNumber);

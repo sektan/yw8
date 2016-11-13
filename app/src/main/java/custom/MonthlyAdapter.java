@@ -51,7 +51,7 @@ public class MonthlyAdapter extends BaseAdapter{
     public View getView(int position, View ConverterView, ViewGroup viewGroup) {
         View view = null;
         if(view == null) {
-            view = layoutInflater.inflate(R.layout.yearly_row_item, viewGroup, false);
+            view = layoutInflater.inflate(R.layout.monthly_row_item, viewGroup, false);
         }
         TextView monthlyRank = (TextView) view.findViewById(R.id.lv_mrank);
         TextView monthlyUserName = (TextView) view.findViewById(R.id.lv_musername);

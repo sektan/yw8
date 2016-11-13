@@ -116,7 +116,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                intentSearch.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                finish();
                 startActivity(intentSearch);
             }
         });

@@ -26,6 +26,8 @@ public class Util {
     public static double latitude = 17.77;
     public static double longitude;
     public static String monthOrYear = "";
+    public static String monthName = "";
+    public static int yearNumber = 0, monthNumber = 0;
     public static Typeface faceRoman = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
             "avenirltstdroman.ttf"),
             faceMedium = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
@@ -91,5 +93,29 @@ public class Util {
 
     public static void setMonthOrYear(String monthOrYear) {
         utilContent.monthOrYear = monthOrYear;
+    }
+
+    public static String getMonthName() {
+        return utilContent.monthName;
+    }
+
+    public static void setMonthName(String monthName) {
+        utilContent.monthName = monthName;
+    }
+
+    public static int getYearNumber() {
+        return utilContent.yearNumber;
+    }
+
+    public static void setYearNumber(int yearNumber) {
+        utilContent.yearNumber = yearNumber;
+    }
+
+    public static int getMonthNumber() {
+        return utilContent.monthNumber;
+    }
+
+    public static void setMonthNumber(int monthNumber) {
+        utilContent.monthNumber = monthNumber;
     }
 }
