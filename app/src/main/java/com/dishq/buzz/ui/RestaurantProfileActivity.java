@@ -21,7 +21,6 @@ import java.util.Arrays;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Finder.RestaurantInfoFinder;
 import server.Finder.SimilarRestInfoFinder;
 import server.Response.RestaurantInfoResponse;
 import server.Response.SimilarRestaurantResponse;
@@ -37,12 +36,11 @@ public class RestaurantProfileActivity extends BaseActivity {
     private String query = "";
     private String restaurantName = "";
     private String TAG = "RestaurantInfoResponse";
-    private Boolean isOpenNow, similarOpenNow = false;
+    private Boolean isOpenNow, similarOpenNow=false;
     private Toolbar restToolbar;
     private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait, rlNoWait;
     private ProgressDialog progressDialog;
 
-    private RestaurantInfoFinder restaurantInfoFinder;
     private SimilarRestInfoFinder similarRestInfoFinder;
     private TextView restToolbarName, noOfMins, foodTypeText, restaurantTypeText,
             restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr,
@@ -108,15 +106,15 @@ public class RestaurantProfileActivity extends BaseActivity {
         userProfFinder = (ImageView) findViewById(R.id.tvMenuFinder);
     }
 
-    private void setFunctionality(RestaurantInfoFinder restaurantInfoFinder) {
-        if (restaurantInfoFinder != null) {
-            isOpenNow = restaurantInfoFinder.getIsOpenNow();
+    private void setFunctionality(RestaurantInfoResponse.RestaurantInfo body) {
+        if (body != null) {
+            isOpenNow = body.getIsOpenNow();
             if (isOpenNow) {
-                noWaitQuiet.setText(restaurantInfoFinder.getBuzzTypeText());
+                noWaitQuiet.setText(body.waitTimeData.getBuzzTypeText());
                 if (noOfMins != null) {
-                    String noOfmin = restaurantInfoFinder.getWaitTime();
+                    String noOfmin = body.waitTimeData.getWaitTimeDisplay().replace(" mins", "");
                     noOfMins.setText(noOfmin);
-                    if (noOfmin.equals("0")) {
+                    if (body.waitTimeData.getWaitTime().equals("0")) {
                         rlNoWait.setVisibility(View.VISIBLE);
                         rlRestWaitTime.setVisibility(View.GONE);
                         restaurantSuggestion.setVisibility(View.GONE);
@@ -126,12 +124,22 @@ public class RestaurantProfileActivity extends BaseActivity {
                         //method to call SimilarRestaurant API
                         rlNoWait.setVisibility(View.GONE);
                         rlRestWaitTime.setVisibility(View.VISIBLE);
-                        if (restaurantSuggestion != null) {
-                            restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
-                        }
                         fetchSimilarRestInfo(query);
-                        restaurantSuggestion.setVisibility(View.VISIBLE);
-                        cardViewSuggestRes.setVisibility(View.VISIBLE);
+                        if(similarOpenNow!=null) {
+                            if(similarOpenNow) {
+                                if (restaurantSuggestion != null) {
+                                    restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
+                                }
+                                restaurantSuggestion.setVisibility(View.VISIBLE);
+                                cardViewSuggestRes.setVisibility(View.VISIBLE);
+                            }else {
+                                if (restaurantSuggestion != null) {
+                                    restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
+                                }
+                                restaurantSuggestion.setVisibility(View.GONE);
+                                cardViewSuggestRes.setVisibility(View.GONE);
+                            }
+                        }
                     }
                 }
             } else {
@@ -157,20 +165,19 @@ public class RestaurantProfileActivity extends BaseActivity {
                 }
             }
             if (foodTypeText != null) {
-                String foodType = Arrays.toString(restaurantInfoFinder.getCuisine());
+                String foodType = Arrays.toString(body.getCuisine());
                 String type = foodType.replaceAll("\\[", "").replaceAll("\\]", "");
                 foodTypeText.setText(type);
             }
 
             if (restaurantTypeText != null) {
-                String restaurantType = Arrays.toString(restaurantInfoFinder.getRestaurantType());
+                String restaurantType = Arrays.toString(body.getRestaurantType());
                 String restType = restaurantType.replaceAll("\\[", "").replaceAll("\\]", "");
                 restaurantTypeText.setText(restType);
             }
 
             if (restAddrText != null) {
-                String restAddr = restaurantInfoFinder.getDisplayAddress();
-                restAddrText.setText(restAddr);
+                restAddrText.setText(body.getDisplayAddress());
             }
 
             if (restToolbarName != null) {
@@ -210,10 +217,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 progressDialog.dismiss();
                 RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
                 if (body != null) {
-                    restaurantInfoFinder = new RestaurantInfoFinder(body.getIsOpenNow(), body.getDisplayAddress(), body.getCuisine(),
-                            body.getRestName(), body.getRestId(), body.getRestaurantType(), body.waitTimeData.getShowBuzzTypeText(),
-                            body.waitTimeData.getWaitTime(), body.waitTimeData.getBuzzTypeText());
-                    setFunctionality(restaurantInfoFinder);
+                    setFunctionality(body);
                 }
             }
             @Override
@@ -241,7 +245,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {
                         Log.d(TAG, "Success");
-
+                        progressDialog.dismiss();
                         SimilarRestaurantResponse.SimilarRestaurant body = response.body().similarRestaurant;
                         if (body != null) {
                             similarRestInfoFinder = new SimilarRestInfoFinder(body.getSimilarRestCuisine(), body.getSimilarRestAddr(), body.getSimilarRestName(),
@@ -258,16 +262,12 @@ public class RestaurantProfileActivity extends BaseActivity {
 
                     @Override
                     public void onFailure(Call<SimilarRestaurantResponse> call, Throwable t) {
+                        progressDialog.dismiss();
+                        similarOpenNow = false;
                         Log.d(TAG, "Fail");
                     }
                 });
                 return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean b) {
-                super.onPostExecute(b);
-                progressDialog.dismiss();
             }
 
         };
