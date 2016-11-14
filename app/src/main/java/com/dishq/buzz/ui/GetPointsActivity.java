@@ -49,10 +49,6 @@ public class GetPointsActivity extends BaseActivity {
         GetPointsFinder = (ImageView) findViewById(R.id.tvMenuFinder);
         getPointsHeader = (TextView) findViewById(R.id.toolbarTitle);
         webviewPointsInfo = (WebView) findViewById(R.id.wv_get_points);
-        termsConditions = (RelativeLayout) findViewById(R.id.rl_gp_terms);
-        Button termsCond = (Button) findViewById(R.id.terms_and_cond);
-        termsCond.setTypeface(Util.getFaceRoman());
-
         setFunctionality();
     }
 
@@ -78,28 +74,7 @@ public class GetPointsActivity extends BaseActivity {
         webviewPointsInfo.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         progressDialog.dismiss();
         webviewPointsInfo.loadUrl(url);
-
-        termsConditions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-//                Uri uri = Uri.parse("http://www.yw8.in/x/terms");
-//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                startActivity(intent);
-            }
-        });
     }
-
-    public void goToTerms(View view) {
-        goToUrl ("http://www.yw8.in/x/terms");
-    }
-
-    private void goToUrl (String url) {
-        Uri uriUrl = Uri.parse(url);
-        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-        startActivity(launchBrowser);
-    }
-
 
     private class webBrowser extends WebViewClient {
         @Override

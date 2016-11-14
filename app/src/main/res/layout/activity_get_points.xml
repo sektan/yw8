@@ -33,31 +33,6 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/rl_gp_terms"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="20dp"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/terms_and_cond"
-                    android:background="@null"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:onClick="goToTerms"
-                    android:autoLink="web"
-                    android:clickable="true"
-                    android:text="@string/terms_and_conditions"
-                    android:textColor="@color/blueGreen" />
-
-            </RelativeLayout>
-
-
         </LinearLayout>
 
     </ScrollView>
