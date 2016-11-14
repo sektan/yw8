@@ -6,6 +6,7 @@
     <color name="white">#ffffff</color>
     <color name="offWhite">#80ffffff</color>
     <color name="blueGreen">#00bfa5</color>
+    <color name="cardFirst">#0500bfa5</color>
     <color name="cardOne">#1500bfa5</color>
     <color name="cardTwo">#3000bfa5</color>
     <color name="cardThree">#4500bfa5</color>

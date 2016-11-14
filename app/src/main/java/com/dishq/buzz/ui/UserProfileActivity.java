@@ -151,7 +151,7 @@ public class UserProfileActivity extends BaseActivity {
         Util.setMonthName(body.monthBuzzPointsInfo.getmMonthName());
 
         if (body.monthBuzzPointsInfo.getmRank() != 0 && body.monthBuzzPointsInfo.getmRank() != -1) {
-            String monthRankText = "# " + Integer.toString(body.monthBuzzPointsInfo.getmRank());
+            String monthRankText = "#" + Integer.toString(body.monthBuzzPointsInfo.getmRank());
             userProfMonthRank.setText(monthRankText);
         }
 
@@ -165,7 +165,7 @@ public class UserProfileActivity extends BaseActivity {
         }
 
         if (body.yearBuzzPointsInfo.getyRank() != 0 && body.yearBuzzPointsInfo.getyRank() != -1) {
-            String yearRankText = "# " + Integer.toString(body.yearBuzzPointsInfo.getyRank());
+            String yearRankText = "#" + Integer.toString(body.yearBuzzPointsInfo.getyRank());
             userProfYearRank.setText(yearRankText);
         }
 

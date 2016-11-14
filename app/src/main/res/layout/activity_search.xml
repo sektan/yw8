@@ -89,8 +89,7 @@
             android:textColor="@color/white"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="@dimen/user_profile_points_info_text"
-            android:layout_marginStart="20dp"
+            android:textSize="@dimen/home_page_reading_text"
             android:layout_marginTop="30dp"
             android:text="Sorry, no results found"/>
     </LinearLayout>

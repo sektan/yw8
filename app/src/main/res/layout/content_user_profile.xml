@@ -52,7 +52,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/up_badge_image"
                 android:layout_centerHorizontal="true"
-                android:alpha="0.50"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/badge_type_rookie"
@@ -183,7 +182,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
                             android:textColor="@color/lightPurple"
-                            android:text="&#35; &#45;&#45;"
+                            android:text="&#35;&#45;&#45;"
                             android:textSize="@dimen/points_rank" />
 
                         <TextView
@@ -250,7 +249,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
                             android:textColor="@color/lightPurple"
-                            android:text="&#35; &#45;&#45;"
+                            android:text="&#35;&#45;&#45;"
                             android:textSize="@dimen/points_rank" />
 
                         <TextView

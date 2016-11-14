@@ -1,78 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.UpdateRestProfileActivity"
-    tools:showIn="@layout/activity_update_rest_profile"
-    android:background="@color/white">
+    tools:showIn="@layout/activity_update_rest_profile">
 
     <include
         android:id="@+id/update_rest_profile_toolbar"
-        layout="@layout/tool_bar"/>
+        layout="@layout/tool_bar" />
 
     <RelativeLayout
         android:id="@+id/rl_update_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
+        android:layout_below="@+id/update_rest_profile_toolbar"
         android:layout_marginEnd="15dp"
-        android:layout_marginTop="17dp"
-        android:layout_below="@+id/update_rest_profile_toolbar">
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="17dp">
 
-        <android.support.v7.widget.CardView
-            android:id= "@+id/cv_update_rest_name"
-            android:layout_gravity ="center"
-            card_view:cardBackgroundColor="@color/white"
-            android:layout_width = "match_parent"
-            android:layout_height= "46dp"
-            android:layout_marginTop="11dp"
-            android:paddingStart="14dp"
-            android:paddingEnd="15dp"
-            android:foregroundGravity="left|center"
-            card_view:cardCornerRadius="2dp">
-
-                <TextView
-                    android:id="@+id/cv_up_rest_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="12dp"
-                    android:alpha="0.86"
-                    android:textSize="@dimen/visible_text_reading_size"
-                    android:textColor="@color/black"/>
-
-        </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/cv_up_rest_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/visible_text_reading_size"
+            android:textStyle="normal|bold" />
 
         <TextView
             android:id="@+id/tv_current_wait"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:alpha="0.86"
+            android:layout_below="@+id/cv_up_rest_name"
             android:layout_marginTop="30dp"
-            android:layout_below="@+id/cv_update_rest_name"
-            android:textSize="@dimen/visible_text_reading_size"
-            android:text="@string/current_wait"/>
+            android:alpha="0.86"
+            android:text="@string/current_wait"
+            android:textColor="@color/black"
+            android:textSize="@dimen/visible_text_reading_size" />
 
         <LinearLayout
             android:id="@+id/ll_current_wait"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_below="@+id/tv_current_wait"
             android:layout_marginTop="13dp"
-            android:layout_below="@+id/tv_current_wait">
+            android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_wait_one"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/white"
-                android:layout_width = "62dp"
-                android:layout_height= "71dp"
-                android:paddingStart="14dp"
+                android:id="@+id/cv_wait_one"
+                android:layout_width="62dp"
+                android:layout_height="71dp"
+                android:layout_gravity="center"
+                card_view:cardElevation="0dp"
                 android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/cardFirst"
                 card_view:cardCornerRadius="2dp">
 
                 <LinearLayout
@@ -84,12 +71,11 @@
                         android:id="@+id/cv_tv_wait_time_one"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/visible_text_reading_size"
+                        android:layout_marginTop="14dp"
                         android:text="0"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                     <TextView
                         android:id="@+id/cv_tv_min_one"
@@ -97,22 +83,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:text="@string/mins"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_wait_two"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/cardOne"
-                android:layout_width = "62dp"
-                android:layout_height= "71dp"
+                android:id="@+id/cv_wait_two"
+                android:layout_width="62dp"
+                android:layout_height="71dp"
+                android:layout_gravity="center"
                 android:layout_marginStart="5dp"
-                android:paddingStart="14dp"
+                card_view:cardElevation="0dp"
                 android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/cardOne"
                 card_view:cardCornerRadius="2dp">
 
                 <LinearLayout
@@ -124,12 +111,11 @@
                         android:id="@+id/cv_tv_wait_time_two"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
+                        android:layout_marginTop="14dp"
                         android:text="10"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                     <TextView
                         android:id="@+id/cv_tv_min_two"
@@ -137,22 +123,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:text="@string/mins"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_wait_three"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/cardTwo"
-                android:layout_width = "62dp"
-                android:layout_height= "71dp"
+                android:id="@+id/cv_wait_three"
+                android:layout_width="62dp"
+                android:layout_height="71dp"
+                android:layout_gravity="center"
+                card_view:cardElevation="0dp"
                 android:layout_marginStart="5dp"
-                android:paddingStart="14dp"
                 android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/cardTwo"
                 card_view:cardCornerRadius="2dp">
 
                 <LinearLayout
@@ -164,12 +151,11 @@
                         android:id="@+id/cv_tv_wait_time_three"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
+                        android:layout_marginTop="14dp"
                         android:text="20"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                     <TextView
                         android:id="@+id/cv_tv_min_three"
@@ -177,22 +163,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:text="@string/mins"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_wait_four"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/cardThree"
-                android:layout_width = "62dp"
-                android:layout_height= "71dp"
+                android:id="@+id/cv_wait_four"
+                android:layout_width="62dp"
+                android:layout_height="71dp"
+                android:layout_gravity="center"
+                card_view:cardElevation="0dp"
                 android:layout_marginStart="5dp"
-                android:paddingStart="14dp"
                 android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/cardThree"
                 card_view:cardCornerRadius="2dp">
 
                 <LinearLayout
@@ -204,12 +191,11 @@
                         android:id="@+id/cv_tv_wait_time_four"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
+                        android:layout_marginTop="14dp"
                         android:text="30"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                     <TextView
                         android:id="@+id/cv_tv_min_four"
@@ -217,23 +203,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:text="@string/mins"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_wait_five"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/cardFour"
-                android:layout_centerHorizontal="true"
-                android:layout_width = "62dp"
-                android:layout_height= "71dp"
+                android:id="@+id/cv_wait_five"
+                android:layout_width="62dp"
+                android:layout_height="71dp"
+                card_view:cardElevation="0dp"
+                android:layout_gravity="center"
                 android:layout_marginStart="5dp"
-                android:paddingStart="14dp"
                 android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardBackgroundColor="@color/cardFour"
                 card_view:cardCornerRadius="2dp">
 
                 <LinearLayout
@@ -246,22 +232,22 @@
                         android:id="@+id/cv_tv_wait_time_five"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
+                        android:layout_marginTop="14dp"
                         android:text="30&#43;"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                     <TextView
                         android:id="@+id/cv_tv_min_five"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="12dp"
                         android:text="@string/mins"
-                        android:textSize="@dimen/visible_text_reading_size"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/visible_text_reading_size" />
 
                 </LinearLayout>
 
@@ -274,71 +260,70 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ll_current_wait"
-            android:textColor="@color/black"
             android:layout_marginTop="30dp"
+            android:text="@string/ambiance"
+            android:textColor="@color/black"
             android:textSize="@dimen/visible_text_reading_size"
-            android:visibility="gone"
-            android:text="@string/ambiance"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/ll_current_ambiance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_below="@+id/tv_ambiance"
             android:layout_marginTop="13dp"
-            android:visibility="gone"
-            android:layout_below="@+id/tv_ambiance">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_ambiance_one"
-                android:layout_gravity ="center"
-                android:layout_centerHorizontal="true"
-                card_view:cardBackgroundColor="@color/cardOne"
-                android:layout_width = "160dp"
-                android:layout_height= "71dp"
-                android:paddingStart="14dp"
+                android:id="@+id/cv_ambiance_one"
+                android:layout_width="160dp"
+                android:layout_height="71dp"
+                android:layout_gravity="center"
                 android:paddingEnd="15dp"
+                android:paddingStart="14dp"
+                card_view:cardElevation="0dp"
+                card_view:cardBackgroundColor="@color/cardOne"
                 card_view:cardCornerRadius="2dp">
 
                 <TextView
                     android:id="@+id/cv_tv_ambiance_one"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
-                    android:textSize="@dimen/visible_text_reading_size"
                     android:alpha="0.86"
                     android:text="Quiet"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/visible_text_reading_size" />
 
-                </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id= "@+id/cv_ambiance_two"
-                android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/cardThree"
-                android:layout_width = "160dp"
-                android:layout_height= "71dp"
-                android:paddingStart="13dp"
+                android:id="@+id/cv_ambiance_two"
+                android:layout_width="160dp"
+                android:layout_height="71dp"
+                android:layout_gravity="center"
                 android:paddingEnd="15dp"
+                android:paddingStart="13dp"
+                card_view:cardElevation="0dp"
+                card_view:cardBackgroundColor="@color/cardThree"
                 card_view:cardCornerRadius="2dp">
 
                 <TextView
                     android:id="@+id/cv_tv_ambiance_two"
                     android:layout_width="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
-                    android:textSize="@dimen/visible_text_reading_size"
-                    android:text="Lively"
                     android:alpha="0.86"
-                    android:textColor="@color/black"/>
+                    android:text="Lively"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/visible_text_reading_size" />
 
             </android.support.v7.widget.CardView>
 
-            </LinearLayout>
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -347,11 +332,11 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:paddingTop="3dp"
-        android:text="UPDATE"
-        android:textSize="@dimen/visible_text_reading_size"
         android:alpha="0.38"
         android:background="@color/black"
+        android:enabled="false"
+        android:paddingTop="3dp"
+        android:text="UPDATE"
         android:textColor="@color/white"
-        android:enabled="false"/>
+        android:textSize="@dimen/visible_text_reading_size" />
 </RelativeLayout>

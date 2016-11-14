@@ -27,7 +27,7 @@
     <string name="log_out">Log Out</string>
 
     <!-- Home Page -->
-    <string name="check_waiting_time">Check waiting time at\nrestaurant, pub, bar</string>
+    <string name="check_waiting_time">Check waiting time at\nrestaurants, pubs &#38; bars</string>
     <string name="waiting_time_search">SEARCH</string>
     <string name="give_wait_time">Give current\nwaiting time</string>
     <string name="give_time_update">UPDATE</string>
@@ -50,16 +50,16 @@
     <string name="profile">Profile</string>
 
     <!-- Restaurant Profile & Update Profile-->
-    <string name="current_waiting_time_text">Current Waiting Time is</string>
+    <string name="current_waiting_time_text">Current waiting time is</string>
     <string name="mins">mins</string>
     <string name="update">Update</string>
-    <string name="current_wait">Current Waiting Time \?</string>
-    <string name="ambiance">Ambiance \?</string>
+    <string name="current_wait">Current waiting time\?</string>
+    <string name="ambiance">Ambiance\?</string>
     <string name="similar_rest_text_wait">Similar restaurant nearby with no waiting time</string>
     <string name="similar_rest_closed">Similar restaurant that\'s open with no waiting time</string>
     <string name="similar_closed">There are no similar open restaurants nearby right now.</string>
-    <string name="num_of_points_added">Thanks&#33; You just Earned %s points</string>
-    <string name="too_often_update">You can\'t update the waiting time for same place too often</string>
+    <string name="num_of_points_added">Thanks, you just earned %s points&#33;</string>
+    <string name="too_often_update">You can\'t update the waiting time for the same place too often</string>
     <!-- Leader Board -->
     <string name="leaderboard">Leaderboard</string>
     <string name="monthly">Monthly</string>

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -253,6 +254,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         restToolbarName.setText(getResources().getString(R.string.update));
         restToolbarName.setTypeface(Util.getFaceMedium());
         updateRestName = (TextView) findViewById(R.id.cv_up_rest_name);
+        updateRestName.setTypeface(null, Typeface.BOLD);
         updateRestName.setTypeface(Util.getFaceRoman());
         restToolBarSearch = (ImageView) findViewById(R.id.tvMenuFinder);
         restToolBarSearch.setVisibility(View.GONE);
@@ -392,7 +394,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     llAmbiance.setVisibility(View.GONE);
 
                     buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    buttonUpdate.setAlpha(Float.parseFloat("0.6"));
+                    buttonUpdate.setAlpha(Float.parseFloat("1"));
                     buttonUpdate.setTextColor(getResources().getColor(R.color.white));
                     buttonUpdate.setEnabled(true);
 
@@ -430,7 +432,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     llAmbiance.setVisibility(View.GONE);
 
                     buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    buttonUpdate.setAlpha(Float.parseFloat("0.6"));
+                    buttonUpdate.setAlpha(Float.parseFloat("1"));
                     buttonUpdate.setTextColor(getResources().getColor(R.color.white));
                     buttonUpdate.setEnabled(true);
 
@@ -468,7 +470,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     llAmbiance.setVisibility(View.GONE);
 
                     buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    buttonUpdate.setAlpha(Float.parseFloat("0.6"));
+                    buttonUpdate.setAlpha(Float.parseFloat("1"));
                     buttonUpdate.setTextColor(getResources().getColor(R.color.white));
                     buttonUpdate.setEnabled(true);
 
@@ -506,7 +508,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     llAmbiance.setVisibility(View.GONE);
 
                     buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    buttonUpdate.setAlpha(Float.parseFloat("0.6"));
+                    buttonUpdate.setAlpha(Float.parseFloat("1"));
                     buttonUpdate.setTextColor(getResources().getColor(R.color.white));
                     buttonUpdate.setEnabled(true);
 
@@ -523,15 +525,13 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     ambianceOne.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    ambianceOne.setAlpha(Float.parseFloat("1"));
-                    ambianceTwo.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    ambianceTwo.setAlpha(Float.parseFloat("0.4"));
+                    ambianceTwo.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
 
                     tvAmbianceOne.setTextColor(getResources().getColor(R.color.white));
                     tvAmbianceTwo.setTextColor(getResources().getColor(R.color.black));
 
                     buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    buttonUpdate.setAlpha(Float.parseFloat("0.6"));
+                    buttonUpdate.setAlpha(Float.parseFloat("1"));
                     buttonUpdate.setTextColor(getResources().getColor(R.color.white));
                     buttonUpdate.setEnabled(true);
 
@@ -545,17 +545,15 @@ public class UpdateRestProfileActivity extends BaseActivity {
             ambianceTwo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ambianceOne.setCardBackgroundColor(getResources().getColor(R.color.blueGreen));
-                    ambianceOne.setAlpha(Float.parseFloat("0.15"));
+                    ambianceOne.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
                     ambianceTwo.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    ambianceTwo.setAlpha(Float.parseFloat("1"));
 
 
                     tvAmbianceOne.setTextColor(getResources().getColor(R.color.black));
                     tvAmbianceTwo.setTextColor(getResources().getColor(R.color.white));
 
                     buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-                    buttonUpdate.setAlpha(Float.parseFloat("0.6"));
+                    buttonUpdate.setAlpha(Float.parseFloat("1"));
                     buttonUpdate.setTextColor(getResources().getColor(R.color.white));
                     buttonUpdate.setEnabled(true);
 
