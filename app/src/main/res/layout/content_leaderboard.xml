@@ -27,9 +27,10 @@
         android:layout_weight="1"
         android:padding="5dp"
         android:text="@string/monthly"
+        android:textAllCaps="false"
         android:background="@null"
         android:textSize="22sp"
-        />
+        tools:ignore="ButtonStyle" />
 
     <Button android:id="@+id/tv_year"
         android:layout_width="0dp"
@@ -37,11 +38,12 @@
         android:textColor="@color/white"
         android:layout_weight="1"
         android:background="@null"
+        android:textAllCaps="false"
         android:padding="5dp"
         android:text="@string/year"
         android:gravity="center"
         android:textSize="22sp"
-        />
+        tools:ignore="ButtonStyle" />
 
     </LinearLayout>
     

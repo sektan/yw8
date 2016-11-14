@@ -99,7 +99,7 @@ public class LeaderBoardActivity extends BaseActivity {
         tvMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tvMonth.setBackground(getResources().getDrawable(R.drawable.button_selector));
+                //tvMonth.setBackground(getResources().getDrawable(R.drawable.button_selector));
                 fetchMonthlyDetails(monthNumber, yearNumber);
                 Intent intent = getIntent();
                 finish();
@@ -110,7 +110,7 @@ public class LeaderBoardActivity extends BaseActivity {
         tvYear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tvYear.setBackground(getResources().getDrawable(R.drawable.button_selector));
+                //tvYear.setBackground(getResources().getDrawable(R.drawable.button_selector));
                 fetchYearlyDetails(yearNumber);
                 Intent intent = getIntent();
                 finish();

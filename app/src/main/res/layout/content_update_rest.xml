@@ -38,6 +38,7 @@
                     android:id="@+id/cv_up_rest_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="12dp"
                     android:alpha="0.86"
                     android:textSize="@dimen/visible_text_reading_size"
@@ -83,7 +84,9 @@
                         android:id="@+id/cv_tv_wait_time_one"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
                         android:textSize="@dimen/visible_text_reading_size"
                         android:text="0"
                         android:textColor="@color/black"/>
@@ -121,7 +124,9 @@
                         android:id="@+id/cv_tv_wait_time_two"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
                         android:text="10"
                         android:textSize="@dimen/visible_text_reading_size"
                         android:textColor="@color/black"/>
@@ -159,7 +164,9 @@
                         android:id="@+id/cv_tv_wait_time_three"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
                         android:text="20"
                         android:textSize="@dimen/visible_text_reading_size"
                         android:textColor="@color/black"/>
@@ -197,7 +204,9 @@
                         android:id="@+id/cv_tv_wait_time_four"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
                         android:text="30"
                         android:textSize="@dimen/visible_text_reading_size"
                         android:textColor="@color/black"/>
@@ -219,6 +228,7 @@
                 android:id= "@+id/cv_wait_five"
                 android:layout_gravity ="center"
                 card_view:cardBackgroundColor="@color/cardFour"
+                android:layout_centerHorizontal="true"
                 android:layout_width = "62dp"
                 android:layout_height= "71dp"
                 android:layout_marginStart="5dp"
@@ -229,13 +239,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/cv_tv_wait_time_five"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
                         android:text="30&#43;"
                         android:textSize="@dimen/visible_text_reading_size"
                         android:textColor="@color/black"/>
@@ -245,6 +258,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
+                        android:layout_centerHorizontal="true"
                         android:text="@string/mins"
                         android:textSize="@dimen/visible_text_reading_size"
                         android:textColor="@color/black"/>
@@ -278,8 +292,8 @@
             <android.support.v7.widget.CardView
                 android:id= "@+id/cv_ambiance_one"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.15"
+                android:layout_centerHorizontal="true"
+                card_view:cardBackgroundColor="@color/cardOne"
                 android:layout_width = "160dp"
                 android:layout_height= "71dp"
                 android:paddingStart="14dp"
@@ -290,8 +304,11 @@
                     android:id="@+id/cv_tv_ambiance_one"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
                     android:textSize="@dimen/visible_text_reading_size"
+                    android:alpha="0.86"
                     android:text="Quiet"
                     android:textColor="@color/black"/>
 
@@ -300,8 +317,7 @@
             <android.support.v7.widget.CardView
                 android:id= "@+id/cv_ambiance_two"
                 android:layout_gravity ="center"
-                card_view:cardBackgroundColor="@color/blueGreen"
-                android:alpha="0.4"
+                card_view:cardBackgroundColor="@color/cardThree"
                 android:layout_width = "160dp"
                 android:layout_height= "71dp"
                 android:paddingStart="13dp"
@@ -311,10 +327,13 @@
                 <TextView
                     android:id="@+id/cv_tv_ambiance_two"
                     android:layout_width="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_gravity="center"
                     android:textSize="@dimen/visible_text_reading_size"
                     android:text="Lively"
+                    android:alpha="0.86"
                     android:textColor="@color/black"/>
 
             </android.support.v7.widget.CardView>
