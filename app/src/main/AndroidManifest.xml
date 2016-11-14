@@ -42,12 +42,6 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <activity
-            android:name=".ui.LoginActivity"
-            android:label="Login"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
             android:name=".ui.SignUpActivity"
             android:label="YW8"
             android:screenOrientation="portrait"

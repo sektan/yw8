@@ -2,8 +2,6 @@ package com.dishq.buzz.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -238,16 +236,12 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
-                Intent intentLogOut = new Intent(HomePageActivity.this, LoginActivity.class);
-                intentLogOut.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 String facebookOrGoogle = YW8Application.getFacebookOrGoogle();
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();
                 } else {
                     googleSignOut();
                 }
-                finish();
-                startActivity(intentLogOut);
                 return true;
 
             default:
@@ -289,7 +283,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 }
             });
         }
-
     }
 
     public void userLogOut() {
@@ -299,7 +292,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         YW8Application.setAccessToken(null, null);
         YW8Application.getPrefs().edit().clear().apply();
         getApplicationContext().getSharedPreferences("dish_app_prefs", MODE_PRIVATE).edit().clear().apply();
-        Intent intent = new Intent(HomePageActivity.this, LoginActivity.class);
+        Intent intent = new Intent(HomePageActivity.this, SignUpActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(intent);

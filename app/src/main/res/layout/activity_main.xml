@@ -8,17 +8,15 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="0dp"
-    android:background="@color/colorPrimary"
+    android:background="@color/greyWhite"
     tools:context="com.dishq.buzz.MainActivity"
     android:gravity="center">
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_heading"
-        android:textColor="@color/white"
-        android:gravity="center"
-        android:textSize="@dimen/splash_screen_text"/>
+        android:src="@drawable/splashscreen_logo"
+        android:gravity="center" />
 
 
 </RelativeLayout>

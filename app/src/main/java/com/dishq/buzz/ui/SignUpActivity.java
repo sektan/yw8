@@ -6,19 +6,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
@@ -70,9 +66,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
 
     String ace = "";
-    private TextView signupText, restText, pubText, barText, haveAnAccText;
+    private TextView signupText;
     LoginButton loginButton;
-    private ToggleButton logInText;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
     private ImageView facebookButton, googleButton;
 
@@ -82,9 +77,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         //Facebook SDK is initialized
         facebookSDKInitialize();
 
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -111,7 +103,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     protected void onResume() {
         super.onResume();
 
-        //Logs 'instal' and 'app acitvate'App events
+        //Logs 'install' and 'app activate'App events
         AppEventsLogger.activateApp(this);
     }
 
@@ -132,38 +124,24 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
-        logInText = (ToggleButton) findViewById(R.id.login_button_text);
-        logInText.setTypeface(Util.getFaceRoman());
         signupText = (TextView) findViewById(R.id.signuptext);
         signupText.setTypeface(Util.getFaceRoman());
         loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         facebookButton = (ImageView) findViewById(R.id.fb);
         googleButton = (ImageView) findViewById(R.id.google_sign_up);
-        restText = (TextView) findViewById(R.id.restaurants);
+        TextView restText = (TextView) findViewById(R.id.restaurants);
         restText.setTypeface(Util.getFaceRoman());
-        pubText = (TextView) findViewById(R.id.pubs);
+        TextView pubText = (TextView) findViewById(R.id.pubs);
         pubText.setTypeface(Util.getFaceRoman());
-        barText = (TextView) findViewById(R.id.bars);
+        TextView barText = (TextView) findViewById(R.id.bars);
         barText.setTypeface(Util.getFaceRoman());
-        haveAnAccText = (TextView) findViewById(R.id.have_an_acc);
-        haveAnAccText.setTypeface(Util.getFaceRoman());
+        TextView connectWith = (TextView) findViewById(R.id.connect_with);
+        connectWith.setTypeface(Util.getFaceRoman());
         setClickables(context);
     }
 
     //Setting up the clickables of the current activity
     public void setClickables(Context context) {
-        if (logInText != null) {
-            logInText.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (b) {
-                        signupText.setText(getResources().getString(R.string.start_signin_message));
-                    } else {
-                        signupText.setText(getResources().getString(R.string.start_signup_message));
-                    }
-                }
-            });
-        }
         if (loginButton != null) {
             loginButton.setReadPermissions("email");
             getLoginDetails(loginButton);
@@ -365,7 +343,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     public void startHomePageActivity() {
         Intent i = new Intent(SignUpActivity.this.getApplicationContext(), HomePageActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(i);
     }
