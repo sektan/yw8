@@ -116,7 +116,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
-                finish();
                 startActivity(intentSearch);
             }
         });
@@ -143,22 +142,37 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         });
 
         if (body != null) {
-            int lifetimePoints = body.getLifeTimePoints();
-            if (spUserPoints != null && lifetimePoints != 0) {
-                if (lifetimePoints > 0 && lifetimePoints < 150) {
-                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_rookie);
-                } else if (lifetimePoints >= 150 && lifetimePoints < 500) {
-                    spBadgeImage.setImageResource(R.drawable.profile_points_soldier);
-                } else if (lifetimePoints >= 500 && lifetimePoints < 1000) {
-                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_agent);
-                } else if (lifetimePoints >= 1000 && lifetimePoints < 2000) {
-                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_captain);
-                } else if (lifetimePoints >= 2000 && lifetimePoints < 4000) {
-                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_knight);
-                } else if (lifetimePoints >= 4000) {
-                    spBadgeImage.setImageResource(R.drawable.homescreen_profile_general);
+            if (spUserPoints != null && body.shortUserCurrBadge.getBadgeLevel() != 0) {
+
+                switch (body.shortUserCurrBadge.getBadgeLevel()) {
+                    case 1:
+                        spBadgeImage.setImageResource(R.drawable.homescreen_profile_rookie);
+                        break;
+
+                    case 2:
+                        spBadgeImage.setImageResource(R.drawable.profile_points_soldier);
+                        break;
+
+                    case 3:
+                        spBadgeImage.setImageResource(R.drawable.homescreen_profile_agent);
+                        break;
+
+                    case 4:
+                        spBadgeImage.setImageResource(R.drawable.homescreen_profile_captain);
+                        break;
+
+                    case 5:
+                        spBadgeImage.setImageResource(R.drawable.homescreen_profile_knight);
+                        break;
+
+                    case 6:
+                        spBadgeImage.setImageResource(R.drawable.homescreen_profile_general);
+                        break;
+
+                    default:
+                        break;
                 }
-                spUserPoints.setText(Integer.toString(lifetimePoints));
+                spUserPoints.setText(Integer.toString(body.getLifeTimePoints()));
                 spPointsInfo.setText(getResources().getString(R.string.sp_lifetime_points));
             } else {
                 spPointsInfo.setText(getResources().getString(R.string.give_time_win_prizes));

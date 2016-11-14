@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.dishq.buzz.R;
 import com.dishq.buzz.ui.UserProfileActivity;
+import com.dishq.buzz.util.Util;
 
 import java.util.ArrayList;
 
@@ -54,12 +55,21 @@ public class MonthlyAdapter extends BaseAdapter{
             view = layoutInflater.inflate(R.layout.monthly_row_item, viewGroup, false);
         }
         TextView monthlyRank = (TextView) view.findViewById(R.id.lv_mrank);
+        monthlyRank.setTypeface(Util.getFaceRoman());
         TextView monthlyUserName = (TextView) view.findViewById(R.id.lv_musername);
+        monthlyUserName.setTypeface(Util.getFaceRoman());
         TextView monthlyPoints = (TextView) view.findViewById(R.id.lv_mpoints);
+        monthlyPoints.setTypeface(Util.getFaceRoman());
+        TextView monthlyPointsText = (TextView) view.findViewById(R.id.lv_mpoints_text);
+        monthlyPointsText.setTypeface(Util.getFaceRoman());
         LinearLayout lllayout = (LinearLayout) view.findViewById(R.id.ll_monthly_row);
 
         if(lllayout!= null) {
             if(monthlyFinder.get(position).getMonthIsCurrentUser()) {
+                monthlyRank.setTextColor(context.getResources().getColor(R.color.lightPurple));
+                monthlyUserName.setTextColor(context.getResources().getColor(R.color.lightPurple));
+                monthlyPoints.setTextColor(context.getResources().getColor(R.color.lightPurple));
+                monthlyPointsText.setTextColor(context.getResources().getColor(R.color.lightPurple));
                 lllayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

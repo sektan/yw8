@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     tools:context=".ui.LeaderBoardActivity"
     tools:showIn="@layout/activity_leaderboard">
@@ -23,11 +22,11 @@
     <Button android:id="@+id/tv_monthly"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:gravity="center"
         android:layout_weight="1"
         android:padding="5dp"
-        android:text="Monthly"
+        android:text="@string/monthly"
         android:background="@null"
         android:textSize="22sp"
         />
@@ -35,11 +34,11 @@
     <Button android:id="@+id/tv_year"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:layout_weight="1"
         android:background="@null"
         android:padding="5dp"
-        android:text="Year"
+        android:text="@string/year"
         android:gravity="center"
         android:textSize="22sp"
         />
@@ -51,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_below="@+id/ll_month_year"
         android:background="@null"
+        android:alpha="0.80"
         android:textColor="@color/blueGreen"
         android:layout_height="40dp" />
 

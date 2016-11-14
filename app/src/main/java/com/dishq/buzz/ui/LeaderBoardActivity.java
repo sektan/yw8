@@ -46,9 +46,9 @@ public class LeaderBoardActivity extends BaseActivity {
     String monthOrYear = "", monthOrYearText = "";
 
     ImageView ldBack, ldFinder;
-    TextView ldHeader, tvYear, tvMonth;
+    TextView ldHeader;
     ListView listView;
-    Button yearOrMonth;
+    Button yearOrMonth, tvYear, tvMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +59,18 @@ public class LeaderBoardActivity extends BaseActivity {
         monthOrYear = Util.getMonthOrYear();
         yearNumber = Util.getYearNumber();
         monthNumber = Util.getMonthNumber();
-
+        setContentView(R.layout.activity_leaderboard);
+        setTags();
         if (monthOrYear.equals("month")) {
             fetchMonthlyDetails(monthNumber, yearNumber);
         } else if (monthOrYear.equals("year")) {
             fetchYearlyDetails(yearNumber);
         }
-        setContentView(R.layout.activity_leaderboard);
-        setTags();
     }
 
     public void setTags() {
         yearOrMonth = (Button) findViewById(R.id.leaderboard_button);
+        yearOrMonth.setTypeface(Util.getFaceRoman());
         listView = (ListView) findViewById(R.id.list_leaderBoard);
         listView.setVisibility(View.VISIBLE);
         ldBack = (ImageView) findViewById(R.id.back_button);
@@ -84,8 +84,11 @@ public class LeaderBoardActivity extends BaseActivity {
         ldFinder.setVisibility(View.GONE);
         ldHeader = (TextView) findViewById(R.id.toolbarTitle);
         ldHeader.setText(getResources().getString(R.string.leaderboard));
-        tvYear = (TextView) findViewById(R.id.tv_year);
-        tvMonth = (TextView) findViewById(R.id.tv_monthly);
+        ldHeader.setTypeface(Util.getFaceMedium());
+        tvYear = (Button) findViewById(R.id.tv_year);
+        tvYear.setTypeface(Util.getFaceRoman());
+        tvMonth = (Button) findViewById(R.id.tv_monthly);
+        tvMonth.setTypeface(Util.getFaceRoman());
     }
 
     public void setFunctionality() {
@@ -121,6 +124,12 @@ public class LeaderBoardActivity extends BaseActivity {
         monthOrYear = "month";
         Util.setMonthOrYear(monthOrYear);
         monthOrYearText = Util.getMonthName();
+        if(tvMonth!=null) {
+            tvMonth.setTextColor(getResources().getColor(R.color.white));
+        }
+        if(tvYear!=null) {
+            tvYear.setTextColor(getResources().getColor(R.color.offWhite));
+        }
         final String header = YW8Application.getAccessToken();
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<MonthLeaderBoardResponse> request = apiInterface.getMonthLeaderBoardDetails(header, monthNumber, yearNumber);
@@ -163,6 +172,12 @@ public class LeaderBoardActivity extends BaseActivity {
         monthOrYearText = Integer.toString(Util.getYearNumber());
         monthOrYear = "year";
         Util.setMonthOrYear(monthOrYear);
+        if(tvMonth!=null) {
+            tvMonth.setTextColor(getResources().getColor(R.color.offWhite));
+        }
+        if(tvYear!=null) {
+            tvYear.setTextColor(getResources().getColor(R.color.white));
+        }
         final String header = YW8Application.getAccessToken();
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<YearLeaderBoardResponse> request = apiInterface.getYearLeaderBoardDetails(header, yearNumber);

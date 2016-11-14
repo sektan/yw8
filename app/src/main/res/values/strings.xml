@@ -59,9 +59,11 @@
     <string name="similar_rest_closed">Similar restaurant that\'s open with no waiting time</string>
     <string name="similar_closed">There are no similar open restaurants nearby right now.</string>
     <string name="num_of_points_added">Thanks&#33; You just Earned %s points</string>
-
+    <string name="too_often_update">You can\'t update the waiting time for same place too often</string>
     <!-- Leader Board -->
     <string name="leaderboard">Leaderboard</string>
+    <string name="monthly">Monthly</string>
+    <string name="year">Year</string>
 
     <!-- Big Badge -->
     <string name="congrats">Congratulations &#33;</string>

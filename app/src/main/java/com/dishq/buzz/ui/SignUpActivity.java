@@ -200,7 +200,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         }
 
         if (googleButton != null) {
+            GOOGLE_BUTTON_SELECTED = true;
             googleButton.setOnClickListener(this);
+
         }
 
     }

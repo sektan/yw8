@@ -64,16 +64,33 @@ public class UserProfileActivity extends BaseActivity {
         userProfBadge = (ImageView) findViewById(R.id.up_badge_image);
         progressImage = (ImageView) findViewById(R.id.progress_image);
         userProfileHeader = (TextView) findViewById(R.id.toolbarTitle);
+        userProfileHeader.setTypeface(Util.getFaceMedium());
         userProfName = (TextView) findViewById(R.id.up_user_name);
+        userProfName.setTypeface(Util.getFaceRoman());
         userProfBadgeName = (TextView) findViewById(R.id.up_badge_name);
+        userProfBadgeName.setTypeface(Util.getFaceRoman());
         userProfPointsAlloted = (TextView) findViewById(R.id.up_points_allotted);
+        userProfPointsAlloted.setTypeface(Util.getFaceRoman());
+        TextView userProfLifetimeText = (TextView) findViewById(R.id.up_lifetime_points);
+        userProfLifetimeText.setTypeface(Util.getFaceRoman());
         userProfInfoText = (TextView) findViewById(R.id.up_info_text);
+        userProfInfoText.setTypeface(Util.getFaceRoman());
         userProfMonth = (TextView) findViewById(R.id.up_month_name);
+        userProfMonth.setTypeface(Util.getFaceMedium());
         userProfMonthRank = (TextView) findViewById(R.id.up_month_rank);
+        userProfMonthRank.setTypeface(Util.getFaceRoman());
         userProfMonthPoints = (TextView) findViewById(R.id.up_month_points);
+        userProfMonthPoints.setTypeface(Util.getFaceRoman());
+        TextView mPtText = (TextView) findViewById(R.id.up_month_pt_text);
+        mPtText.setTypeface(Util.getFaceRoman());
         userProfYear = (TextView) findViewById(R.id.up_year_no);
+        userProfYear.setTypeface(Util.getFaceMedium());
         userProfYearRank = (TextView) findViewById(R.id.up_year_rank);
+        userProfYearRank.setTypeface(Util.getFaceRoman());
         userProfYearPoints = (TextView) findViewById(R.id.up_year_points);
+        userProfYearPoints.setTypeface(Util.getFaceRoman());
+        TextView yPtText = (TextView) findViewById(R.id.up_ypts_text);
+        yPtText.setTypeface(Util.getFaceRoman());
         monthCV = (CardView) findViewById(R.id.cv_month_leaderboard);
         yearCV = (CardView) findViewById(R.id.cv_year_leaderboard);
         userProfProgress = (ProgressBar) findViewById(R.id.up_progressBar);
@@ -218,6 +235,15 @@ public class UserProfileActivity extends BaseActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
+        finish();
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onDestroy() {

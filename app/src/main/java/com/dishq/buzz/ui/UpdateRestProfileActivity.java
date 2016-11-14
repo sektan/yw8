@@ -117,6 +117,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 return true;
             } else {
                 locationOff = true;
+                progressDialog.dismiss();
                 showSettingsAlert();
                 return false;
             }
@@ -171,12 +172,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
         alertDialog.show();
     }
 
-    //TODO remove the checkSelfPermission (because it is repeated).
     public void selfPermission() {
-         /*if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {*/ // ??? Why again?
             if (ActivityCompat.shouldShowRequestPermissionRationale(UpdateRestProfileActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
+                progressDialog.dismiss();
                 Log.e("accept", "accept");
                 Toast.makeText(this, "Enable Location Permission to access this feature", Toast.LENGTH_SHORT).show(); // Something like this
 
@@ -188,6 +187,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             } else {
                 //request the permission
                 Log.e("accept", "not accept");
+                progressDialog.dismiss();
                 ActivityCompat.requestPermissions(UpdateRestProfileActivity.this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_GPS_ACCESS);
@@ -260,10 +260,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(backButtonIntent);
+                Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);;
                 finish();
+                startActivity(backButtonIntent);
             }
         });
         TextView currentWaitTime = (TextView) findViewById(R.id.tv_current_wait);
@@ -296,10 +295,31 @@ public class UpdateRestProfileActivity extends BaseActivity {
         ambianceOne = (CardView) findViewById(R.id.cv_ambiance_one);
         ambianceTwo = (CardView) findViewById(R.id.cv_ambiance_two);
         tvAmbianceOne = (TextView) findViewById(R.id.cv_tv_ambiance_one);
+        tvAmbianceOne.setTypeface(Util.getFaceRoman());
         tvAmbianceTwo = (TextView) findViewById(R.id.cv_tv_ambiance_two);
+        tvAmbianceTwo.setTypeface(Util.getFaceRoman());
         textAmbiance = (TextView) findViewById(R.id.tv_ambiance);
+        textAmbiance.setTypeface(Util.getFaceRoman());
         llAmbiance = (LinearLayout) findViewById(R.id.ll_current_ambiance);
         buttonUpdate = (Button) findViewById(R.id.button_update);
+        buttonUpdate.setTypeface(Util.getFaceMedium());
+        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
+        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
+        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
+        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
+        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
+
+        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
+        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
+        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.black));
+        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.black));
+        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.black));
+
+        tvMinOne.setTextColor(getResources().getColor(R.color.black));
+        tvMinTwo.setTextColor(getResources().getColor(R.color.black));
+        tvMinThree.setTextColor(getResources().getColor(R.color.black));
+        tvMinFour.setTextColor(getResources().getColor(R.color.black));
+        tvMinFive.setTextColor(getResources().getColor(R.color.black));
         setFunctionality();
     }
 
@@ -549,6 +569,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
             buttonUpdate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    progressDialog = new ProgressDialog(UpdateRestProfileActivity.this);
+                    progressDialog.show();
                     fetchUpdatedUserInfo();
                     buttonUpdate.setEnabled(false);
                 }
@@ -576,9 +598,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     private void fetchUpdatedUserInfo() {
         if (checkGPS()) {
-            if (getLongitude == 0 | getLatitude == 0) {
-//            fetchUpdatedUserInfo(); // TODO "TEMPORARY FIX" Can be optimized, bu structuring the whole implementation
-            } else {
                 rest_id = Integer.parseInt(query);
                 final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
                         getLatitude, getLongitude, waitTimeId, buzzTypeId);
@@ -589,6 +608,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 call.enqueue(new Callback<UpdateRestaurantResponse>() {
                     @Override
                     public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+                        if(progressDialog!=null) {
+                            progressDialog.dismiss();
+                        }
                         Log.d(TAG, "Success");
                         try {
                             if (response.isSuccessful()) {
@@ -625,10 +647,13 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
                     @Override
                     public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
+                        if(progressDialog!=null) {
+                            progressDialog.dismiss();
+                        }
                         Log.d(TAG, "Failure of connecting to the server");
                     }
                 });
-            }
+
         }
     }
 
@@ -659,7 +684,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
 
     public void alertTooFrequent(final Activity activity) {
         AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("You can't update buzz for same restaurant too often ")
+                .setMessage(getResources().getString(R.string.too_often_update))
                 .setCancelable(false)
                 .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
 
@@ -741,12 +766,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 startActivity(goToHomePageIntent);
             }
         }, 3000); // the timer will count 3 seconds....
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        gps.stopUsingGPS();
     }
 
     @Override

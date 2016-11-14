@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:text="Name"
                 android:textColor="@color/white"
@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/up_badge_image"
                 android:layout_centerHorizontal="true"
+                android:alpha="0.50"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/badge_type_rookie"
@@ -83,6 +84,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
+                android:alpha="0.54"
+                android:textColor="@color/black"
                 android:maxLines="1"
                 android:text="0"
                 android:textSize="@dimen/points_text" />
@@ -95,8 +98,10 @@
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:maxLines="1"
+                android:alpha="0.54"
+                android:textColor="@color/black"
                 android:text="@string/lifetime_points"
-                android:textSize="@dimen/user_profile_points_info_text" />
+                android:textSize="@dimen/user_profile_points_text" />
 
             <LinearLayout
                 android:id="@+id/ll_progress"
@@ -131,6 +136,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:maxLines="2"
+                android:alpha="0.54"
+                android:textColor="@color/black"
                 android:text="Give your first waiting time to become a Rookie"
                 android:textSize="@dimen/user_profile_points_info_text" />
 
@@ -152,7 +159,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="14dp"
-                    android:alpha= "0.9"
                     android:orientation="vertical">
 
                     <TextView
@@ -160,6 +166,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:textColor="@color/black"
+                        android:alpha="0.86"
                         android:text="Month"
                         android:textSize="@dimen/home_page_button_text" />
 
@@ -173,7 +181,7 @@
                             android:id="@+id/up_month_rank"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="40dp"
+                            android:layout_marginStart="30dp"
                             android:textColor="@color/lightPurple"
                             android:text="&#35; &#45;&#45;"
                             android:textSize="@dimen/points_rank" />
@@ -188,6 +196,7 @@
                             android:textSize="@dimen/points_rank" />
 
                         <TextView
+                            android:id="@+id/up_month_pt_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
@@ -224,6 +233,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:textColor="@color/black"
+                        android:alpha="0.86"
                         android:text="Month"
                         android:textSize="@dimen/home_page_button_text" />
 
@@ -237,7 +248,7 @@
                             android:id="@+id/up_year_rank"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="40dp"
+                            android:layout_marginStart="30dp"
                             android:textColor="@color/lightPurple"
                             android:text="&#35; &#45;&#45;"
                             android:textSize="@dimen/points_rank" />
@@ -252,6 +263,7 @@
                             android:textSize="@dimen/points_rank" />
 
                         <TextView
+                            android:id="@+id/up_ypts_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"

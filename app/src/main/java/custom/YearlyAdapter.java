@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.dishq.buzz.R;
 import com.dishq.buzz.ui.UserProfileActivity;
+import com.dishq.buzz.util.Util;
 
 import java.util.ArrayList;
 import server.Finder.YearlyLeaderBoardFinder;
@@ -53,9 +54,13 @@ public class YearlyAdapter extends BaseAdapter {
             view = layoutInflater.inflate(R.layout.yearly_row_item, viewGroup, false);
         }
         TextView yearlyRank = (TextView) view.findViewById(R.id.lv_yrank);
+        yearlyRank.setTypeface(Util.getFaceRoman());
         TextView yearlyUserName = (TextView) view.findViewById(R.id.lv_yusername);
+        yearlyUserName.setTypeface(Util.getFaceRoman());
         TextView yearlyPoints = (TextView) view.findViewById(R.id.lv_ypoints);
+        yearlyPoints.setTypeface(Util.getFaceRoman());
         TextView yearlyPointsText = (TextView) view.findViewById(R.id.lv_ypoints_text);
+        yearlyPointsText.setTypeface(Util.getFaceRoman());
         LinearLayout llayout = (LinearLayout) view.findViewById(R.id.ll_year_row);
 
         if(llayout!=null) {
