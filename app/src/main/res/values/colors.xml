@@ -19,4 +19,5 @@
     <color name="red">#ff4d4d</color>
     <color name="rowGreen">#e8f6f4</color>
     <color name="rowPurple">#f1eef6</color>
+    <color name="greyWhite">#fafafa</color>
 </resources>
