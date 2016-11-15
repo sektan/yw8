@@ -2,6 +2,11 @@
     <string name="app_name">YW8</string>
     <string name="authorization">Bearer PTu45EJAcujcs1i8PzOEikW7Wn5a8Q</string>
 
+    <!-- Google Analytics -->
+
+    <!-- MixPanel -->
+    <string name="MIXPANEL_TOKEN">328b330c9e8e2732c24ea2154b17d0d2</string>
+
     <!-- Splash Screen -->
     <string name="app_heading">YW8</string>
 

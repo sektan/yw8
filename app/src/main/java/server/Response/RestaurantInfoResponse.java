@@ -100,6 +100,10 @@ public class RestaurantInfoResponse {
     }
 
     public class WaitTimeData {
+        @SerializedName("display_text")
+        @Expose
+        private String waitTimeDisplay;
+
         @SerializedName("show_buzz_type_text")
         @Expose
         private Boolean showBuzzTypeText;
@@ -111,6 +115,14 @@ public class RestaurantInfoResponse {
         @SerializedName("buzz_type_text")
         @Expose
         private String buzzTypeText;
+
+        public String getWaitTimeDisplay() {
+            return waitTimeDisplay;
+        }
+
+        public void setWaitTimeDisplay(String waitTimeDisplay) {
+            this.waitTimeDisplay=waitTimeDisplay;
+        }
 
         public Boolean getShowBuzzTypeText() {
             return showBuzzTypeText;

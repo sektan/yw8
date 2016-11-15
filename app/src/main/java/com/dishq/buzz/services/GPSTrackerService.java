@@ -61,7 +61,6 @@ public class GPSTrackerService extends Service implements LocationListener {
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // no network provider is enabled
             } else {
-                this.canGetLocation = true;
                 // First get location from Network Provider
                 try {
                     if (isNetworkEnabled) {
@@ -74,6 +73,7 @@ public class GPSTrackerService extends Service implements LocationListener {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                             if (location != null) {
+                                this.canGetLocation = true;
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                             }
@@ -92,6 +92,7 @@ public class GPSTrackerService extends Service implements LocationListener {
                                 location = locationManager
                                         .getLastKnownLocation(LocationManager.GPS_PROVIDER);
                                 if (location != null) {
+                                    this.canGetLocation = true;
                                     latitude = location.getLatitude();
                                     longitude = location.getLongitude();
                                 }
@@ -157,21 +158,14 @@ public class GPSTrackerService extends Service implements LocationListener {
         return this.canGetLocation;
     }
 
-    /**
-     * Function to show settings alert dialog
-     * On pressing Settings button will lauch Settings Options
-     */
-
-
     @Override
     public void onLocationChanged(Location location) {
-        getLatitude();
-        getLongitude();
+        getLocation();
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
+        getLocation();
     }
 
     @Override

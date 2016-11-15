@@ -157,7 +157,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 dialog.dismiss();
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivityForResult(intent, SETTINGS_RESULT_REQ_CODE);
-//                getGPS();
             }
         });
 
