@@ -1,31 +1,51 @@
 package com.dishq.buzz;
 
 import android.content.Intent;
+
 import java.util.Calendar;
+
+import android.content.pm.PackageInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import server.Response.VersionCheckResponse;
+import server.api.ApiInterface;
+import server.api.Config;
 
 import com.dishq.buzz.ui.HomePageActivity;
 import com.dishq.buzz.ui.SignUpActivity;
 import com.dishq.buzz.util.YW8Application;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-    MixpanelAPI mixpanel = null;
+    public String versionName;
+    public int versionCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Crashlytics instantiation
         Fabric.with(this, new Crashlytics());
-        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
+        //Google Analytics instantiation
         setContentView(R.layout.activity_main);
+
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionName = pInfo.versionName;
+            versionCode = pInfo.versionCode;
+
+            Log.e("dfdd", pInfo.versionName + pInfo.versionCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        fetchVersion(versionName, versionCode);
 
         timer.start();
     }
@@ -33,25 +53,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-            final long hourOfTheDay = hourOfTheDay();
-
-
-        try {
-            final JSONObject properties = new JSONObject();
-            properties.put("first viewed on", hourOfTheDay);
-            properties.put("user domain", "(unknown)");
-            mixpanel.registerSuperProperties(properties);
-        } catch (final JSONException e) {
-            throw new RuntimeException("could not encode hour first viewed as JSON");
-        }
-
-        try {
-            final JSONObject properties = new JSONObject();
-            properties.put("hour of the day", hourOfTheDay);
-            mixpanel.track("App resumed", properties);
-        } catch (final JSONException e) {
-            throw new RuntimeException("Could not encode hour of the day in JSON");
-        }
     }
 
     // To set the timer for the splash screen to be displayed
@@ -79,15 +80,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private int hourOfTheDay() {
-        final Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.HOUR_OF_DAY);
-    }
+    public void fetchVersion(String versionName, int versionCode) {
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        Call<VersionCheckResponse> request = apiInterface.checkVersion(versionName, versionCode);
+        request.enqueue(new Callback<VersionCheckResponse>() {
+            @Override
+            public void onResponse(Call<VersionCheckResponse> call, Response<VersionCheckResponse> response) {
+                Log.d("MainActivity", "Success");
+            }
 
-    @Override
-    protected void onDestroy() {
-        mixpanel.flush();
-        super.onDestroy();
+            @Override
+            public void onFailure(Call<VersionCheckResponse> call, Throwable t) {
+                Log.d("MainActivity", "Failure");
+            }
+        });
+
     }
 
 }
