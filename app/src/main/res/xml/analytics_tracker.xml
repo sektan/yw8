@@ -11,4 +11,15 @@
 
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
+    <screenName name="com.dishq.buzz.MainActivity">SplashScreen</screenName>
+    <screenName name="com.dishq.buzz.ui.SignUpActivity">Sign Up</screenName>
+    <screenName name="com.dishq.buzz.ui.HomePageActivity">HomePage</screenName>
+    <screenName name="com.dishq.buzz.ui.GetPointsActivity">Get Points</screenName>
+    <screenName name="com.dishq.buzz.ui.SearchActivity">Search Activity</screenName>
+    <screenName name="com.dishq.buzz.ui.RestaurantProfileActivity">Restaurant Profile</screenName>
+    <screenName name="com.dishq.buzz.ui.UpdateRestProfileActivity">Update Restaurant WaitTime</screenName>
+    <screenName name="com.dishq.buzz.ui.BigBadgeActivity">New Badge</screenName>
+    <screenName name="com.dishq.buzz.ui.UserProfileActivity">User Profile</screenName>
+    <screenName name="com.dishq.buzz.ui.LeaderBoardActivity">LeaderBoard</screenName>
+
     </resources>

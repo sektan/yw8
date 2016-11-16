@@ -24,7 +24,7 @@
     <string name="facebook_app_id">511959269002627</string>
     <!-- Menu Bar -->
     <string name="options">Options</string>
-    <string name="get_points">Get Points</string>
+    <string name="get_points">Win Prizes</string>
     <string name="log_out">Log Out</string>
 
     <!-- Home Page -->
@@ -36,9 +36,8 @@
     <string name="give_time_win_prizes">Give waiting time &amp; win prizes</string>
 
     <!-- Get Points -->
-    <string name="get_points_heading">Get Points</string>
+    <string name="get_points_heading">Win Points</string>
     <string name="get_points_back">Home</string>
-    <string name="terms_and_conditions">&#91;Terms &amp; conditions&#93;</string>
 
     <!-- Search Activity -->
     <string name="suggestion_text">Restaurant, Pub, Bar</string>

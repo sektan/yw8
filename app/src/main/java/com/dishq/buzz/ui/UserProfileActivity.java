@@ -14,6 +14,10 @@ import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -32,6 +36,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private static String serverAccessToken;
     private String TAG = "UserProfileActivity";
+    MixpanelAPI mixpanel = null;
     private String monthOrYear = "";
     private ProgressDialog progressDialog;
 
@@ -48,6 +53,8 @@ public class UserProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(UserProfileActivity.this);
         progressDialog.show();
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
         setContentView(R.layout.activity_user_profile);
         setTags();
         fetchFullUserDetails();
@@ -182,6 +189,13 @@ public class UserProfileActivity extends BaseActivity {
                 Util.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("monthly leaderboard", "monthly leaderboard");
+                    mixpanel.track("monthly leaderboard", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intent);
             }
         });
@@ -193,6 +207,13 @@ public class UserProfileActivity extends BaseActivity {
                 Util.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("yearly leaderboard", "yearly leaderboard");
+                    mixpanel.track("yearly leaderboard", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intent);
             }
         });
@@ -247,6 +268,7 @@ public class UserProfileActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        mixpanel.flush();
         super.onDestroy();
         this.finish();
     }

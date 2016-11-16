@@ -31,6 +31,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.firebase.auth.FirebaseAuth;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -48,6 +52,7 @@ import server.api.Config;
 
 public class HomePageActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
     private ProgressDialog progressDialog;
+    MixpanelAPI mixpanel = null;
     private static String serverAccessToken;
     private String goingToSearch = "";
     private GoogleApiClient mGoogleApiClient;
@@ -59,6 +64,9 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
+        //Facebook SDK is initialized
         progressDialog = new ProgressDialog(HomePageActivity.this);
         progressDialog.show();
 
@@ -102,6 +110,13 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
                 intentSearch.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("search", "search");
+                    mixpanel.track("search", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intentSearch);
             }
         });
@@ -114,6 +129,13 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 YW8Application.getPrefs().edit().putString(Constants.GOING_TO_SEARCH, goingToSearch).apply();
                 YW8Application.setGoingToSearch(goingToSearch);
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("update", "update");
+                    mixpanel.track("update", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intentSearch);
             }
         });
@@ -135,6 +157,13 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             public void onClick(View view) {
                 Intent intentUserProf = new Intent(HomePageActivity.this, UserProfileActivity.class);
                 intentUserProf.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("profile", "profile");
+                    mixpanel.track("profile", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intentUserProf);
             }
         });
@@ -197,6 +226,9 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                     if (response.isSuccessful()) {
                         ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
                         if (body != null) {
+                            mixpanel.identify(body.shortUserDetails.getUserId());
+                            mixpanel.getPeople().identify(body.shortUserDetails.getUserId());
+                            mixpanel.getPeople().set("Plan", "Premium");
                             setFunctionality(body);
                         }
                     } else {
@@ -233,10 +265,24 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
                 intentGetPoints.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("win prizes", "nav");
+                    mixpanel.track("win prizes", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intentGetPoints);
                 return true;
             case R.id.log_out:
                 String facebookOrGoogle = YW8Application.getFacebookOrGoogle();
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("log out", "nav");
+                    mixpanel.track("log out", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 if (facebookOrGoogle.equals("facebook")) {
                     facebookSignOut();
                 } else {
@@ -302,5 +348,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
     }
 }

@@ -49,6 +49,10 @@ public class ShortUserDetailsResponse {
         @Expose
         private String displayName;
 
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+
         public String getFullName() {
             return fullName;
         }
@@ -63,6 +67,14 @@ public class ShortUserDetailsResponse {
 
         public void setDisplayName(String displayName) {
             this.displayName = displayName;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
     }
 

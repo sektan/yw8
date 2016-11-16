@@ -7,6 +7,12 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
+import com.dishq.buzz.Analytics.GoogleAnalyticsTrackers;
+import com.dishq.buzz.R;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -35,6 +41,8 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
         numPointsAdded = getPrefs().getInt(Constants.NUM_POINTS_ADDED, 0);
         goingToSearch = getPrefs().getString(Constants.GOING_TO_SEARCH, null);
         Util.ACCESS_TOKEN = tokenType + " " + accessToken;
+        GoogleAnalyticsTrackers.initialize(this);
+        GoogleAnalyticsTrackers.getInstance().get(GoogleAnalyticsTrackers.Target.APP);
     }
 
     public static SharedPreferences getPrefs(){
@@ -44,16 +52,30 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
         return prefs;
     }
 
-    public static void runOnUiThread(Runnable runnable){
-        application.mHandler.post(runnable);
+    //Method for invoking Google analytics
+    public synchronized Tracker getGoogleAnalyticsTracker() {
+        GoogleAnalyticsTrackers googleAnalyticsTrackers = GoogleAnalyticsTrackers.getInstance();
+        return googleAnalyticsTrackers.get(GoogleAnalyticsTrackers.Target.APP);
     }
 
-    class UiThreadExecutor implements Executor {
-        @Override
-        public void execute(@NonNull Runnable command) {
-            mHandler.post(command);
-        }
+    /***
+     * Tracking screen view
+     *
+     * @param screenName screen name to be displayed on GA dashboard
+     */
+    public void trackScreenView(String screenName) {
+        Tracker mTracker = getGoogleAnalyticsTracker();
+        // Set screen name.
+        mTracker.setScreenName(screenName);
+        // Send a screen view.
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        GoogleAnalytics.getInstance(this).dispatchLocalHits();
     }
+
+    public static synchronized YW8Application getInstance() {
+        return application;
+    }
+
 
     public static int getNumPointsAdded() {
         return application.numPointsAdded;
@@ -87,10 +109,6 @@ public final class YW8Application extends android.support.multidex.MultiDexAppli
 
     public static void setGoingToSearch(String goingToSearch) {
         application.goingToSearch = goingToSearch;
-    }
-
-    public static synchronized YW8Application getInstance() {
-        return application;
     }
 
     @Override

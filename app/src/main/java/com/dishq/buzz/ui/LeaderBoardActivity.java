@@ -14,6 +14,10 @@ import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +48,7 @@ public class LeaderBoardActivity extends BaseActivity {
     private String TAG = "LeaderBoardActivity";
     private static int monthNumber = 0, yearNumber = 0;
     String monthOrYear = "", monthOrYearText = "";
-
+    MixpanelAPI mixpanel = null;
     ImageView ldBack, ldFinder;
     TextView ldHeader;
     ListView listView;
@@ -55,6 +59,8 @@ public class LeaderBoardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(LeaderBoardActivity.this);
         progressDialog.show();
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
 
         monthOrYear = Util.getMonthOrYear();
         yearNumber = Util.getYearNumber();
@@ -99,7 +105,8 @@ public class LeaderBoardActivity extends BaseActivity {
         tvMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //tvMonth.setBackground(getResources().getDrawable(R.drawable.button_selector));
+                // Tracking the screen view
+                YW8Application.getInstance().trackScreenView("Monthly_leaderboard");
                 fetchMonthlyDetails(monthNumber, yearNumber);
                 Intent intent = getIntent();
                 finish();
@@ -110,7 +117,7 @@ public class LeaderBoardActivity extends BaseActivity {
         tvYear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //tvYear.setBackground(getResources().getDrawable(R.drawable.button_selector));
+                YW8Application.getInstance().trackScreenView("Year_leaderboard");
                 fetchYearlyDetails(yearNumber);
                 Intent intent = getIntent();
                 finish();
@@ -137,6 +144,13 @@ public class LeaderBoardActivity extends BaseActivity {
             @Override
             public void onResponse(Call<MonthLeaderBoardResponse> call, Response<MonthLeaderBoardResponse> response) {
                 Log.d(TAG, "Success");
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("monthly", "monthly");
+                    mixpanel.track("monthly", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 progressDialog.dismiss();
                 try {
                     if (response.isSuccessful()) {
@@ -185,6 +199,13 @@ public class LeaderBoardActivity extends BaseActivity {
             @Override
             public void onResponse(Call<YearLeaderBoardResponse> call, Response<YearLeaderBoardResponse> response) {
                 Log.d(TAG, "Success");
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("yearly", "yearly");
+                    mixpanel.track("yearly", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 progressDialog.dismiss();
                 try {
                     if (response.isSuccessful()) {
@@ -216,4 +237,9 @@ public class LeaderBoardActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
+    }
 }

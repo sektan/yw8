@@ -34,7 +34,7 @@ public class SimilarRestaurantResponse {
         @Expose
         public String similarRestId;
 
-        @SerializedName("is_open_on")
+        @SerializedName("is_open_now")
         @Expose
         public Boolean similarRestIsOpenOn;
 

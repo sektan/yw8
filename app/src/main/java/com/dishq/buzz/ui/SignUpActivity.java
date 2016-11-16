@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
@@ -38,9 +39,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
+import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,6 +73,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     String ace = "";
     private TextView signupText;
+    MixpanelAPI mixpanel = null;
     LoginButton loginButton;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
     private ImageView facebookButton, googleButton;
@@ -74,6 +81,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
         //Facebook SDK is initialized
         facebookSDKInitialize();
 
@@ -321,6 +331,23 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                 progressDialog.dismiss();
                 Log.d("YW8", "success");
+                if(FACEBOOK_BUTTON_SELECTED) {
+                    try {
+                        final JSONObject properties = new JSONObject();
+                        properties.put("facebook", "signup");
+                        mixpanel.track("facebook", properties);
+                    } catch (final JSONException e) {
+                        throw new RuntimeException("Could not encode hour of the day in JSON");
+                    }
+                }else if(GOOGLE_BUTTON_SELECTED) {
+                    try {
+                        final JSONObject properties = new JSONObject();
+                        properties.put("google", "signup");
+                        mixpanel.track("google", properties);
+                    } catch (final JSONException e) {
+                        throw new RuntimeException("Could not encode hour of the day in JSON");
+                    }
+                }
                 SignUpResponse body = response.body();
                 if (body != null) {
                     YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, body.getAccessToken()).apply();
@@ -425,5 +452,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         assert message != null;
         message1.setLineSpacing(0, 1.5f);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
     }
 }

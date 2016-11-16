@@ -17,11 +17,11 @@
 
             <ImageView
                 android:id="@+id/back_button"
-                android:layout_width="45dp"
-                android:layout_height="46dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="4dp"
-                android:padding="11dp"
+                android:layout_marginStart="0dp"
+                android:padding="10dp"
                 android:src="@drawable/back_white" />
 
             <TextView
@@ -36,12 +36,11 @@
 
             <ImageView
                 android:id="@+id/tvMenuFinder"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="15dp"
-                android:padding="11dp"
+                android:layout_marginStart="16dp"
+                android:padding="10dp"
                 android:src="@drawable/search_white" />
         </LinearLayout>
 

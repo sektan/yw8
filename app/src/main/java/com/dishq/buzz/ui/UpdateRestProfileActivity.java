@@ -30,6 +30,10 @@ import com.dishq.buzz.services.GPSTrackerService;
 import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -60,6 +64,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
     private UpdateRestaurantFinder updateRestaurantFinder;
     public int rest_id = 0;
     public static Boolean no_gps = false;
+    MixpanelAPI mixpanel = null;
     public static Boolean yes_gps = false;
     private boolean noNetwork, didPause, locationOff;
     private ProgressDialog progressDialog, progressDialoglert;
@@ -85,6 +90,9 @@ public class UpdateRestProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
 
         Intent intentFromSearch = getIntent();
         if (intentFromSearch != null) {
@@ -605,6 +613,29 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 call.enqueue(new Callback<UpdateRestaurantResponse>() {
                     @Override
                     public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+                        try {
+                            final JSONObject properties = new JSONObject();
+                            properties.put(waitTimeUpdate, waitTimeUpdate);
+                            mixpanel.track(waitTimeUpdate, properties);
+                        } catch (final JSONException e) {
+                            throw new RuntimeException("Could not encode hour of the day in JSON");
+                        }
+
+                        try {
+                            final JSONObject properties = new JSONObject();
+                            properties.put(buzzTypeLabel, buzzTypeLabel);
+                            mixpanel.track(buzzTypeLabel, properties);
+                        } catch (final JSONException e) {
+                            throw new RuntimeException("Could not encode hour of the day in JSON");
+                        }
+
+                        try {
+                            final JSONObject properties = new JSONObject();
+                            properties.put("update", "update");
+                            mixpanel.track("update", properties);
+                        } catch (final JSONException e) {
+                            throw new RuntimeException("Could not encode hour of the day in JSON");
+                        }
                         if(progressDialog!=null) {
                             progressDialog.dismiss();
                         }
@@ -771,6 +802,12 @@ public class UpdateRestProfileActivity extends BaseActivity {
         Intent intent = new Intent(this, HomePageActivity.class);
         finish();
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
     }
 
 }

@@ -15,7 +15,12 @@ import android.widget.TextView;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Util;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 import retrofit2.Call;
@@ -34,9 +39,10 @@ import server.api.Config;
 public class RestaurantProfileActivity extends BaseActivity {
 
     private String query = "";
+    MixpanelAPI mixpanel = null;
     private String restaurantName = "";
     private String TAG = "RestaurantInfoResponse";
-    private Boolean isOpenNow, similarOpenNow=false;
+    private Boolean isOpenNow, similarOpenNow = null;
     private Toolbar restToolbar;
     private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait, rlNoWait;
     private ProgressDialog progressDialog;
@@ -53,6 +59,8 @@ public class RestaurantProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
         progressDialog.show();
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
 
         Intent intentFromSearch = getIntent();
 
@@ -85,6 +93,7 @@ public class RestaurantProfileActivity extends BaseActivity {
         rlRestWait = (RelativeLayout) findViewById(R.id.restaurant_wait_info);
         rlRestClosed = (RelativeLayout) findViewById(R.id.rl_rest_closed);
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
+        restToolbarName.setTypeface(Util.getFaceMedium());
         noOfMins = (TextView) findViewById(R.id.no_of_mins);
         noOfMins.setTypeface(Util.getFaceMedium());
         TextView waitTimeMinText = (TextView) findViewById(R.id.wait_time_min_text);
@@ -119,27 +128,11 @@ public class RestaurantProfileActivity extends BaseActivity {
                         rlRestWaitTime.setVisibility(View.GONE);
                         restaurantSuggestion.setVisibility(View.GONE);
                         cardViewSuggestRes.setVisibility(View.GONE);
-
                     } else {
                         //method to call SimilarRestaurant API
                         rlNoWait.setVisibility(View.GONE);
                         rlRestWaitTime.setVisibility(View.VISIBLE);
                         fetchSimilarRestInfo(query);
-                        if(similarOpenNow!=null) {
-                            if(similarOpenNow) {
-                                if (restaurantSuggestion != null) {
-                                    restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
-                                }
-                                restaurantSuggestion.setVisibility(View.VISIBLE);
-                                cardViewSuggestRes.setVisibility(View.VISIBLE);
-                            }else {
-                                if (restaurantSuggestion != null) {
-                                    restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
-                                }
-                                restaurantSuggestion.setVisibility(View.GONE);
-                                cardViewSuggestRes.setVisibility(View.GONE);
-                            }
-                        }
                     }
                 }
             } else {
@@ -150,19 +143,6 @@ public class RestaurantProfileActivity extends BaseActivity {
                 rlRestWait.setVisibility(View.GONE);
                 rlRestClosed.setVisibility(View.VISIBLE);
                 fetchSimilarRestInfo(query);
-                if (similarOpenNow) {
-                    if (restaurantSuggestion != null) {
-                        restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_closed));
-                    }
-                    restaurantSuggestion.setVisibility(View.VISIBLE);
-                    cardViewSuggestRes.setVisibility(View.VISIBLE);
-                } else {
-                    if (restaurantSuggestion != null) {
-                        restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
-                    }
-                    restaurantSuggestion.setVisibility(View.GONE);
-                    cardViewSuggestRes.setVisibility(View.GONE);
-                }
             }
             if (foodTypeText != null) {
                 String foodType = Arrays.toString(body.getCuisine());
@@ -189,6 +169,13 @@ public class RestaurantProfileActivity extends BaseActivity {
                 public void onClick(View view) {
                     Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
                     backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    try {
+                        final JSONObject properties = new JSONObject();
+                        properties.put("search", "rest info");
+                        mixpanel.track("search", properties);
+                    } catch (final JSONException e) {
+                        throw new RuntimeException("Could not encode hour of the day in JSON");
+                    }
                     startActivity(backButtonIntent);
                 }
             });
@@ -198,6 +185,13 @@ public class RestaurantProfileActivity extends BaseActivity {
                 public void onClick(View view) {
                     Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
                     finish();
+                    try {
+                        final JSONObject properties = new JSONObject();
+                        properties.put("search", "search");
+                        mixpanel.track("search", properties);
+                    } catch (final JSONException e) {
+                        throw new RuntimeException("Could not encode hour of the day in JSON");
+                    }
                     startActivity(finderIntent);
                 }
             });
@@ -215,11 +209,21 @@ public class RestaurantProfileActivity extends BaseActivity {
             public void onResponse(Call<RestaurantInfoResponse> call, Response<RestaurantInfoResponse> response) {
                 Log.d(TAG, "s");
                 progressDialog.dismiss();
-                RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
-                if (body != null) {
-                    setFunctionality(body);
+                try {
+                    if (response.isSuccessful()) {
+                        RestaurantInfoResponse.RestaurantInfo body = response.body().restaurantInfo;
+                        if (body != null) {
+                            setFunctionality(body);
+                        }
+                    }else {
+                        String error = response.errorBody().string();
+                        Log.d("Restaurant Profile", error);
+                    }
+                }catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
+
             @Override
             public void onFailure(Call<RestaurantInfoResponse> call, Throwable t) {
                 Log.d(TAG, "f");
@@ -228,71 +232,86 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     private void fetchSimilarRestInfo(final String query) {
-        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
 
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        final Call<SimilarRestaurantResponse> request = apiInterface.getSimilarRestaurantInfo(query);
+        request.enqueue(new Callback<SimilarRestaurantResponse>() {
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
-                progressDialog.show();
-            }
-
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                ApiInterface apiInterface = Config.createService(ApiInterface.class);
-                final Call<SimilarRestaurantResponse> request = apiInterface.getSimilarRestaurantInfo(query);
-                request.enqueue(new Callback<SimilarRestaurantResponse>() {
-                    @Override
-                    public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {
-                        Log.d(TAG, "Success");
-                        progressDialog.dismiss();
+            public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {
+                Log.d(TAG, "Success");
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("alternative rest", "alternative rest");
+                    mixpanel.track("alternative rest", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
+                try {
+                    if(response.isSuccessful()) {
                         SimilarRestaurantResponse.SimilarRestaurant body = response.body().similarRestaurant;
                         if (body != null) {
                             similarRestInfoFinder = new SimilarRestInfoFinder(body.getSimilarRestCuisine(), body.getSimilarRestAddr(), body.getSimilarRestName(),
                                     body.getSimilarRestId(), body.getSimilarRestIsOpenOn(), body.getSimilarRestType());
                             startSimilarRestInfoActivity(similarRestInfoFinder);
-                            similarOpenNow = similarRestInfoFinder.getSimilarRestIsOpenOn();
-                        } else {
-                            //show nothing
-                            similarOpenNow = false;
-                            restaurantSuggestion.setVisibility(View.GONE);
-                            cardViewSuggestRes.setVisibility(View.GONE);
                         }
+                    }else {
+                        String error = response.errorBody().string();
+                        Log.d("Restaurant Profile", error);
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                    @Override
-                    public void onFailure(Call<SimilarRestaurantResponse> call, Throwable t) {
-                        progressDialog.dismiss();
-                        similarOpenNow = false;
-                        Log.d(TAG, "Fail");
-                    }
-                });
-                return true;
             }
 
-        };
-        task.execute();
-
+            @Override
+            public void onFailure(Call<SimilarRestaurantResponse> call, Throwable t) {
+                similarOpenNow = false;
+                Log.d(TAG, "Fail");
+            }
+        });
     }
 
     public void startSimilarRestInfoActivity(SimilarRestInfoFinder similarRestInfoFinder) {
-        final String similarRestAddr = similarRestInfoFinder.getSimilarRestAddr();
-        final String similarRestName = similarRestInfoFinder.getSimilarRestName();
-        final String similarRestId = similarRestInfoFinder.getSimilarRestId();
+        if(similarRestInfoFinder!=null) {
+            final String similarRestAddr = similarRestInfoFinder.getSimilarRestAddr();
+            final String similarRestName = similarRestInfoFinder.getSimilarRestName();
+            final String similarRestId = similarRestInfoFinder.getSimilarRestId();
+            similarOpenNow = similarRestInfoFinder.getSimilarRestIsOpenOn();
 
-        suggestedRestName.setText(similarRestName);
-        suggestedRestAddr.setText(similarRestAddr);
-
-        cardViewSuggestRes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, RestaurantProfileActivity.class);
-                finish();
-                intentSuggestRest.putExtra("restaurant_name", similarRestName);
-                intentSuggestRest.putExtra("restaurant_id", similarRestId);
-                startActivity(intentSuggestRest);
+            if(similarOpenNow) {
+                restaurantSuggestion.setVisibility(View.VISIBLE);
+                cardViewSuggestRes.setVisibility(View.VISIBLE);
+                suggestedRestName.setText(similarRestName);
+                suggestedRestAddr.setText(similarRestAddr);
+                if (restaurantSuggestion != null) {
+                    restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
+                }
+            } else {
+                restaurantSuggestion.setVisibility(View.GONE);
+                cardViewSuggestRes.setVisibility(View.GONE);
+                if (restaurantSuggestion != null) {
+                    restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
+                }
             }
-        });
+            cardViewSuggestRes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, RestaurantProfileActivity.class);
+                    finish();
+                    intentSuggestRest.putExtra("restaurant_name", similarRestName);
+                    intentSuggestRest.putExtra("restaurant_id", similarRestId);
+                    startActivity(intentSuggestRest);
+                }
+            });
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
     }
 }
