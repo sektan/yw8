@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dishq.buzz.BaseActivity;
@@ -106,6 +107,15 @@ public class UserProfileActivity extends BaseActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                finish();
+                startActivity(intent);
+            }
+        });
+        RelativeLayout userGreenInfo = (RelativeLayout) findViewById(R.id.rl_up_user_info);
+        userGreenInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(UserProfileActivity.this, BadgesActivity.class);
                 finish();
                 startActivity(intent);
             }

@@ -116,10 +116,9 @@ public class SearchActivity extends BaseActivity {
                     if (YW8Application.getGoingToSearch().equals("restaurant")){
                         Intent i = new Intent(SearchActivity.this,
                                 RestaurantProfileActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         i.putExtra("restaurant_id",restaurnat_id);
                         i.putExtra("restaurant_name",restaurant_name+"");
-                        finish();
+                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     }else if (YW8Application.getGoingToSearch().equals("update")){
                         if(REST_IS_OPENED) {
@@ -220,8 +219,6 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-
-
     }
 
     @Override

@@ -26,7 +26,6 @@ import java.util.Arrays;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Finder.SimilarRestInfoFinder;
 import server.Response.RestaurantInfoResponse;
 import server.Response.SimilarRestaurantResponse;
 import server.api.ApiInterface;
@@ -47,7 +46,6 @@ public class RestaurantProfileActivity extends BaseActivity {
     private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait, rlNoWait;
     private ProgressDialog progressDialog;
 
-    private SimilarRestInfoFinder similarRestInfoFinder;
     private TextView restToolbarName, noOfMins, foodTypeText, restaurantTypeText,
             restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr,
             noWaitQuiet;
@@ -167,8 +165,8 @@ public class RestaurantProfileActivity extends BaseActivity {
             backButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, HomePageActivity.class);
-                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
+                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     try {
                         final JSONObject properties = new JSONObject();
                         properties.put("search", "rest info");
@@ -250,9 +248,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                     if(response.isSuccessful()) {
                         SimilarRestaurantResponse.SimilarRestaurant body = response.body().similarRestaurant;
                         if (body != null) {
-                            similarRestInfoFinder = new SimilarRestInfoFinder(body.getSimilarRestCuisine(), body.getSimilarRestAddr(), body.getSimilarRestName(),
-                                    body.getSimilarRestId(), body.getSimilarRestIsOpenOn(), body.getSimilarRestType());
-                            startSimilarRestInfoActivity(similarRestInfoFinder);
+                            startSimilarRestInfoActivity(body);
                         }
                     }else {
                         String error = response.errorBody().string();
@@ -272,12 +268,12 @@ public class RestaurantProfileActivity extends BaseActivity {
         });
     }
 
-    public void startSimilarRestInfoActivity(SimilarRestInfoFinder similarRestInfoFinder) {
-        if(similarRestInfoFinder!=null) {
-            final String similarRestAddr = similarRestInfoFinder.getSimilarRestAddr();
-            final String similarRestName = similarRestInfoFinder.getSimilarRestName();
-            final String similarRestId = similarRestInfoFinder.getSimilarRestId();
-            similarOpenNow = similarRestInfoFinder.getSimilarRestIsOpenOn();
+    public void startSimilarRestInfoActivity(SimilarRestaurantResponse.SimilarRestaurant body ) {
+        if(body.getSimilarRestName()!=null) {
+            final String similarRestAddr = body.getSimilarRestAddr();
+            final String similarRestName = body.getSimilarRestName();
+            final String similarRestId = body.getSimilarRestId();
+            similarOpenNow = body.getSimilarRestIsOpenOn();
 
             if(similarOpenNow) {
                 restaurantSuggestion.setVisibility(View.VISIBLE);
@@ -286,12 +282,6 @@ public class RestaurantProfileActivity extends BaseActivity {
                 suggestedRestAddr.setText(similarRestAddr);
                 if (restaurantSuggestion != null) {
                     restaurantSuggestion.setText(getResources().getString(R.string.similar_rest_text_wait));
-                }
-            } else {
-                restaurantSuggestion.setVisibility(View.GONE);
-                cardViewSuggestRes.setVisibility(View.GONE);
-                if (restaurantSuggestion != null) {
-                    restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
                 }
             }
             cardViewSuggestRes.setOnClickListener(new View.OnClickListener() {
@@ -305,8 +295,13 @@ public class RestaurantProfileActivity extends BaseActivity {
                     startActivity(intentSuggestRest);
                 }
             });
+        }else {
+            restaurantSuggestion.setVisibility(View.GONE);
+            cardViewSuggestRes.setVisibility(View.GONE);
+            if (restaurantSuggestion != null) {
+                restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
+            }
         }
-
     }
 
     @Override

@@ -9,22 +9,58 @@ import com.google.gson.annotations.SerializedName;
 
 public class VersionCheckResponse {
 
+    @SerializedName("response")
+    @Expose
     public String response;
-    public VersionCheckData data;
 
+    @SerializedName("data")
+    @Expose
+    public VersionCheckData versionCheckData;
 
-    class VersionCheckData {
+    public class VersionCheckData {
         @SerializedName("version_number")
         @Expose
-        public String versionNumber;
+        public String lVersionNumber;
         @SerializedName("show_update_popup")
         @Expose
         public boolean showUpdatePopup;
         @SerializedName("version_name")
         @Expose
-        public String versionName;
+        public String lVersionName;
         @SerializedName("do_force_update")
         @Expose
         public boolean doForceUpdate;
+
+        public String getlVersionNumber() {
+           return lVersionNumber;
+        }
+
+        public void setlVersionNumber(String lVersionNumber) {
+            this.lVersionNumber = lVersionNumber;
+        }
+
+        public boolean getShowUpdatePopup() {
+            return showUpdatePopup;
+        }
+
+        public void setShowUpdatePopup(Boolean showUpdatePopup) {
+            this.showUpdatePopup = showUpdatePopup;
+        }
+
+        public String getlVersionName() {
+            return lVersionName;
+        }
+
+        public void setlVersionName(String lVersionName) {
+            this.lVersionName = lVersionName;
+        }
+
+        public Boolean getDoForceUpdate() {
+            return doForceUpdate;
+        }
+
+        public void setDoForceUpdate(Boolean doForceUpdate) {
+            this.doForceUpdate = doForceUpdate;
+        }
     }
 }

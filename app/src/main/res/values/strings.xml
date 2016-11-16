@@ -22,6 +22,7 @@
     <string name="grant_type_conv_token">convert_token</string>
     <string name="backend_google">google-oauth2</string>
     <string name="facebook_app_id">511959269002627</string>
+
     <!-- Menu Bar -->
     <string name="options">Options</string>
     <string name="get_points">Win Prizes</string>
@@ -36,7 +37,7 @@
     <string name="give_time_win_prizes">Give waiting time &amp; win prizes</string>
 
     <!-- Get Points -->
-    <string name="get_points_heading">Win Points</string>
+    <string name="get_points_heading">Win Prizes</string>
     <string name="get_points_back">Home</string>
 
     <!-- Search Activity -->
@@ -60,10 +61,11 @@
     <string name="similar_closed">There are no similar open restaurants nearby right now.</string>
     <string name="num_of_points_added">Thanks, you just earned %s points&#33;</string>
     <string name="too_often_update">You can\'t update the waiting time for the same place too often</string>
+
     <!-- Leader Board -->
     <string name="leaderboard">Leaderboard</string>
     <string name="monthly">Monthly</string>
-    <string name="year">Year</string>
+    <string name="year">Yearly</string>
 
     <!-- Big Badge -->
     <string name="congrats">Congratulations &#33;</string>
