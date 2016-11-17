@@ -270,6 +270,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);;
+                backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
                 startActivity(backButtonIntent);
             }
@@ -799,9 +800,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, HomePageActivity.class);
+        Intent searchBackIntent = new Intent(this, SearchActivity.class);
+        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
-        startActivity(intent);
+        startActivity(searchBackIntent);
     }
 
     @Override

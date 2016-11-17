@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,8 +22,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import custom.MonthlyAdapter;
+import android.app.DatePickerDialog;
 import custom.YearlyAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +53,7 @@ public class LeaderBoardActivity extends BaseActivity {
     String monthOrYear = "", monthOrYearText = "";
     MixpanelAPI mixpanel = null;
     ImageView ldBack, ldFinder;
+    CharSequence title = "Choose a month";
     TextView ldHeader;
     ListView listView;
     Button yearOrMonth, tvYear, tvMonth;
@@ -101,6 +105,12 @@ public class LeaderBoardActivity extends BaseActivity {
 
         if(monthOrYearText!=null) {
             yearOrMonth.setText(monthOrYearText);
+            yearOrMonth.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   createDialogWithoutDateField().show();
+                }
+            });
         }
         tvMonth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,4 +252,34 @@ public class LeaderBoardActivity extends BaseActivity {
         mixpanel.flush();
         super.onDestroy();
     }
+    private DatePickerDialog createDialogWithoutDateField() {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        DatePickerDialog dpd = new DatePickerDialog(this, null, year, month, 0);
+        dpd.setTitle("Choose a month");
+        try {
+            java.lang.reflect.Field[] datePickerDialogFields = dpd.getClass().getDeclaredFields();
+            for (java.lang.reflect.Field datePickerDialogField : datePickerDialogFields) {
+                if (datePickerDialogField.getName().equals("mDatePicker")) {
+                    datePickerDialogField.setAccessible(true);
+                    DatePicker datePicker = (DatePicker) datePickerDialogField.get(dpd);
+                    java.lang.reflect.Field[] datePickerFields = datePickerDialogField.getType().getDeclaredFields();
+                    for (java.lang.reflect.Field datePickerField : datePickerFields) {
+                        Log.i("test", datePickerField.getName());
+                        if ("mDaySpinner".equals(datePickerField.getName())) {
+                            datePickerField.setAccessible(true);
+                            Object dayPicker = datePickerField.get(datePicker);
+                            //Object monthPicker = datePickerField.get()
+                            ((View) dayPicker).setVisibility(View.GONE);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+        }
+        return dpd;
+    }
+
 }

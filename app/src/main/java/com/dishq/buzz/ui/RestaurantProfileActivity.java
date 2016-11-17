@@ -166,7 +166,8 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
-                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                    finish();
                     try {
                         final JSONObject properties = new JSONObject();
                         properties.put("search", "rest info");
@@ -182,6 +183,7 @@ public class RestaurantProfileActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent finderIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
+                    finderIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                     finish();
                     try {
                         final JSONObject properties = new JSONObject();
@@ -302,6 +304,15 @@ public class RestaurantProfileActivity extends BaseActivity {
                 restaurantSuggestion.setText(getResources().getString(R.string.similar_closed));
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent searchBackIntent = new Intent(this, SearchActivity.class);
+        searchBackIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finish();
+        startActivity(searchBackIntent);
     }
 
     @Override

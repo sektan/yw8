@@ -3,6 +3,7 @@ package com.dishq.buzz.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +37,6 @@ import server.api.Config;
 
 public class UserProfileActivity extends BaseActivity {
 
-    private static String serverAccessToken;
     private String TAG = "UserProfileActivity";
     MixpanelAPI mixpanel = null;
     private String monthOrYear = "";
@@ -105,8 +106,10 @@ public class UserProfileActivity extends BaseActivity {
         userProfBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                SearchActivity.currentActivity.finish();
                 finish();
                 startActivity(intent);
             }
@@ -116,7 +119,13 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, BadgesActivity.class);
-                finish();
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("badges", "profile");
+                    mixpanel.track("badges", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 startActivity(intent);
             }
         });
@@ -154,13 +163,11 @@ public class UserProfileActivity extends BaseActivity {
             }
         }
 
-        int thresholdPoints =body.nextBadgeInfo.getThresholdPoints()-1;
-        int currPoints = body.getfLifeTimePoints();
-        userProfPointsAlloted.setText(Integer.toString(currPoints));
-        userProfProgress.setMax(thresholdPoints);
-        userProfProgress.setProgress(currPoints);
+        userProfPointsAlloted.setText(String.format(Locale.ENGLISH, "%d", body.getfLifeTimePoints()));
+        userProfProgress.setMax(body.nextBadgeInfo.getThresholdPoints()-1);
+        userProfProgress.setProgress(body.getfLifeTimePoints());
         userProfProgress.getProgressDrawable().setColorFilter(
-                getResources().getColor(R.color.lightPurple), android.graphics.PorterDuff.Mode.SRC_IN);
+                ContextCompat.getColor(this, R.color.lightPurple), android.graphics.PorterDuff.Mode.SRC_IN);
 
         userProfInfoText.setText(body.getfPointsToUgrade());
 
@@ -173,11 +180,11 @@ public class UserProfileActivity extends BaseActivity {
         }
 
         if (body.monthBuzzPointsInfo.getmNoOfPoints() != 0) {
-            userProfMonthPoints.setText(Integer.toString(body.monthBuzzPointsInfo.getmNoOfPoints()));
+            userProfMonthPoints.setText(String.format(Locale.ENGLISH, "%d", body.monthBuzzPointsInfo.getmNoOfPoints()));
         }
 
         if (body.yearBuzzPointsInfo.getyYear() != 0) {
-            userProfYear.setText(Integer.toString(body.yearBuzzPointsInfo.getyYear()));
+            userProfYear.setText(String.format(Locale.ENGLISH, "%d", body.yearBuzzPointsInfo.getyYear()));
             Util.setYearNumber(body.yearBuzzPointsInfo.getyYear());
         }
 
@@ -187,7 +194,7 @@ public class UserProfileActivity extends BaseActivity {
         }
 
         if (body.yearBuzzPointsInfo.getyNoOfPoints() != 0) {
-            userProfYearPoints.setText(Integer.toString(body.yearBuzzPointsInfo.getyNoOfPoints()));
+            userProfYearPoints.setText(String.format(Locale.ENGLISH, "%d", body.yearBuzzPointsInfo.getyNoOfPoints()));
         }
 
         Util.setMonthNumber(body.monthBuzzPointsInfo.getmMonthNo());
@@ -231,7 +238,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void fetchFullUserDetails() {
-        serverAccessToken = YW8Application.getAccessToken();
+        String serverAccessToken = YW8Application.getAccessToken();
 
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<FullUserDetailsResponse> request = apiInterface.getFullUserDetails(serverAccessToken);
@@ -271,6 +278,7 @@ public class UserProfileActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         finish();
         startActivity(intent);
     }

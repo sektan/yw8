@@ -11,7 +11,7 @@
     <string name="app_heading">YW8</string>
 
     <!-- signIn/signUp -->
-    <string name="start_signup_message">Check how long the waiting time is at&#8230;</string>
+    <string name="start_signup_message">Check the waiting time at&#8230;</string>
     <string name="restaurants">Restaurants</string>
     <string name="pubs">Pubs</string>
     <string name="bars">Bars</string>

@@ -2,6 +2,7 @@ package com.dishq.buzz.ui;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ public class SearchActivity extends BaseActivity {
     LinearLayout norestaurant ;
     ImageView backButton;
     ProgressBar progressBar;
+
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
@@ -126,19 +128,17 @@ public class SearchActivity extends BaseActivity {
                                     UpdateRestProfileActivity.class);
                             i.putExtra("restaurant_id",restaurnat_id);
                             i.putExtra("restaurant_name",restaurant_name+"");
-                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            finish();
+                            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(i);
                         }else {
                             Intent i = new Intent(SearchActivity.this,
                                     RestaurantProfileActivity.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             i.putExtra("restaurant_id",restaurnat_id);
                             i.putExtra("restaurant_name",restaurant_name+"");
                             finish();
                             startActivity(i);
                         }
-
                     }
 
                 }

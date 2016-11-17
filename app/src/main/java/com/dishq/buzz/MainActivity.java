@@ -82,25 +82,27 @@ public class MainActivity extends AppCompatActivity {
                         VersionCheckResponse.VersionCheckData body = response.body().versionCheckData;
                         if(body!=null) {
                             if(body.getShowUpdatePopup()) {
-                                showAlert("Update YW8", "To enjoy the newest personalised recommendations please update dishq", false);
-                            }
-                            if(body.getDoForceUpdate()) {
-                                showAlert("Update YW8", "To enjoy the newest personalised recommendations please update dishq", true);
-                            }
-                            if (!YW8Application.getAccessToken().equals("null null")) {
-                                //Intent to start home page when access token
-                                Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
-                                startHomePageActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                finish();
-                                startActivity(startHomePageActivity);
-                            } else {
-                                //Intent to start the Signup Activity after the splash screen
-                                Intent i = new Intent(MainActivity.this, SignUpActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                finish();
-                                startActivity(i);
-                            }
+                                if(body.getDoForceUpdate()) {
+                                    showAlert("Update YW8", "Update the app for best performance", true);
+                                }else {
 
+                                    showAlert("Update YW8", "Update the app for best performance", false);
+                                }
+                            }else {
+                                if (!YW8Application.getAccessToken().equals("null null")) {
+                                    //Intent to start home page when access token
+                                    Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
+                                    startHomePageActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    finish();
+                                    startActivity(startHomePageActivity);
+                                } else {
+                                    //Intent to start the Signup Activity after the splash screen
+                                    Intent i = new Intent(MainActivity.this, SignUpActivity.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    finish();
+                                    startActivity(i);
+                                }
+                            }
                         }
 
                     } else {
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showAlert(String title, String message, boolean force) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update dishq");
+        builder.setTitle(title);
         builder.setMessage(message).setCancelable(false)
                 .setPositiveButton("Update", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

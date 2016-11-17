@@ -112,7 +112,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 intentSearch.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 try {
                     final JSONObject properties = new JSONObject();
-                    properties.put("search", "search");
+                    properties.put("search", "home");
                     mixpanel.track("search", properties);
                 } catch (final JSONException e) {
                     throw new RuntimeException("Could not encode hour of the day in JSON");
@@ -131,8 +131,8 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 Intent intentSearch = new Intent(HomePageActivity.this, SearchActivity.class);
                 try {
                     final JSONObject properties = new JSONObject();
-                    properties.put("update", "update");
-                    mixpanel.track("update", properties);
+                    properties.put("go2update", "home");
+                    mixpanel.track("go2update", properties);
                 } catch (final JSONException e) {
                     throw new RuntimeException("Could not encode hour of the day in JSON");
                 }
@@ -159,7 +159,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 intentUserProf.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 try {
                     final JSONObject properties = new JSONObject();
-                    properties.put("profile", "profile");
+                    properties.put("profile", "home");
                     mixpanel.track("profile", properties);
                 } catch (final JSONException e) {
                     throw new RuntimeException("Could not encode hour of the day in JSON");

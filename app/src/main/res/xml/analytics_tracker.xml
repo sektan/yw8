@@ -21,5 +21,6 @@
     <screenName name="com.dishq.buzz.ui.BigBadgeActivity">New Badge</screenName>
     <screenName name="com.dishq.buzz.ui.UserProfileActivity">User Profile</screenName>
     <screenName name="com.dishq.buzz.ui.LeaderBoardActivity">LeaderBoard</screenName>
+    <screenName name="com.dishq.buzz.ui.BadgesActivity">Badges</screenName>
 
     </resources>
