@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(!Util.checkAndShowNetworkPopup(MainActivity.this)) {
+            fetchVersion(versionName, versionCode);
+        }
     }
 
     // To set the timer for the splash screen to be displayed
