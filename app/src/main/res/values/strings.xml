@@ -11,10 +11,6 @@
     <string name="app_heading">YW8</string>
 
     <!-- signIn/signUp -->
-    <string name="start_signup_message">Check the waiting time at&#8230;</string>
-    <string name="restaurants">Restaurants</string>
-    <string name="pubs">Pubs</string>
-    <string name="bars">Bars</string>
     <string name="connect_with">Connect with</string>
     <string name="server_client_id">54832716150-fedbq3bfv99as0vkv2fp3q12juu3btp7.apps.googleusercontent.com</string>
     <string name="server_web_id">54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com</string>
@@ -49,6 +45,7 @@
     <string name="badge_type_rookie">ROOKIE</string>
     <string name="lifetime_points">Lifetime Points</string>
     <string name="profile">Profile</string>
+    <string name="year_leaderboard">%d Leaderboard</string>
 
     <!-- Restaurant Profile & Update Profile-->
     <string name="current_waiting_time_text">Current waiting time is</string>
@@ -70,8 +67,21 @@
     <!-- Big Badge -->
     <string name="congrats">Congratulations &#33;</string>
     <string name="you_are_now_a">You are now a</string>
-
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
+    <!-- Badge Info -->
+    <string name="general">GENERAL</string>
+    <string name="gen_level">LEVEL 6</string>
+    <string name="knight">KNIGHT</string>
+    <string name="kni_level">LEVEL 5</string>
+    <string name="captain">CAPTAIN</string>
+    <string name="cap_level">LEVEL 4</string>
+    <string name="agent">AGENT</string>
+    <string name="age_level">LEVEL 3</string>
+    <string name="soldier">SOLDIER</string>
+    <string name="sol_level">LEVEL 2</string>
+    <string name="rookie">ROOKIE</string>
+    <string name="roo_level">LEVEL 1</string>
+    <string name="badges_to_collect">Badges To Collect</string>
 
 </resources>

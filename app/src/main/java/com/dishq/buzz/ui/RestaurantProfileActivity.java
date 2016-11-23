@@ -39,16 +39,15 @@ public class RestaurantProfileActivity extends BaseActivity {
 
     private String query = "";
     MixpanelAPI mixpanel = null;
-    private String restaurantName = "";
+    private String restaurantName = "", restAdd;
     private String TAG = "RestaurantInfoResponse";
     private Boolean isOpenNow, similarOpenNow = null;
     private Toolbar restToolbar;
-    private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait, rlNoWait;
+    private RelativeLayout rlRestWaitTime, rlRestClosed, rlRestWait;
     private ProgressDialog progressDialog;
 
     private TextView restToolbarName, noOfMins, foodTypeText, restaurantTypeText,
-            restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr,
-            noWaitQuiet;
+            restAddrText, restaurantSuggestion, suggestedRestName, suggestedRestAddr;
     private ImageView backButton, userProfFinder;
     private CardView cardViewSuggestRes;
 
@@ -60,10 +59,8 @@ public class RestaurantProfileActivity extends BaseActivity {
         //MixPanel Instantiation
         mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
 
-        Intent intentFromSearch = getIntent();
-
-        query = intentFromSearch.getExtras().getString("restaurant_id");
-        restaurantName = intentFromSearch.getExtras().getString("restaurant_name");
+        query = Util.getRestId();
+        restaurantName = Util.getRestaurantName();
         setContentView(R.layout.activity_restaurant_profile);
         setTags();
 
@@ -71,22 +68,11 @@ public class RestaurantProfileActivity extends BaseActivity {
     }
 
     private void setTags() {
-        TextView noWaitTime = (TextView) findViewById(R.id.no_wait_time_text);
-        noWaitTime.setTypeface(Util.getFaceRoman());
-        TextView noWaitNoOfMin = (TextView) findViewById(R.id.nowait_no_of_mins);
-        noWaitNoOfMin.setTypeface(Util.getFaceMedium());
-        TextView noWaitNoOfMinText = (TextView) findViewById(R.id.nowait_no_min_text);
-        noWaitNoOfMinText.setTypeface(Util.getFaceRoman());
-        TextView noWaitPlaceIs = (TextView) findViewById(R.id.nowait_place_is);
-        noWaitPlaceIs.setTypeface(Util.getFaceRoman());
-        noWaitQuiet = (TextView) findViewById(R.id.nowait_quiet);
-        noWaitQuiet.setTypeface(Util.getFaceMedium());
         TextView restClosed = (TextView) findViewById(R.id.rest_closed);
         restClosed.setTypeface(Util.getFaceMedium());
         TextView waitTimeText = (TextView) findViewById(R.id.wait_time_text);
         waitTimeText.setTypeface(Util.getFaceRoman());
         restToolbar = (Toolbar) findViewById(R.id.toolbar);
-        rlNoWait = (RelativeLayout) findViewById(R.id.rest_no_wait_time);
         rlRestWaitTime = (RelativeLayout) findViewById(R.id.restaurant_wait_time_info);
         rlRestWait = (RelativeLayout) findViewById(R.id.restaurant_wait_info);
         rlRestClosed = (RelativeLayout) findViewById(R.id.rl_rest_closed);
@@ -117,26 +103,21 @@ public class RestaurantProfileActivity extends BaseActivity {
         if (body != null) {
             isOpenNow = body.getIsOpenNow();
             if (isOpenNow) {
-                noWaitQuiet.setText(body.waitTimeData.getBuzzTypeText());
                 if (noOfMins != null) {
                     String noOfmin = body.waitTimeData.getWaitTimeDisplay().replace(" mins", "");
                     noOfMins.setText(noOfmin);
+                    rlRestWaitTime.setVisibility(View.VISIBLE);
                     if (body.waitTimeData.getWaitTime().equals("0")) {
-                        rlNoWait.setVisibility(View.VISIBLE);
-                        rlRestWaitTime.setVisibility(View.GONE);
                         restaurantSuggestion.setVisibility(View.GONE);
                         cardViewSuggestRes.setVisibility(View.GONE);
                     } else {
                         //method to call SimilarRestaurant API
-                        rlNoWait.setVisibility(View.GONE);
-                        rlRestWaitTime.setVisibility(View.VISIBLE);
                         fetchSimilarRestInfo(query);
                     }
                 }
             } else {
                 restToolbar.setBackgroundColor(getResources().getColor(R.color.red));
                 rlRestWaitTime.setVisibility(View.VISIBLE);
-                rlNoWait.setVisibility(View.GONE);
                 rlRestWaitTime.setBackgroundColor(getResources().getColor(R.color.red));
                 rlRestWait.setVisibility(View.GONE);
                 rlRestClosed.setVisibility(View.VISIBLE);
@@ -292,8 +273,8 @@ public class RestaurantProfileActivity extends BaseActivity {
 
                     Intent intentSuggestRest = new Intent(RestaurantProfileActivity.this, RestaurantProfileActivity.class);
                     finish();
-                    intentSuggestRest.putExtra("restaurant_name", similarRestName);
-                    intentSuggestRest.putExtra("restaurant_id", similarRestId);
+                    Util.setRestId(similarRestId);
+                    Util.setRestaurantName(similarRestName);
                     startActivity(intentSuggestRest);
                 }
             });

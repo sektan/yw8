@@ -62,6 +62,7 @@ public class GPSTrackerService extends Service implements LocationListener {
                 // no network provider is enabled
             } else {
                 // First get location from Network Provider
+                this.canGetLocation = true;
                 try {
                     if (isNetworkEnabled) {
                         locationManager.requestLocationUpdates(
@@ -92,7 +93,6 @@ public class GPSTrackerService extends Service implements LocationListener {
                                 location = locationManager
                                         .getLastKnownLocation(LocationManager.GPS_PROVIDER);
                                 if (location != null) {
-                                    this.canGetLocation = true;
                                     latitude = location.getLatitude();
                                     longitude = location.getLongitude();
                                 }
@@ -165,7 +165,6 @@ public class GPSTrackerService extends Service implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        getLocation();
     }
 
     @Override

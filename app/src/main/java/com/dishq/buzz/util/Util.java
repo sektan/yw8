@@ -27,13 +27,12 @@ public class Util {
     public static double longitude;
     public static String monthOrYear = "";
     public static String monthName = "";
+    public static String restaurantName = "", restId = "", restAddr = "";
     public static int yearNumber = 0, monthNumber = 0;
     public static Typeface faceRoman = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
             "avenirltstdroman.ttf"),
             faceMedium = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
                     "avenirltstdmedium.ttf");
-
-    private static Util utilContent;
 
     public static Typeface getFaceRoman() {
         return faceRoman;
@@ -59,7 +58,10 @@ public class Util {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            System.exit(0);
+                            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                            homeIntent.addCategory( Intent.CATEGORY_HOME );
+                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            activity.startActivity(homeIntent);
                         }
                     })
                     .create();
@@ -86,36 +88,59 @@ public class Util {
         return true;
     }
 
+    public static String getRestId() {
+        return Util.restId;
+    }
+
+    public static void setRestId(String restId) {
+        Util.restId = restId;
+    }
+
+    public static String getRestaurantName() {
+        return Util.restaurantName;
+    }
+
+    public static void setRestaurantName(String restaurantName) {
+        Util.restaurantName = restaurantName;
+    }
+
+    public static String getRestAddr() {
+        return Util.restAddr;
+    }
+
+    public static void setRestAddr(String restAddr) {
+        Util.restAddr = restAddr;
+    }
 
     public static String getMonthOrYear() {
-        return utilContent.monthOrYear;
+        return Util.monthOrYear;
     }
 
     public static void setMonthOrYear(String monthOrYear) {
-        utilContent.monthOrYear = monthOrYear;
+        Util.monthOrYear = monthOrYear;
     }
 
     public static String getMonthName() {
-        return utilContent.monthName;
+        return Util.monthName;
     }
 
     public static void setMonthName(String monthName) {
-        utilContent.monthName = monthName;
+        Util.monthName = monthName;
     }
 
     public static int getYearNumber() {
-        return utilContent.yearNumber;
+        return Util.yearNumber;
     }
 
     public static void setYearNumber(int yearNumber) {
-        utilContent.yearNumber = yearNumber;
+        Util.yearNumber = yearNumber;
     }
 
     public static int getMonthNumber() {
-        return utilContent.monthNumber;
+        return Util.monthNumber;
     }
 
     public static void setMonthNumber(int monthNumber) {
-        utilContent.monthNumber = monthNumber;
+        Util.monthNumber = monthNumber;
     }
 }

@@ -1,8 +1,11 @@
 package com.dishq.buzz.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -68,11 +71,11 @@ public class LeaderBoardActivity extends BaseActivity {
 
         monthOrYear = Util.getMonthOrYear();
         yearNumber = Util.getYearNumber();
-        monthNumber = Util.getMonthNumber();
+        //monthNumber = Util.getMonthNumber();
         setContentView(R.layout.activity_leaderboard);
         setTags();
         if (monthOrYear.equals("month")) {
-            fetchMonthlyDetails(monthNumber, yearNumber);
+            //fetchMonthlyDetails(monthNumber, yearNumber);
         } else if (monthOrYear.equals("year")) {
             fetchYearlyDetails(yearNumber);
         }
@@ -97,8 +100,8 @@ public class LeaderBoardActivity extends BaseActivity {
         ldHeader.setTypeface(Util.getFaceMedium());
         tvYear = (Button) findViewById(R.id.tv_year);
         tvYear.setTypeface(Util.getFaceRoman());
-        tvMonth = (Button) findViewById(R.id.tv_monthly);
-        tvMonth.setTypeface(Util.getFaceRoman());
+//        tvMonth = (Button) findViewById(R.id.tv_monthly);
+//        tvMonth.setTypeface(Util.getFaceRoman());
     }
 
     public void setFunctionality() {
@@ -108,97 +111,97 @@ public class LeaderBoardActivity extends BaseActivity {
             yearOrMonth.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   createDialogWithoutDateField().show();
+                   //createDialogWithoutDateField().show();
                 }
             });
         }
-        tvMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Tracking the screen view
-                YW8Application.getInstance().trackScreenView("Monthly_leaderboard");
-                fetchMonthlyDetails(monthNumber, yearNumber);
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
-        });
+//        tvMonth.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Tracking the screen view
+//                YW8Application.getInstance().trackScreenView("Monthly_leaderboard");
+//                fetchMonthlyDetails(monthNumber, yearNumber);
+//                Intent intent = getIntent();
+//                finish();
+//                startActivity(intent);
+//            }
+//        });
 
-        tvYear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YW8Application.getInstance().trackScreenView("Year_leaderboard");
-                fetchYearlyDetails(yearNumber);
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
-        });
-
-    }
-
-    private void fetchMonthlyDetails(final int monthNumber, final int yearNumber) {
-        monthOrYear = "month";
-        Util.setMonthOrYear(monthOrYear);
-        monthOrYearText = Util.getMonthName();
-        if(tvMonth!=null) {
-            tvMonth.setTextColor(getResources().getColor(R.color.white));
-        }
-        if(tvYear!=null) {
-            tvYear.setTextColor(getResources().getColor(R.color.offWhite));
-        }
-        final String header = YW8Application.getAccessToken();
-        ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        Call<MonthLeaderBoardResponse> request = apiInterface.getMonthLeaderBoardDetails(header, monthNumber, yearNumber);
-        request.enqueue(new Callback<MonthLeaderBoardResponse>() {
-            @Override
-            public void onResponse(Call<MonthLeaderBoardResponse> call, Response<MonthLeaderBoardResponse> response) {
-                Log.d(TAG, "Success");
-                try {
-                    final JSONObject properties = new JSONObject();
-                    properties.put("monthly", "monthly");
-                    mixpanel.track("monthly", properties);
-                } catch (final JSONException e) {
-                    throw new RuntimeException("Could not encode hour of the day in JSON");
-                }
-                progressDialog.dismiss();
-                try {
-                    if (response.isSuccessful()) {
-                        monthlyLeaderBoardFinder.clear();
-                        for (MonthLeaderBoardResponse.MonthPointsInfo data : response.body().monthPointsInfo) {
-                            monthlyLeaderBoardFinder.add(new MonthlyLeaderBoardFinder(data.monthPoints, data.monthRank, data.monthUserDetails.monthUserName,
-                                    data.monthUserDetails.monthIsCurrentUser, data.monthUserDetails.monthUserId));
-                        }
-                        monthlyAdapter = new MonthlyAdapter(LeaderBoardActivity.this, monthlyLeaderBoardFinder);
-                        listView.setAdapter(monthlyAdapter);
-                        setFunctionality();
-                    } else {
-                        String error = response.errorBody().string();
-                        Log.d("LeaderBoard", error);
-                    }
-
-                    return;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MonthLeaderBoardResponse> call, Throwable t) {
-                Log.d(TAG, "Fail");
-                progressDialog.dismiss();
-            }
-        });
+//        tvYear.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                YW8Application.getInstance().trackScreenView("Year_leaderboard");
+//                fetchYearlyDetails(yearNumber);
+//                Intent intent = getIntent();
+//                finish();
+//                startActivity(intent);
+//            }
+//        });
 
     }
+
+//    private void fetchMonthlyDetails(final int monthNumber, final int yearNumber) {
+//        monthOrYear = "month";
+//        Util.setMonthOrYear(monthOrYear);
+//        monthOrYearText = Util.getMonthName();
+//        if(tvMonth!=null) {
+//            tvMonth.setTextColor(getResources().getColor(R.color.white));
+//        }
+//        if(tvYear!=null) {
+//            tvYear.setTextColor(getResources().getColor(R.color.offWhite));
+//        }
+//        final String header = YW8Application.getAccessToken();
+//        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+//        Call<MonthLeaderBoardResponse> request = apiInterface.getMonthLeaderBoardDetails(header, monthNumber, yearNumber);
+//        request.enqueue(new Callback<MonthLeaderBoardResponse>() {
+//            @Override
+//            public void onResponse(Call<MonthLeaderBoardResponse> call, Response<MonthLeaderBoardResponse> response) {
+//                Log.d(TAG, "Success");
+//                try {
+//                    final JSONObject properties = new JSONObject();
+//                    properties.put("monthly", "monthly");
+//                    mixpanel.track("monthly", properties);
+//                } catch (final JSONException e) {
+//                    throw new RuntimeException("Could not encode hour of the day in JSON");
+//                }
+//                progressDialog.dismiss();
+//                try {
+//                    if (response.isSuccessful()) {
+//                        monthlyLeaderBoardFinder.clear();
+//                        for (MonthLeaderBoardResponse.MonthPointsInfo data : response.body().monthPointsInfo) {
+//                            monthlyLeaderBoardFinder.add(new MonthlyLeaderBoardFinder(data.monthPoints, data.monthRank, data.monthUserDetails.monthUserName,
+//                                    data.monthUserDetails.monthIsCurrentUser, data.monthUserDetails.monthUserId));
+//                        }
+//                        monthlyAdapter = new MonthlyAdapter(LeaderBoardActivity.this, monthlyLeaderBoardFinder);
+//                        listView.setAdapter(monthlyAdapter);
+//                        setFunctionality();
+//                    } else {
+//                        String error = response.errorBody().string();
+//                        Log.d("LeaderBoard", error);
+//                    }
+//
+//                    return;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<MonthLeaderBoardResponse> call, Throwable t) {
+//                Log.d(TAG, "Fail");
+//                progressDialog.dismiss();
+//            }
+//        });
+//
+//    }
 
     private void fetchYearlyDetails(final int yearNumber) {
         monthOrYearText = Integer.toString(Util.getYearNumber());
         monthOrYear = "year";
         Util.setMonthOrYear(monthOrYear);
-        if(tvMonth!=null) {
-            tvMonth.setTextColor(getResources().getColor(R.color.offWhite));
-        }
+//        if(tvMonth!=null) {
+//            tvMonth.setTextColor(getResources().getColor(R.color.offWhite));
+//        }
         if(tvYear!=null) {
             tvYear.setTextColor(getResources().getColor(R.color.white));
         }
@@ -242,9 +245,43 @@ public class LeaderBoardActivity extends BaseActivity {
             public void onFailure(Call<YearLeaderBoardResponse> call, Throwable t) {
                 Log.d(TAG, "Fail");
                 progressDialog.dismiss();
+                if(!Util.checkAndShowNetworkPopup(LeaderBoardActivity.this)){
+                    fetchYearlyDetails(yearNumber);
+                }else {
+                    alertServerConnectFailure(LeaderBoardActivity.this);
+                }
             }
         });
 
+    }
+
+    public void alertServerConnectFailure(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("Oops, something went wrong, please try again")
+                .setCancelable(false)
+                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent backButtonIntent = new Intent(LeaderBoardActivity.this, LeaderBoardActivity.class);
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        finish();
+                        startActivity(backButtonIntent);
+                    }
+                })
+                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                        homeIntent.addCategory( Intent.CATEGORY_HOME );
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(homeIntent);
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
     @Override

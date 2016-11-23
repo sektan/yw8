@@ -22,12 +22,25 @@
         android:layout_marginTop="17dp">
 
         <TextView
-            android:id="@+id/cv_up_rest_name"
+        android:id="@+id/cv_up_rest_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/visible_text_reading_size"
+        android:textStyle="normal|bold" />
+
+        <TextView
+            android:id="@+id/cv_up_rest_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="6dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/cv_up_rest_name"
+            android:alpha="0.58"
             android:textColor="@color/black"
             android:textSize="@dimen/visible_text_reading_size"
             android:textStyle="normal|bold" />
@@ -36,7 +49,7 @@
             android:id="@+id/tv_current_wait"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/cv_up_rest_name"
+            android:layout_below="@+id/cv_up_rest_add"
             android:layout_marginTop="30dp"
             android:alpha="0.86"
             android:text="@string/current_wait"
@@ -59,6 +72,7 @@
                 card_view:cardElevation="2dp"
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
+                android:clickable="false"
                 card_view:cardBackgroundColor="@color/white"
                 card_view:cardCornerRadius="2dp">
 
@@ -99,6 +113,7 @@
                 card_view:cardElevation="0dp"
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
+                android:clickable="false"
                 card_view:cardBackgroundColor="@color/cardOne"
                 card_view:cardCornerRadius="2dp">
 
@@ -139,6 +154,7 @@
                 android:layout_marginStart="5dp"
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
+                android:clickable="false"
                 card_view:cardBackgroundColor="@color/cardTwo"
                 card_view:cardCornerRadius="2dp">
 
@@ -179,6 +195,7 @@
                 android:layout_marginStart="5dp"
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
+                android:clickable="false"
                 card_view:cardBackgroundColor="@color/cardThree"
                 card_view:cardCornerRadius="2dp">
 
@@ -220,6 +237,7 @@
                 android:paddingEnd="15dp"
                 android:paddingStart="14dp"
                 card_view:cardBackgroundColor="@color/cardFour"
+                android:clickable="false"
                 card_view:cardCornerRadius="2dp">
 
                 <LinearLayout
@@ -232,7 +250,6 @@
                         android:id="@+id/cv_tv_wait_time_five"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
                         android:layout_marginTop="14dp"
                         android:text="30&#43;"
@@ -243,7 +260,6 @@
                         android:id="@+id/cv_tv_min_five"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_marginStart="12dp"
                         android:text="@string/mins"
                         android:textColor="@color/black"
@@ -255,17 +271,7 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_ambiance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_current_wait"
-            android:layout_marginTop="30dp"
-            android:text="@string/ambiance"
-            android:textColor="@color/black"
-            android:textSize="@dimen/visible_text_reading_size"
-            android:visibility="gone" />
-
+     <!--
         <LinearLayout
             android:id="@+id/ll_current_ambiance"
             android:layout_width="match_parent"
@@ -324,7 +330,7 @@
             </android.support.v7.widget.CardView>
 
         </LinearLayout>
-
+-->
     </RelativeLayout>
 
     <Button

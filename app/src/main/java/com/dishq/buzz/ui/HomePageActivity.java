@@ -1,10 +1,14 @@
 package com.dishq.buzz.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -112,8 +116,8 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                 intentSearch.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 try {
                     final JSONObject properties = new JSONObject();
-                    properties.put("search", "home");
-                    mixpanel.track("search", properties);
+                    properties.put("go2search", "home");
+                    mixpanel.track("go2search", properties);
                 } catch (final JSONException e) {
                     throw new RuntimeException("Could not encode hour of the day in JSON");
                 }
@@ -170,7 +174,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
         if (body != null) {
             if (spUserPoints != null && body.shortUserCurrBadge.getBadgeLevel() != 0) {
-
+                spPointsInfo.setTextColor(ContextCompat.getColor(this, R.color.black));
                 switch (body.shortUserCurrBadge.getBadgeLevel()) {
                     case 1:
                         spBadgeImage.setImageResource(R.drawable.homescreen_profile_rookie);
@@ -234,6 +238,9 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                     } else {
                         String error = response.errorBody().string();
                         Log.d("HomePage", error);
+                        if (!(HomePageActivity.this).isFinishing()) {
+                            alertTryAgain(HomePageActivity.this);
+                        }
                     }
                     return;
                 } catch (IOException e) {
@@ -245,8 +252,59 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             public void onFailure(Call<ShortUserDetailsResponse> call, Throwable t) {
                 Log.d("YW8", "Fail");
                 progressDialog.dismiss();
+                if(!Util.checkAndShowNetworkPopup(HomePageActivity.this)) {
+                    fetchShortUserProfile();
+                }
+
             }
         });
+    }
+
+    public void alertServerConnectFailure(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("Oops, something went wrong, please try again")
+                .setCancelable(false)
+                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent backButtonIntent = new Intent(HomePageActivity.this, HomePageActivity.class);
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        finish();
+                        startActivity(backButtonIntent);
+                    }
+                })
+                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                        homeIntent.addCategory( Intent.CATEGORY_HOME );
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(homeIntent);
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    public void alertTryAgain(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("Oops, something went wrong, please try again")
+                .setCancelable(false)
+                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent backButtonIntent = new Intent(HomePageActivity.this, HomePageActivity.class);
+                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        finish();
+                        startActivity(backButtonIntent);
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
     @Override

@@ -51,16 +51,8 @@ public class AdapterClass extends BaseAdapter {
         }
         TextView restaurantSearchName = (TextView) view.findViewById(R.id.restaurant_search_name);
         restaurantSearchName.setTypeface(Util.getFaceRoman());
-        TextView isRestaurantOpen = (TextView) view.findViewById(R.id.rest_closed);
-        isRestaurantOpen.setTypeface(Util.getFaceRoman());
         TextView restaurantSearchAddress = (TextView) view.findViewById(R.id.restaurant_search_address);
         restaurantSearchAddress.setTypeface(Util.getFaceRoman());
-        Boolean isRestOpened = restfinders.get(position).getIsOpenNowSearch();
-        if(isRestOpened) {
-            isRestaurantOpen.setVisibility(View.GONE);
-        }else {
-            isRestaurantOpen.setVisibility(View.VISIBLE);
-        }
 
         restaurantSearchName.setText(restfinders.get(position).getRestaurantName());
         Log.e("JSON Parser", "4");

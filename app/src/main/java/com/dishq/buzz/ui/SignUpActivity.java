@@ -72,7 +72,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
 
     String ace = "";
-    private TextView signupText;
     MixpanelAPI mixpanel = null;
     LoginButton loginButton;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
@@ -134,17 +133,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     //Method for mapping the various variables to their XML ids
     public void setTags(Context context) {
-        signupText = (TextView) findViewById(R.id.signuptext);
-        signupText.setTypeface(Util.getFaceRoman());
         loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         facebookButton = (ImageView) findViewById(R.id.fb);
         googleButton = (ImageView) findViewById(R.id.google_sign_up);
-        TextView restText = (TextView) findViewById(R.id.restaurants);
-        restText.setTypeface(Util.getFaceRoman());
-        TextView pubText = (TextView) findViewById(R.id.pubs);
-        pubText.setTypeface(Util.getFaceRoman());
-        TextView barText = (TextView) findViewById(R.id.bars);
-        barText.setTypeface(Util.getFaceRoman());
         TextView connectWith = (TextView) findViewById(R.id.connect_with);
         connectWith.setTypeface(Util.getFaceRoman());
         setClickables(context);

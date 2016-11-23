@@ -156,7 +156,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:background="@color/white"
-                        card_view:cardBackgroundColor="@color/rowGreen"
+                        card_view:cardBackgroundColor="@color/white"
                         card_view:cardCornerRadius="0dp"
                         card_view:cardElevation="0dp">
 
@@ -242,7 +242,7 @@
                                 android:alpha="0.54"
                                 android:gravity="center"
                                 android:text="@string/give_time_win_prizes"
-                                android:textColor="@color/black"
+                                android:textColor="@color/lightPurple"
                                 android:textSize="@dimen/user_profile_points_text" />
 
                         </RelativeLayout>

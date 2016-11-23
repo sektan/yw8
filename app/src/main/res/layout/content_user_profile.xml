@@ -144,6 +144,7 @@
                     android:text="Give your first waiting time to become a Rookie"
                     android:textSize="@dimen/user_profile_points_info_text" />
 
+<!-- not for now
                 <android.support.v7.widget.CardView
                     android:id="@+id/cv_month_leaderboard"
                     android:layout_width="330dp"
@@ -155,6 +156,7 @@
                     card_view:cardElevation="0dp"
                     android:paddingEnd="15dp"
                     android:paddingStart="14dp"
+                    android:visibility="gone"
                     card_view:cardBackgroundColor="@color/cardGreen"
                     card_view:cardCornerRadius="4dp">
 
@@ -210,13 +212,14 @@
                         </LinearLayout>
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
+                -->
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/cv_year_leaderboard"
                     android:layout_width="330dp"
                     android:layout_height="100dp"
                     card_view:cardElevation="0dp"
-                    android:layout_below="@+id/cv_month_leaderboard"
+                    android:layout_below="@+id/up_info_text"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
                     android:layout_marginTop="12dp"
@@ -238,7 +241,7 @@
                             android:layout_gravity="center"
                             android:textColor="@color/black"
                             android:alpha="0.86"
-                            android:text="Month"
+                            android:text="@string/year_leaderboard"
                             android:textSize="@dimen/home_page_button_text" />
 
                         <LinearLayout

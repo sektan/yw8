@@ -1,11 +1,11 @@
 package com.dishq.buzz;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
 import java.io.IOException;
-import java.util.Calendar;
 
 import android.content.pm.PackageInfo;
 import android.net.Uri;
@@ -25,11 +25,13 @@ import server.api.Config;
 
 import com.dishq.buzz.ui.HomePageActivity;
 import com.dishq.buzz.ui.SignUpActivity;
+import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
 
 public class MainActivity extends AppCompatActivity {
     public String versionName;
     public int versionCode;
+    private boolean networkFailed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,12 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                fetchVersion(versionName, versionCode);
+                if(networkFailed) {
+                    checkNetwork();
+                }
+                else {
+                    fetchVersion(versionName, versionCode);
+                }
             }
         }
     };
@@ -118,9 +125,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<VersionCheckResponse> call, Throwable t) {
                 Log.d("MainActivity", "Failure");
+                alertTryAgain(MainActivity.this);
             }
         });
 
+    }
+
+    public void alertTryAgain(final Activity activity) {
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setMessage("Your Internet connection is slow. Please find a better connection.")
+                .setCancelable(false)
+                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
     public void showAlert(String title, String message, boolean force) {
@@ -155,6 +179,16 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
 
+    }
+
+    private void checkNetwork(){
+        if(!Util.checkAndShowNetworkPopup(this)){
+
+            fetchVersion(versionName, versionCode);
+
+        }else{
+            networkFailed = true;
+        }
     }
 
 }

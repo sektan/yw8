@@ -29,6 +29,7 @@
         android:text="@string/monthly"
         android:textAllCaps="false"
         android:background="@null"
+        android:visibility="gone"
         android:textSize="22sp"
         tools:ignore="ButtonStyle" />
 

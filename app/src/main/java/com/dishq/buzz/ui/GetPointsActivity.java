@@ -29,7 +29,6 @@ import retrofit2.http.Url;
 public class GetPointsActivity extends BaseActivity {
 
     private WebView webviewPointsInfo;
-    private RelativeLayout termsConditions;
     ImageView GetPointsBack, GetPointsFinder;
     TextView getPointsHeader;
     private ProgressDialog progressDialog;

@@ -107,9 +107,12 @@ public class SearchActivity extends BaseActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     REST_IS_OPENED = restaurantFinder.get(position).getIsOpenNowSearch();
-                    restaurnat_id=  restaurantFinder.get(position).getRestaurantId()+"";
-                    restaurant_name=restaurantFinder.get(position).getRestaurantName();
-
+                    //restaurnat_id=  restaurantFinder.get(position).getRestaurantId()+"";
+                    Util.setRestId(restaurantFinder.get(position).getRestaurantId()+"");
+                    //restaurant_name=restaurantFinder.get(position).getRestaurantName();
+                    Util.setRestaurantName(restaurantFinder.get(position).getRestaurantName());
+                    //String restaurantAddress = restaurantFinder.get(position).getRestaurantAddress();
+                    Util.setRestAddr(restaurantFinder.get(position).getRestaurantAddress());
                     try {
                         prop.put("Restaurant name",restaurant_name);
                     } catch (JSONException e) {
@@ -118,25 +121,18 @@ public class SearchActivity extends BaseActivity {
                     if (YW8Application.getGoingToSearch().equals("restaurant")){
                         Intent i = new Intent(SearchActivity.this,
                                 RestaurantProfileActivity.class);
-                        i.putExtra("restaurant_id",restaurnat_id);
-                        i.putExtra("restaurant_name",restaurant_name+"");
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     }else if (YW8Application.getGoingToSearch().equals("update")){
                         if(REST_IS_OPENED) {
                             Intent i = new Intent(SearchActivity.this,
                                     UpdateRestProfileActivity.class);
-                            i.putExtra("restaurant_id",restaurnat_id);
-                            i.putExtra("restaurant_name",restaurant_name+"");
                             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(i);
                         }else {
                             Intent i = new Intent(SearchActivity.this,
                                     RestaurantProfileActivity.class);
                             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                            i.putExtra("restaurant_id",restaurnat_id);
-                            i.putExtra("restaurant_name",restaurant_name+"");
-                            finish();
                             startActivity(i);
                         }
                     }
