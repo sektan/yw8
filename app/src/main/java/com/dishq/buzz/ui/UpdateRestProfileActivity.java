@@ -2,8 +2,10 @@ package com.dishq.buzz.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -30,6 +32,15 @@ import com.dishq.buzz.services.GPSTrackerService;
 import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
@@ -60,6 +71,7 @@ import static com.dishq.buzz.util.Util.restaurantName;
 public class UpdateRestProfileActivity extends BaseActivity {
 
     private final static int SETTINGS_RESULT_REQ_CODE = 100;
+    private final static int NON_SETTINGS_RESULT_REQ_CODE = 200;
 
     private GPSTrackerService gps;
     private UpdateRestaurantFinder updateRestaurantFinder;
@@ -67,6 +79,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
     public static Boolean no_gps = false;
     MixpanelAPI mixpanel = null;
     public static Boolean yes_gps = false;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private boolean noNetwork, didPause, locationOff;
     private ProgressDialog progressDialog, progressDialoglert, progressGpsAlert;
 
@@ -147,42 +160,50 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 }
                 fetchUpdatedUserInfo();
                 break;
-
+            case NON_SETTINGS_RESULT_REQ_CODE:
+                getGPS();
+            fetchUpdatedUserInfo();
             default:
+                if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                    progressGpsAlert = new ProgressDialog(UpdateRestProfileActivity.this);
+                    progressGpsAlert.show();
+                }
+                getGPS();
+                fetchUpdatedUserInfo();
                 Log.w(TAG, "Request Code " + requestCode);
                 break;
         }
     }
 
     public void showSettingsAlert() {
-
-        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
-
-        // Setting Dialog Title
-        alertDialog.setTitle("Your GPS Is Off");
-
-        // Setting Dialog Message
-        alertDialog.setMessage(" Turn on GPS to update restaurant wait time");
-
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Turn on GPS", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(intent, SETTINGS_RESULT_REQ_CODE);
-            }
-        });
-
-        // on pressing cancel button
-        alertDialog.setNegativeButton("No thanks ", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                alertNoForward(UpdateRestProfileActivity.this);
-            }
-        });
-
-        // Showing Alert Message
-        alertDialog.show();
+        displayLocationSettingsRequest(UpdateRestProfileActivity.this);
+//        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
+//
+//        // Setting Dialog Title
+//        alertDialog.setTitle("Your GPS Is Off");
+//
+//        // Setting Dialog Message
+//        alertDialog.setMessage(" Turn on GPS to update restaurant wait time");
+//
+//        // On pressing Settings button
+//        alertDialog.setPositiveButton("Turn on GPS", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                startActivityForResult(intent, SETTINGS_RESULT_REQ_CODE);
+//            }
+//        });
+//
+//        // on pressing cancel button
+//        alertDialog.setNegativeButton("No thanks ", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                alertNoForward(UpdateRestProfileActivity.this);
+//            }
+//        });
+//
+//        // Showing Alert Message
+//        alertDialog.show();
     }
 
     public void selfPermission() {
@@ -900,6 +921,49 @@ public class UpdateRestProfileActivity extends BaseActivity {
     protected void onDestroy() {
         mixpanel.flush();
         super.onDestroy();
+    }
+
+    private void displayLocationSettingsRequest(Context context) {
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API).build();
+        googleApiClient.connect();
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000 / 2);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.i(TAG, "All location settings are satisfied.");
+
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+
+                        try {
+                            // Show the dialog by calling startResolutionForResult(), and check the result
+                            // in onActivityResult().
+                            status.startResolutionForResult(UpdateRestProfileActivity.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "PendingIntent unable to execute request.");
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        alertNoForward(UpdateRestProfileActivity.this);
+                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        break;
+                }
+            }
+        });
     }
 
 }

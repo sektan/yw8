@@ -61,8 +61,8 @@ public class GPSTrackerService extends Service implements LocationListener {
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // no network provider is enabled
             } else {
-                // First get location from Network Provider
                 this.canGetLocation = true;
+                // First get location from Network Provider
                 try {
                     if (isNetworkEnabled) {
                         locationManager.requestLocationUpdates(
@@ -74,7 +74,6 @@ public class GPSTrackerService extends Service implements LocationListener {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                             if (location != null) {
-                                this.canGetLocation = true;
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                             }
@@ -99,7 +98,8 @@ public class GPSTrackerService extends Service implements LocationListener {
                             }
                         }
                     }
-                } catch (SecurityException e) {
+                }catch (SecurityException e)
+                {
                     e.printStackTrace();
                 }
             }
@@ -114,22 +114,23 @@ public class GPSTrackerService extends Service implements LocationListener {
     /**
      * Stop using GPS listener
      * Calling this function will stop using GPS in your app
-     */
-    public void stopUsingGPS() {
-        try {
-            if (locationManager != null) {
+     * */
+    public void stopUsingGPS(){
+        try{
+            if(locationManager != null){
                 locationManager.removeUpdates(GPSTrackerService.this);
             }
-        } catch (SecurityException e) {
+        }catch (SecurityException e )
+        {
             e.printStackTrace();
         }
     }
 
     /**
      * Function to get latitude
-     */
-    public double getLatitude() {
-        if (location != null) {
+     * */
+    public double getLatitude(){
+        if(location != null){
             latitude = location.getLatitude();
         }
 
@@ -139,9 +140,9 @@ public class GPSTrackerService extends Service implements LocationListener {
 
     /**
      * Function to get longitude
-     */
-    public double getLongitude() {
-        if (location != null) {
+     * */
+    public double getLongitude(){
+        if(location != null){
             longitude = location.getLongitude();
         }
 
@@ -151,20 +152,22 @@ public class GPSTrackerService extends Service implements LocationListener {
 
     /**
      * Function to check GPS/wifi enabled
-     *
      * @return boolean
-     */
+     * */
     public boolean canGetLocation() {
         return this.canGetLocation;
     }
 
+
     @Override
     public void onLocationChanged(Location location) {
-        getLocation();
+        getLatitude();
+        getLongitude();
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
+
     }
 
     @Override
