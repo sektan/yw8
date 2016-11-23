@@ -30,7 +30,7 @@ import com.dishq.buzz.util.YW8Application;
 
 public class MainActivity extends AppCompatActivity {
     public String versionName;
-    public int versionCode;
+    public int versionCode = 0;
     private boolean networkFailed = false;
 
     @Override
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void fetchVersion(String versionName, int versionCode) {
+    public void fetchVersion(final String versionName, final int versionCode) {
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
         Call<VersionCheckResponse> request = apiInterface.checkVersion(versionName, versionCode);
         request.enqueue(new Callback<VersionCheckResponse>() {
@@ -125,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<VersionCheckResponse> call, Throwable t) {
                 Log.d("MainActivity", "Failure");
-                alertTryAgain(MainActivity.this);
+                if(!Util.checkAndShowNetworkPopup(MainActivity.this)) {
+                    fetchVersion(versionName, versionCode);
+                }
             }
         });
 

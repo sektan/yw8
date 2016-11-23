@@ -92,7 +92,9 @@ public class SearchActivity extends BaseActivity {
                                 // your action here
                                 txtAutoComplete.setText("");
                                 restaurantFinder.clear();
-                                myAdapter.notifyDataSetChanged();
+                                if(!Util.checkAndShowNetworkPopup(SearchActivity.this)) {
+                                    myAdapter.notifyDataSetChanged();
+                                }
                                 return true;
                             }
                         }
