@@ -124,17 +124,20 @@ public class SearchActivity extends BaseActivity {
                         Intent i = new Intent(SearchActivity.this,
                                 RestaurantProfileActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        finish();
                         startActivity(i);
                     }else if (YW8Application.getGoingToSearch().equals("update")){
                         if(REST_IS_OPENED) {
                             Intent i = new Intent(SearchActivity.this,
                                     UpdateRestProfileActivity.class);
                             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            finish();
                             startActivity(i);
                         }else {
                             Intent i = new Intent(SearchActivity.this,
                                     RestaurantProfileActivity.class);
                             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            finish();
                             startActivity(i);
                         }
                     }

@@ -92,8 +92,6 @@
 
         <activity android:name=".ui.SearchActivity"
             android:screenOrientation="portrait"
-            android:alwaysRetainTaskState="true"
-            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

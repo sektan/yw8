@@ -812,6 +812,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
                         backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        finish();
                         startActivity(backButtonIntent);
                     }
                 })
@@ -833,6 +834,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
                         backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        finish();
                         startActivity(backButtonIntent);
                     }
                 })
