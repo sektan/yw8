@@ -6,11 +6,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -40,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
         //Google Analytics instantiation
         setContentView(R.layout.activity_main);
-
+        
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             versionName = pInfo.versionName;
@@ -57,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!Util.checkAndShowNetworkPopup(MainActivity.this)) {
-            fetchVersion(versionName, versionCode);
-        }
+//        if(!Util.checkAndShowNetworkPopup(MainActivity.this)) {
+//            fetchVersion(versionName, versionCode);
+//        }
     }
 
     // To set the timer for the splash screen to be displayed
