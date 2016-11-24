@@ -409,6 +409,13 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        System.exit(0);
+    }
+
+    @Override
     protected void onDestroy() {
         mixpanel.flush();
         super.onDestroy();

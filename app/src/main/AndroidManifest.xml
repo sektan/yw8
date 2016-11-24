@@ -65,6 +65,7 @@
         <activity
             android:name=".ui.HomePageActivity"
             android:label="YW8"
+            android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 

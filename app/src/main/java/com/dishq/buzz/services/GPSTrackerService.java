@@ -3,6 +3,7 @@ package com.dishq.buzz.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +19,9 @@ public class GPSTrackerService extends Service implements LocationListener {
 
     private final Context mContext;
 
+    private String provider;
+
+
     // flag for GPS status
     boolean isGPSEnabled = false;
 
@@ -30,6 +34,10 @@ public class GPSTrackerService extends Service implements LocationListener {
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
+
+    // Creating an empty criteria object
+    Criteria criteria = new Criteria();
+
 
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters

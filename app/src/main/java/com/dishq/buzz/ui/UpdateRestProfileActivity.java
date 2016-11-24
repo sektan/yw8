@@ -168,7 +168,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     progressGpsAlert = new ProgressDialog(UpdateRestProfileActivity.this);
                     progressGpsAlert.show();
                 }
-                getGPS();
                 fetchUpdatedUserInfo();
                 Log.w(TAG, "Request Code " + requestCode);
                 break;
@@ -218,6 +217,8 @@ public class UpdateRestProfileActivity extends BaseActivity {
             Uri uri = Uri.fromParts("package", this.getPackageName(), null);
             intent.setData(uri);
             startActivity(intent);
+            getGPS();
+            fetchUpdatedUserInfo();
         } else {
             //request the permission
             Log.e("accept", "not accept");
@@ -902,6 +903,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                 closedialog.dismiss();
                 timer2.cancel(); //this will cancel the timer of the system
                 Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, UserProfileActivity.class);
+                goToHomePageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 finish();
                 startActivity(goToHomePageIntent);
             }
