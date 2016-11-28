@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -71,8 +72,10 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         //MixPanel Instantiation
         mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
         //Facebook SDK is initialized
-        progressDialog = new ProgressDialog(HomePageActivity.this);
-        progressDialog.show();
+        if (!(HomePageActivity.this).isFinishing()) {
+            progressDialog = new ProgressDialog(HomePageActivity.this);
+            progressDialog.show();
+        }
 
         String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -94,6 +97,17 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
         setSupportActionBar(toolbar);
+        setTitle("YW8");
+        try {
+            final int titleID = Resources.getSystem().getIdentifier("action_bar_title", "id",
+                    "android");
+            TextView title = (TextView) getWindow().findViewById(titleID);
+            title.setTypeface(Util.getFaceMedium());
+            title.setTextSize(22);
+            title.setTextColor(getResources().getColor(R.color.white));
+        }catch(Exception e) {
+            Log.e("HomePage", "Failed to obtain title bar");
+        }
         setTags();
         fetchShortUserProfile();
 
@@ -230,6 +244,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                     if (response.isSuccessful()) {
                         ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
                         if (body != null) {
+                            Util.setUserId(body.shortUserDetails.getUserId());
                             mixpanel.identify(body.shortUserDetails.getUserId());
                             mixpanel.getPeople().identify(body.shortUserDetails.getUserId());
                             mixpanel.getPeople().set("Plan", "Premium");

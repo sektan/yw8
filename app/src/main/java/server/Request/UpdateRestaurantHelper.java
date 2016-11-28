@@ -15,11 +15,11 @@ public class UpdateRestaurantHelper {
 
     @SerializedName("latitude")
     @Expose
-    private double latitude;
+    private String latitude;
 
     @SerializedName("longitude")
     @Expose
-    private double longitude;
+    private String longitude;
 
     @SerializedName("wait_time_id")
     @Expose
@@ -29,7 +29,7 @@ public class UpdateRestaurantHelper {
     @Expose
     private int buzzTypeId;
 
-    public UpdateRestaurantHelper(int restaurantId, double latitude, double longitude, int waitTimeId,
+    public UpdateRestaurantHelper(int restaurantId, String latitude, String longitude, int waitTimeId,
                                   int buzzTypeId) {
         this.restaurantId = restaurantId;
         this.latitude = latitude;
@@ -46,19 +46,19 @@ public class UpdateRestaurantHelper {
         this.restaurantId = restaurantId;
     }
 
-    public double getLatitude() {
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude(){
+    public String getLongitude(){
         return longitude;
     }
 
-    public  void setLongitude(float longitude) {
+    public  void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 

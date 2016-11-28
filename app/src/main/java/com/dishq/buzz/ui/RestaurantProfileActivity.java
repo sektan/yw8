@@ -183,7 +183,7 @@ public class RestaurantProfileActivity extends BaseActivity {
 
         final Call<RestaurantInfoResponse> request;
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        request = apiInterface.getRestaurantInfo(query);
+        request = apiInterface.getRestaurantInfo(query, Util.getUserId());
         request.enqueue(new Callback<RestaurantInfoResponse>() {
 
             @Override
@@ -215,7 +215,7 @@ public class RestaurantProfileActivity extends BaseActivity {
     private void fetchSimilarRestInfo(final String query) {
 
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        final Call<SimilarRestaurantResponse> request = apiInterface.getSimilarRestaurantInfo(query);
+        final Call<SimilarRestaurantResponse> request = apiInterface.getSimilarRestaurantInfo(query, Util.getUserId());
         request.enqueue(new Callback<SimilarRestaurantResponse>() {
             @Override
             public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {

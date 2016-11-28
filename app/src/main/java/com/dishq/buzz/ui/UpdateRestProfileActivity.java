@@ -1,6 +1,7 @@
 package com.dishq.buzz.ui;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,11 +9,12 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -21,26 +23,30 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
 import android.widget.Toast;
 
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
-import com.dishq.buzz.services.GPSTrackerService;
 import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
@@ -60,53 +66,58 @@ import server.Response.UpdateWaitTimeResponse;
 import server.api.ApiInterface;
 import server.api.Config;
 
-import static com.dishq.buzz.util.Util.latitude;
-import static com.dishq.buzz.util.Util.longitude;
-import static com.dishq.buzz.util.Util.restaurantName;
 
 /**
  * Created by dishq on 03-11-2016.
  */
 
-public class UpdateRestProfileActivity extends BaseActivity {
+public class UpdateRestProfileActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private final static int SETTINGS_RESULT_REQ_CODE = 100;
-    private final static int NON_SETTINGS_RESULT_REQ_CODE = 200;
-
-    private GPSTrackerService gps;
     private UpdateRestaurantFinder updateRestaurantFinder;
     public int rest_id = 0;
-    public static Boolean no_gps = false;
     MixpanelAPI mixpanel = null;
-    public static Boolean yes_gps = false;
-    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
-    private boolean noNetwork, didPause, locationOff;
-    private ProgressDialog progressDialog, progressDialoglert, progressGpsAlert;
+    private GoogleApiClient googleApiClient;
+    LocationRequest mLocationRequest;
+    private static final long INTERVAL = 1000 * 10;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
+    private Location mLastLocation;
+    protected static final int REQUEST_CHECK_SETTINGS = 1000;
 
-    private double getLatitude, getLongitude;
+    private static String lat = "0.0";
+    private static String lang = "0.0";
+    private ProgressDialog progressDialog, progressDialoglert;
     AlertDialog closedialog = null;
     private String query = "";
     private String restaurantName = "", restAdd = "";
-    private Boolean isUpdateClicked = false, isSettingsShowing = false;
+    private Boolean isUpdateClicked = false;
     final int MY_PERMISSIONS_REQUEST_GPS_ACCESS = 0;
     String waitTimeUpdate, serverAccessToken, buzzTypeLabel;
     int waitTime, waitTimeId = 0, buzzTypeId = 0;
     private String TAG = "UpdateRestProfile";
-    private TextView restToolbarName, updateRestName, updateRestAddr, textAmbiance, tvWaitTimeOne, tvWaitTimeTwo,
+    private TextView restToolbarName, updateRestName, updateRestAddr, tvWaitTimeOne, tvWaitTimeTwo,
             tvWaitTimeThree, tvWaitTimeFour, tvWaitTimeFive, tvMinOne, tvMinTwo, tvMinThree, tvMinFour,
-            tvMinFive, tvAmbianceOne, tvAmbianceTwo;
+            tvMinFive;
     private ImageView restToolBarSearch, backButton;
-    private CardView waitTimeOne, waitTimeTwo, waitTimeThree, waitTimeFour, waitTimeFive,
-            ambianceOne, ambianceTwo;
-    //private LinearLayout llAmbiance;
+    private CardView waitTimeOne, waitTimeTwo, waitTimeThree, waitTimeFour, waitTimeFive;
     private Button buttonUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final int playServicesStatus = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if(playServicesStatus != ConnectionResult.SUCCESS)
+        {
+            //If google play services in not available show an error dialog and return
+            final Dialog errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(this, playServicesStatus, 0, null);
+            errorDialog.show();
+            return;
+        }
+
         //MixPanel Instantiation
         mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
+
         isUpdateClicked = false;
 
         query = Util.getRestId();
@@ -117,92 +128,76 @@ public class UpdateRestProfileActivity extends BaseActivity {
         fetchWaitTimeInfo();
     }
 
-    boolean checkGPS() {
+    public void checkGPS() {
+        createLocationRequest();
         if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) { // first check
-            return getGPS();
+            getTheLocale();
+
         } else if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             selfPermission();
         }
-        return false;
     }
 
-    public boolean getGPS() {
-        if (!no_gps || (latitude == 17.77)) {
-            gps = new GPSTrackerService(this);
-            if (gps.canGetLocation()) {
-                latitude = gps.getLatitude();
-                getLatitude = latitude;
-                longitude = gps.getLongitude();
-                getLongitude = longitude;
-                return true;
-            } else {
-                locationOff = true;
-                progressDialog.dismiss();
-                showSettingsAlert();
-                return false;
-            }
-        } else {
-            return false;
-        }
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case SETTINGS_RESULT_REQ_CODE:
-                if (!(UpdateRestProfileActivity.this).isFinishing()) {
-                    progressGpsAlert = new ProgressDialog(UpdateRestProfileActivity.this);
-                    progressGpsAlert.show();
+            case 1000:
+                switch (resultCode) {
+                    case Activity.RESULT_OK: {
+
+                        Log.d(TAG, "VALUES--OK");
+                        // All required changes were successfully made
+                        getLocation();
+                        break;
+                    }
+                    case Activity.RESULT_CANCELED: {
+
+                        finish();
+                        // The user was asked to change settings, but chose not to
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
                 }
-                fetchUpdatedUserInfo();
-                break;
-            case NON_SETTINGS_RESULT_REQ_CODE:
-                getGPS();
-            fetchUpdatedUserInfo();
-            default:
-                if (!(UpdateRestProfileActivity.this).isFinishing()) {
-                    progressGpsAlert = new ProgressDialog(UpdateRestProfileActivity.this);
-                    progressGpsAlert.show();
-                }
-                fetchUpdatedUserInfo();
-                Log.w(TAG, "Request Code " + requestCode);
                 break;
         }
     }
 
-    public void showSettingsAlert() {
-        displayLocationSettingsRequest(UpdateRestProfileActivity.this);
-//        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
-//
-//        // Setting Dialog Title
-//        alertDialog.setTitle("Your GPS Is Off");
-//
-//        // Setting Dialog Message
-//        alertDialog.setMessage(" Turn on GPS to update restaurant wait time");
-//
-//        // On pressing Settings button
-//        alertDialog.setPositiveButton("Turn on GPS", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                startActivityForResult(intent, SETTINGS_RESULT_REQ_CODE);
-//            }
-//        });
-//
-//        // on pressing cancel button
-//        alertDialog.setNegativeButton("No thanks ", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//                alertNoForward(UpdateRestProfileActivity.this);
-//            }
-//        });
-//
-//        // Showing Alert Message
-//        alertDialog.show();
+    public void getLocation() {
+        try {
+            mLastLocation = LocationServices.FusedLocationApi
+                    .getLastLocation(googleApiClient);
+
+            if (mLastLocation != null) {
+
+                lat = "" + mLastLocation.getLatitude();
+                lang = "" + mLastLocation.getLongitude();
+                Log.d("LOCATION", "LOCATION" + mLastLocation.getLatitude());
+                fetchUpdatedUserInfo(lat, lang);
+
+            } else {
+                startLocationUpdates();
+                getLocation();
+                Log.d("LOCATION", "LOCATIONrrrr");
+                Log.i("", "Not able to retrieve location of device right now");
+            }
+        } catch (Exception e) {
+            Log.d("LOCATION", "LOCATIONeee" + e.getMessage());
+        }
+
     }
 
     public void selfPermission() {
@@ -217,8 +212,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             Uri uri = Uri.fromParts("package", this.getPackageName(), null);
             intent.setData(uri);
             startActivity(intent);
-            getGPS();
-            fetchUpdatedUserInfo();
+            getTheLocale();
         } else {
             //request the permission
             Log.e("accept", "not accept");
@@ -238,7 +232,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
             case MY_PERMISSIONS_REQUEST_GPS_ACCESS: {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getGPS();
+                    getLocation();
                 } else {
                     showAlert("", "That permission is needed in order to update wait time. Tap Retry.");
                 }
@@ -280,7 +274,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        didPause = true;
     }
 
     private void setTags() {
@@ -568,49 +561,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
             setOnclickables(false);
         }
 
-//        if (ambianceOne != null) {
-//            ambianceOne.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    ambianceOne.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-//                    ambianceTwo.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
-//
-//                    tvAmbianceOne.setTextColor(getResources().getColor(R.color.white));
-//                    tvAmbianceTwo.setTextColor(getResources().getColor(R.color.black));
-//
-//                    buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-//                    buttonUpdate.setAlpha(Float.parseFloat("1"));
-//                    buttonUpdate.setTextColor(getResources().getColor(R.color.white));
-//                    buttonUpdate.setEnabled(true);
-//
-//                    buzzTypeId = 1;
-//                    buzzTypeLabel = "Quiet";
-//                }
-//            });
-//        }
-//
-//        if (ambianceTwo != null) {
-//            ambianceTwo.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    ambianceOne.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
-//                    ambianceTwo.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-//
-//
-//                    tvAmbianceOne.setTextColor(getResources().getColor(R.color.black));
-//                    tvAmbianceTwo.setTextColor(getResources().getColor(R.color.white));
-//
-//                    buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
-//                    buttonUpdate.setAlpha(Float.parseFloat("1"));
-//                    buttonUpdate.setTextColor(getResources().getColor(R.color.white));
-//                    buttonUpdate.setEnabled(true);
-//
-//                    buzzTypeId = 2;
-//                    buzzTypeLabel = "Lively";
-//                }
-//            });
-//        }
-
         if (buttonUpdate != null) {
             buttonUpdate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -620,8 +570,11 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     if (!(UpdateRestProfileActivity.this).isFinishing()) {
                         progressDialog = new ProgressDialog(UpdateRestProfileActivity.this);
                         progressDialog.show();
+                        checkGPS();
+
                     }
-                    fetchUpdatedUserInfo();
+
+
                     buttonUpdate.setEnabled(false);
                 }
             });
@@ -646,11 +599,10 @@ public class UpdateRestProfileActivity extends BaseActivity {
         });
     }
 
-    private void fetchUpdatedUserInfo() {
-        if (checkGPS()) {
+    private void fetchUpdatedUserInfo(String latitude, String longitude) {
             rest_id = Integer.parseInt(query);
             final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
-                    getLatitude, getLongitude, waitTimeId, buzzTypeId);
+                    latitude, longitude, waitTimeId, buzzTypeId);
             ApiInterface apiInterface = Config.createService(ApiInterface.class);
             serverAccessToken = YW8Application.getAccessToken();
             Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
@@ -684,9 +636,6 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     if (progressDialog != null) {
                         progressDialog.dismiss();
                     }
-                    if (progressGpsAlert != null) {
-                        progressGpsAlert.dismiss();
-                    }
                     Log.d(TAG, "Success");
                     try {
                         if (response.isSuccessful()) {
@@ -706,7 +655,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                             }
                         } else {
                             String error = response.errorBody().string();
-                            Log.d("UpdateRestaurant", error);
+                            Log.d(TAG, error);
                             if (!(UpdateRestProfileActivity.this).isFinishing()) {
                                 progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
                                 progressDialoglert.show();
@@ -733,7 +682,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     }
 
                     if(!Util.checkAndShowNetworkPopup(UpdateRestProfileActivity.this)){
-                        fetchUpdatedUserInfo();
+                        fetchUpdatedUserInfo(lat, lang);
                     }else {
                         alertServerConnectFailure(UpdateRestProfileActivity.this);
                     }
@@ -741,15 +690,13 @@ public class UpdateRestProfileActivity extends BaseActivity {
                     Log.d(TAG, "Failure of connecting to the server");
                 }
             });
-
-        }
     }
 
     public void alertServerConnectFailure(final Activity activity) {
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setMessage("Oops, something went wrong, please try again")
                 .setCancelable(false)
-                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -850,7 +797,7 @@ public class UpdateRestProfileActivity extends BaseActivity {
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setMessage("Oops, something went wrong, please try again")
                 .setCancelable(false)
-                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Retry", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -890,26 +837,28 @@ public class UpdateRestProfileActivity extends BaseActivity {
             progressDialoglert.dismiss();
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(String.format(getResources().getString(R.string.num_of_points_added),
-                Integer.toString(YW8Application.getNumPointsAdded())));
-        builder.setCancelable(true);
+        if (!(UpdateRestProfileActivity.this).isFinishing()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setMessage(String.format(getResources().getString(R.string.num_of_points_added),
+                    Integer.toString(YW8Application.getNumPointsAdded())));
+            builder.setCancelable(true);
 
-        closedialog = builder.create();
+            closedialog = builder.create();
 
-        closedialog.show();
+            closedialog.show();
 
-        final Timer timer2 = new Timer();
-        timer2.schedule(new TimerTask() {
-            public void run() {
-                closedialog.dismiss();
-                timer2.cancel(); //this will cancel the timer of the system
-                Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, UserProfileActivity.class);
-                goToHomePageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                finish();
-                startActivity(goToHomePageIntent);
-            }
-        }, 3000); // the timer will count 3 seconds....
+            final Timer timer2 = new Timer();
+            timer2.schedule(new TimerTask() {
+                public void run() {
+                    closedialog.dismiss();
+                    timer2.cancel(); //this will cancel the timer of the system
+                    Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, UserProfileActivity.class);
+                    goToHomePageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    finish();
+                    startActivity(goToHomePageIntent);
+                }
+            }, 3000); // the timer will count 3 seconds....
+        }
     }
 
     @Override
@@ -927,47 +876,129 @@ public class UpdateRestProfileActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private void displayLocationSettingsRequest(Context context) {
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).build();
-        googleApiClient.connect();
+    private void getTheLocale() {
 
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(10000 / 2);
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API).addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this).build();
+            googleApiClient.connect();
 
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true);
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(30 * 1000);
+            locationRequest.setFastestInterval(5 * 1000);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
 
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        Log.i(TAG, "All location settings are satisfied.");
+            // **************************
+            builder.setAlwaysShow(true); // this is the key ingredient
+            // **************************
 
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+            PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
+                    .checkLocationSettings(googleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            // All location settings are satisfied. The client can
+                            // initialize location
+                            // requests here.
+                            // createLocationRequest();
+                            getLocation();
+                           // fetchUpdatedUserInfo();
+                            Log.d(TAG, "VALUES--1");
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            // Location settings are not satisfied. But could be
+                            // fixed by showing the user
+                            // a dialog.
+                            Log.d("ADJKJ", "VALUES--2");
+                            try {
+                                // Show the dialog by calling
+                                // startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(UpdateRestProfileActivity.this, REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            // Location settings are not satisfied. However, we have
+                            // no way to fix the
+                            // settings so we won't show the dialog.
+                            Log.d(TAG, "VALUES--3");
+                            break;
 
-                        try {
-                            // Show the dialog by calling startResolutionForResult(), and check the result
-                            // in onActivityResult().
-                            status.startResolutionForResult(UpdateRestProfileActivity.this, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "PendingIntent unable to execute request.");
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        alertNoForward(UpdateRestProfileActivity.this);
-                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
-                        break;
+                        case LocationSettingsStatusCodes.CANCELED:
+                            // Location settings are not satisfied. However, we have
+                            // no way to fix the
+                            // settings so we won't show the dialog.
+                            Log.d(TAG, "VALUES--CC");
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        startLocationUpdates();
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                googleApiClient);
+        if (mLastLocation != null) {
+
+            Log.d(TAG, "VALUES--6" + mLastLocation.getLatitude() + mLastLocation.getLongitude());
+            lat = "" + mLastLocation.getLatitude();
+            lang = "" + mLastLocation.getLongitude();
+
+        } else {
+            Log.d(TAG, "VALUES--6---");
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, this);
+
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        getTheLocale();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+
+        Log.d(TAG, "Remove Location");
+        try {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, this);
+    }
 }

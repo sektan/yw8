@@ -34,15 +34,16 @@ public interface ApiInterface {
     Call<SignUpResponse> createNewUser(@Body SignUpHelper signUpHelper);
 
     @GET("api/restaurant/suggest/")
-    Call<RestaurantSuggestResponse> getRestaurantsuggestion(@Query("query") String query ,
+    Call<RestaurantSuggestResponse> getRestaurantsuggestion(@Query("query") String query,
+                                                            @Query("user_id") String userId,
                                                             @Query("latitude")Double latitude,
                                                             @Query("longitude")Double longitude);
 
     @GET("api/restaurant/{restaurant_id}/details/")
-    Call<RestaurantInfoResponse> getRestaurantInfo(@Path("restaurant_id") String restaurantId);
+    Call<RestaurantInfoResponse> getRestaurantInfo(@Path("restaurant_id") String restaurantId, @Query("user_id") String userId);
 
     @GET("api/restaurant/{restaurant_id}/similar/")
-    Call<SimilarRestaurantResponse> getSimilarRestaurantInfo(@Path("restaurant_id") String restaurantId);
+    Call<SimilarRestaurantResponse> getSimilarRestaurantInfo(@Path("restaurant_id") String restaurantId, @Query("user_id") String userId);
 
     @GET("api/restaurant/checkinform/")
     Call<UpdateWaitTimeResponse> getUpdateWaitTime();

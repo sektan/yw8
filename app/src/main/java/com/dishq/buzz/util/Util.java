@@ -25,6 +25,7 @@ public class Util {
     public static String ACCESS_TOKEN = "";
     public static double latitude = 17.77;
     public static double longitude;
+    public static String userId = "";
     public static String monthOrYear = "";
     public static String monthName = "";
     public static String restaurantName = "", restId = "", restAddr = "";
@@ -94,6 +95,14 @@ public class Util {
 
     public static void setRestId(String restId) {
         Util.restId = restId;
+    }
+
+    public static String getUserId() {
+        return Util.userId;
+    }
+
+    public static void setUserId(String userId) {
+        Util.userId = userId;
     }
 
     public static String getRestaurantName() {

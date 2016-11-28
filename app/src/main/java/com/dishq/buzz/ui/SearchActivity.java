@@ -93,7 +93,9 @@ public class SearchActivity extends BaseActivity {
                                 txtAutoComplete.setText("");
                                 restaurantFinder.clear();
                                 if(!Util.checkAndShowNetworkPopup(SearchActivity.this)) {
-                                    myAdapter.notifyDataSetChanged();
+                                    if(myAdapter!=null) {
+                                        myAdapter.notifyDataSetChanged();
+                                    }
                                 }
                                 return true;
                             }
@@ -186,7 +188,7 @@ public class SearchActivity extends BaseActivity {
     {
         Call<RestaurantSuggestResponse> request;
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        request = apiInterface.getRestaurantsuggestion(query, Util.latitude,Util.longitude);
+        request = apiInterface.getRestaurantsuggestion(query, Util.getUserId(), Util.latitude,Util.longitude);
         request.enqueue(new Callback<RestaurantSuggestResponse>() {
             @Override
             public void onResponse(Call<RestaurantSuggestResponse> call, Response<RestaurantSuggestResponse> response) {
