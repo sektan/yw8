@@ -8,13 +8,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +26,7 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
@@ -80,7 +85,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     private static final long FASTEST_INTERVAL = 1000 * 5;
     private Location mLastLocation;
     protected static final int REQUEST_CHECK_SETTINGS = 1000;
-
+    private FrameLayout layoutUpdate;
     private static String lat = "0.0";
     private static String lang = "0.0";
     private ProgressDialog progressDialog, progressGps, progressDialoglert;
@@ -155,20 +160,20 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case 1000:
                 switch (resultCode) {
                     case Activity.RESULT_OK: {
-
                         Log.d(TAG, "VALUES--OK");
                         // All required changes were successfully made
                         getLocation();
                         break;
                     }
                     case Activity.RESULT_CANCELED: {
-
-                        finish();
+                        if(progressGps!=null) {
+                            progressGps.dismiss();
+                        }
+                        alertNoForward(UpdateRestProfileActivity.this);
                         // The user was asked to change settings, but chose not to
                         break;
                     }
@@ -281,6 +286,8 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     private void setTags() {
+        layoutUpdate = (FrameLayout) findViewById( R.id.mainmenu);
+        layoutUpdate.getForeground().setAlpha( 0);
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
         restToolbarName.setText(getResources().getString(R.string.update));
         restToolbarName.setTypeface(Util.getFaceMedium());
@@ -614,6 +621,10 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
             call.enqueue(new Callback<UpdateRestaurantResponse>() {
                 @Override
                 public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+
+                    if(layoutUpdate!=null) {
+                        layoutUpdate.getForeground().setAlpha( 0); // restore
+                    }
                     try {
                         final JSONObject properties = new JSONObject();
                         properties.put(waitTimeUpdate, waitTimeUpdate);
@@ -683,6 +694,10 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
                     if (progressDialog != null) {
                         progressDialog.dismiss();
+                    }
+
+                    if(layoutUpdate!=null) {
+                        layoutUpdate.getForeground().setAlpha( 0); // restore
                     }
 
                     if(!Util.checkAndShowNetworkPopup(UpdateRestProfileActivity.this)){
@@ -886,9 +901,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                     .addOnConnectionFailedListener(this).build();
             googleApiClient.connect();
 
-            if (!(UpdateRestProfileActivity.this).isFinishing()) {
-                progressDialog.dismiss();
-            }
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             locationRequest.setInterval(30 * 1000);
@@ -900,18 +912,23 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
             builder.setAlwaysShow(true); // this is the key ingredient
             // **************************
 
+            if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                progressDialog.dismiss();
+            }
             PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
                     .checkLocationSettings(googleApiClient, builder.build());
+
+            layoutUpdate.getForeground().setAlpha( 180); // dim
+//            if (!(UpdateRestProfileActivity.this).isFinishing()) {
+//                if(progressGps==null) {
+//                    progressGps = new ProgressDialog(UpdateRestProfileActivity.this);
+//                    progressGps.show();
+//                }
+//            }
             result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
                 @Override
                 public void onResult(LocationSettingsResult result) {
                     final Status status = result.getStatus();
-                    if (!(UpdateRestProfileActivity.this).isFinishing()) {
-                        if(progressGps==null) {
-                            progressGps = new ProgressDialog(UpdateRestProfileActivity.this);
-                            progressGps.show();
-                        }
-                    }
                     switch (status.getStatusCode()) {
 
                         case LocationSettingsStatusCodes.SUCCESS:
@@ -925,7 +942,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                             // Location settings are not satisfied. But could be
                             // fixed by showing the user
                             // a dialog.
-                            Log.d("ADJKJ", "VALUES--2");
+                            Log.d(TAG, "VALUES--2");
                             try {
                                 // Show the dialog by calling
                                 // startResolutionForResult(),
@@ -947,7 +964,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                             // Location settings are not satisfied. However, we have
                             // no way to fix the
                             // settings so we won't show the dialog.
-                            alertNoForward(UpdateRestProfileActivity.this);
+
                             Log.d(TAG, "VALUES--CC");
                             break;
                     }

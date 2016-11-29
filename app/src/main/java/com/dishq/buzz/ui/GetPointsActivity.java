@@ -63,7 +63,6 @@ public class GetPointsActivity extends BaseActivity {
         });
 
         GetPointsFinder.setVisibility(View.GONE);
-
         getPointsHeader.setText(getResources().getString(R.string.get_points_heading));
         getPointsHeader.setTypeface(Util.getFaceMedium());
 
@@ -81,5 +80,13 @@ public class GetPointsActivity extends BaseActivity {
             view.loadUrl(url);
             return true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
+        finish();
+        startActivity(intent);
     }
 }
