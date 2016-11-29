@@ -43,10 +43,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
@@ -86,7 +83,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
 
     private static String lat = "0.0";
     private static String lang = "0.0";
-    private ProgressDialog progressDialog, progressDialoglert;
+    private ProgressDialog progressDialog, progressGps, progressDialoglert;
     AlertDialog closedialog = null;
     private String query = "";
     private String restaurantName = "", restAdd = "";
@@ -147,6 +144,13 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isUpdateClicked) {
+
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -633,8 +637,8 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                     } catch (final JSONException e) {
                         throw new RuntimeException("Could not encode hour of the day in JSON");
                     }
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    if (progressGps != null) {
+                        progressGps.dismiss();
                     }
                     Log.d(TAG, "Success");
                     try {
@@ -725,28 +729,26 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     public void alertNoForward(final Activity activity) {
-        if (progressDialoglert != null) {
-            progressDialoglert.dismiss();
-        }
+        if (!(UpdateRestProfileActivity.this).isFinishing()) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("Can't update without GPS")
+                    .setCancelable(false)
+                    .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Can't update without GPS");
-        builder.setCancelable(false);
-
-        closedialog = builder.create();
-
-        closedialog.show();
-
-        final Timer timer2 = new Timer();
-        timer2.schedule(new TimerTask() {
-            public void run() {
-                closedialog.dismiss();
-                timer2.cancel(); //this will cancel the timer of the system
-                Intent goToHomePageIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                finish();
-                startActivity(goToHomePageIntent);
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                            backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(backButtonIntent);
+                        }
+                    })
+                    .create();
+            if (progressDialoglert != null) {
+                progressDialoglert.dismiss();
             }
-        }, 3000); // the timer will count 3 seconds....
+            dialog.show();
+        }
     }
 
     public void alertTooFrequent(final Activity activity) {
@@ -884,6 +886,9 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                     .addOnConnectionFailedListener(this).build();
             googleApiClient.connect();
 
+            if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                progressDialog.dismiss();
+            }
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             locationRequest.setInterval(30 * 1000);
@@ -901,14 +906,19 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 @Override
                 public void onResult(LocationSettingsResult result) {
                     final Status status = result.getStatus();
+                    if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                        if(progressGps==null) {
+                            progressGps = new ProgressDialog(UpdateRestProfileActivity.this);
+                            progressGps.show();
+                        }
+                    }
                     switch (status.getStatusCode()) {
+
                         case LocationSettingsStatusCodes.SUCCESS:
                             // All location settings are satisfied. The client can
                             // initialize location
                             // requests here.
-                            // createLocationRequest();
                             getLocation();
-                           // fetchUpdatedUserInfo();
                             Log.d(TAG, "VALUES--1");
                             break;
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
@@ -929,6 +939,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                             // Location settings are not satisfied. However, we have
                             // no way to fix the
                             // settings so we won't show the dialog.
+                            alertNoForward(UpdateRestProfileActivity.this);
                             Log.d(TAG, "VALUES--3");
                             break;
 
@@ -936,6 +947,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                             // Location settings are not satisfied. However, we have
                             // no way to fix the
                             // settings so we won't show the dialog.
+                            alertNoForward(UpdateRestProfileActivity.this);
                             Log.d(TAG, "VALUES--CC");
                             break;
                     }
@@ -952,7 +964,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (mLastLocation != null) {
-
             Log.d(TAG, "VALUES--6" + mLastLocation.getLatitude() + mLastLocation.getLongitude());
             lat = "" + mLastLocation.getLatitude();
             lang = "" + mLastLocation.getLongitude();

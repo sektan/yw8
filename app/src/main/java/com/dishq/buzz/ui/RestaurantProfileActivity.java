@@ -183,7 +183,8 @@ public class RestaurantProfileActivity extends BaseActivity {
 
         final Call<RestaurantInfoResponse> request;
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        request = apiInterface.getRestaurantInfo(query, Util.getUserId());
+        String userId = Util.getUserId();
+        request = apiInterface.getRestaurantInfo(query, userId);
         request.enqueue(new Callback<RestaurantInfoResponse>() {
 
             @Override

@@ -305,21 +305,24 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     }
 
     public void alertTryAgain(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Oops, something went wrong, please try again")
-                .setCancelable(false)
-                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+        if (!(HomePageActivity.this).isFinishing()) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("Oops, something went wrong, please try again")
+                    .setCancelable(false)
+                    .setNegativeButton("Retry", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent backButtonIntent = new Intent(HomePageActivity.this, HomePageActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .create();
-        dialog.show();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent backButtonIntent = new Intent(HomePageActivity.this, HomePageActivity.class);
+                            backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(backButtonIntent);
+                        }
+                    })
+                    .create();
+            dialog.show();
+        }
+
     }
 
     @Override

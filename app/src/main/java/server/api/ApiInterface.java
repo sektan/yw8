@@ -40,10 +40,12 @@ public interface ApiInterface {
                                                             @Query("longitude")Double longitude);
 
     @GET("api/restaurant/{restaurant_id}/details/")
-    Call<RestaurantInfoResponse> getRestaurantInfo(@Path("restaurant_id") String restaurantId, @Query("user_id") String userId);
+    Call<RestaurantInfoResponse> getRestaurantInfo(@Path("restaurant_id") String restaurantId,
+                                                   @Query("user_id") String userId);
 
     @GET("api/restaurant/{restaurant_id}/similar/")
-    Call<SimilarRestaurantResponse> getSimilarRestaurantInfo(@Path("restaurant_id") String restaurantId, @Query("user_id") String userId);
+    Call<SimilarRestaurantResponse> getSimilarRestaurantInfo(@Path("restaurant_id") String restaurantId,
+                                                             @Query("user_id") String userId);
 
     @GET("api/restaurant/checkinform/")
     Call<UpdateWaitTimeResponse> getUpdateWaitTime();
