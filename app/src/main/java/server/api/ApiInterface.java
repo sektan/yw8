@@ -25,7 +25,8 @@ import server.Response.YearLeaderBoardResponse;
  * Created by dishq on 28-10-2016.
  */
 
-public interface ApiInterface {
+public interface
+ApiInterface {
 
     @GET("api/getandroidappdetails/")
     Call<VersionCheckResponse> checkVersion(@Query("version_name")String versionName, @Query("version_number")int versionCode);

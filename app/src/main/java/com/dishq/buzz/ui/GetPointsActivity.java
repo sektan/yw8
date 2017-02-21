@@ -26,7 +26,14 @@ import retrofit2.http.Url;
  * Created by dishq on 26-10-2016.
  */
 
-public class GetPointsActivity extends BaseActivity {
+public class
+
+
+
+
+
+
+GetPointsActivity extends BaseActivity {
 
     private WebView webviewPointsInfo;
     ImageView GetPointsBack, GetPointsFinder;

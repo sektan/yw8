@@ -1,8 +1,4 @@
 package server.api;
-
-import android.os.Handler;
-import android.os.Looper;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

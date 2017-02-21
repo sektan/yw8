@@ -70,7 +70,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private String facebookAccessToken = "";
     private static String facebookOrGoogle = "";
 
-
     String ace = "";
     MixpanelAPI mixpanel = null;
     LoginButton loginButton;
@@ -218,14 +217,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (!GOOGLE_BUTTON_SELECTED) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         } else {
-            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
             if (requestCode == RC_SIGN_IN) {
                 GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
                 try {
                     handleSignInResult(result);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (GoogleAuthException e) {
+                } catch (IOException | GoogleAuthException e) {
                     e.printStackTrace();
                 }
             }
@@ -269,11 +265,12 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 protected String doInBackground(Void... params) {
                     try {
 
+                        if (ActivityCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+
+                        }
                         ace = GoogleAuthUtil.getToken(getApplicationContext(),
                                 Plus.AccountApi.getAccountName(mGoogleApiClient),
                                 "oauth2:" + SCOPES);
-                    } catch (IOException | GoogleAuthException | SecurityException e) {
-                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -423,8 +420,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-
-
                 })
                 .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

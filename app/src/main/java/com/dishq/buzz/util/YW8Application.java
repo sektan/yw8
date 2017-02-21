@@ -4,16 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
 import com.dishq.buzz.Analytics.GoogleAnalyticsTrackers;
-import com.dishq.buzz.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import java.util.concurrent.Executor;
 
 /**
  * Created by dishq on 03-11-2016.

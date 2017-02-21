@@ -85,6 +85,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     private static final long FASTEST_INTERVAL = 1000 * 5;
     private Location mLastLocation;
     protected static final int REQUEST_CHECK_SETTINGS = 1000;
+    final int MY_PERMISSIONS_REQUEST_GPS_ACCESS = 0;
     private FrameLayout layoutUpdate;
     private static String lat = "0.0";
     private static String lang = "0.0";
@@ -93,7 +94,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     private String query = "";
     private String restaurantName = "", restAdd = "";
     private Boolean isUpdateClicked = false;
-    final int MY_PERMISSIONS_REQUEST_GPS_ACCESS = 0;
     String waitTimeUpdate, serverAccessToken, buzzTypeLabel;
     int waitTime, waitTimeId = 0, buzzTypeId = 0;
     private String TAG = "UpdateRestProfile";
@@ -109,8 +109,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         super.onCreate(savedInstanceState);
 
         final int playServicesStatus = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        if(playServicesStatus != ConnectionResult.SUCCESS)
-        {
+        if (playServicesStatus != ConnectionResult.SUCCESS) {
             //If google play services in not available show an error dialog and return
             final Dialog errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(this, playServicesStatus, 0, null);
             errorDialog.show();
@@ -152,7 +151,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     @Override
     protected void onResume() {
         super.onResume();
-        if(isUpdateClicked) {
+        if (isUpdateClicked) {
 
         }
     }
@@ -170,7 +169,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         break;
                     }
                     case Activity.RESULT_CANCELED: {
-                        if(progressGps!=null) {
+                        if (progressGps != null) {
                             progressGps.dismiss();
                         }
                         alertNoForward(UpdateRestProfileActivity.this);
@@ -187,6 +186,16 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
 
     public void getLocation() {
         try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mLastLocation = LocationServices.FusedLocationApi
                     .getLastLocation(googleApiClient);
 
@@ -286,8 +295,8 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     private void setTags() {
-        layoutUpdate = (FrameLayout) findViewById( R.id.mainmenu);
-        layoutUpdate.getForeground().setAlpha( 0);
+        layoutUpdate = (FrameLayout) findViewById(R.id.mainmenu);
+        layoutUpdate.getForeground().setAlpha(0);
         restToolbarName = (TextView) findViewById(R.id.toolbarTitle);
         restToolbarName.setText(getResources().getString(R.string.update));
         restToolbarName.setTypeface(Util.getFaceMedium());
@@ -304,7 +313,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
             @Override
             public void onClick(View view) {
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
-                ;
                 backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
                 startActivity(backButtonIntent);
@@ -611,104 +619,104 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     private void fetchUpdatedUserInfo(String latitude, String longitude) {
-            rest_id = Integer.parseInt(query);
-            final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
-                    latitude, longitude, waitTimeId, buzzTypeId);
-            ApiInterface apiInterface = Config.createService(ApiInterface.class);
-            serverAccessToken = YW8Application.getAccessToken();
-            Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
-                    updateRestaurantHelper);
-            call.enqueue(new Callback<UpdateRestaurantResponse>() {
-                @Override
-                public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
+        rest_id = Integer.parseInt(query);
+        final UpdateRestaurantHelper updateRestaurantHelper = new UpdateRestaurantHelper(rest_id,
+                latitude, longitude, waitTimeId, buzzTypeId);
+        ApiInterface apiInterface = Config.createService(ApiInterface.class);
+        serverAccessToken = YW8Application.getAccessToken();
+        Call<UpdateRestaurantResponse> call = apiInterface.updateRestUserProf(serverAccessToken,
+                updateRestaurantHelper);
+        call.enqueue(new Callback<UpdateRestaurantResponse>() {
+            @Override
+            public void onResponse(Call<UpdateRestaurantResponse> call, Response<UpdateRestaurantResponse> response) {
 
-                    if(layoutUpdate!=null) {
-                        layoutUpdate.getForeground().setAlpha( 0); // restore
-                    }
-                    try {
-                        final JSONObject properties = new JSONObject();
-                        properties.put(waitTimeUpdate, waitTimeUpdate);
-                        mixpanel.track(waitTimeUpdate, properties);
-                    } catch (final JSONException e) {
-                        throw new RuntimeException("Could not encode hour of the day in JSON");
-                    }
+                if (layoutUpdate != null) {
+                    layoutUpdate.getForeground().setAlpha(0); // restore
+                }
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put(waitTimeUpdate, waitTimeUpdate);
+                    mixpanel.track(waitTimeUpdate, properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
 
-                    try {
-                        final JSONObject properties = new JSONObject();
-                        properties.put(buzzTypeLabel, buzzTypeLabel);
-                        mixpanel.track(buzzTypeLabel, properties);
-                    } catch (final JSONException e) {
-                        throw new RuntimeException("Could not encode hour of the day in JSON");
-                    }
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put(buzzTypeLabel, buzzTypeLabel);
+                    mixpanel.track(buzzTypeLabel, properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
 
-                    try {
-                        final JSONObject properties = new JSONObject();
-                        properties.put("update", "update");
-                        mixpanel.track("update", properties);
-                    } catch (final JSONException e) {
-                        throw new RuntimeException("Could not encode hour of the day in JSON");
-                    }
-                    if (progressGps != null) {
-                        progressGps.dismiss();
-                    }
-                    Log.d(TAG, "Success");
-                    try {
-                        if (response.isSuccessful()) {
-                            UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
-                            if (body != null) {
-                                updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
-                                        body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("update", "update");
+                    mixpanel.track("update", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
+                if (progressGps != null) {
+                    progressGps.dismiss();
+                }
+                Log.d(TAG, "Success");
+                try {
+                    if (response.isSuccessful()) {
+                        UpdateRestaurantResponse.UserProfileUpdateInfo body = response.body().userProfileUpdateInfo;
+                        if (body != null) {
+                            updateRestaurantFinder = new UpdateRestaurantFinder(body.getHasBadgeUpgrade(), body.getNumPointsAdded(),
+                                    body.currentBadgeInfo.getBadgeName(), body.currentBadgeInfo.getBadgeLevel());
 
-                                YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded()).apply();
-                                YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
-                                if (!(UpdateRestProfileActivity.this).isFinishing()) {
-                                    progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
-                                    progressDialoglert.show();
-                                }
-                                checkWhereToGo(updateRestaurantFinder);
-
-                            }
-                        } else {
-                            String error = response.errorBody().string();
-                            Log.d(TAG, error);
+                            YW8Application.getPrefs().edit().putInt(Constants.NUM_POINTS_ADDED, updateRestaurantFinder.getNumPointsAdded()).apply();
+                            YW8Application.setNumPointsAdded(updateRestaurantFinder.getNumPointsAdded());
                             if (!(UpdateRestProfileActivity.this).isFinishing()) {
                                 progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
                                 progressDialoglert.show();
-                                if (response.code() == 412) {
-                                    alertTooFrequent(UpdateRestProfileActivity.this);
-                                } else if (response.code() == 406) {
-                                    alertFarOff(UpdateRestProfileActivity.this);
-                                } else if (response.code() == 400) {
-                                    alertTryAgain(UpdateRestProfileActivity.this);
-                                }
                             }
+                            checkWhereToGo(updateRestaurantFinder);
 
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    } else {
+                        String error = response.errorBody().string();
+                        Log.d(TAG, error);
+                        if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                            progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
+                            progressDialoglert.show();
+                            if (response.code() == 412) {
+                                alertTooFrequent(UpdateRestProfileActivity.this);
+                            } else if (response.code() == 406) {
+                                alertFarOff(UpdateRestProfileActivity.this);
+                            } else if (response.code() == 400) {
+                                alertTryAgain(UpdateRestProfileActivity.this);
+                            }
+                        }
 
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
-                @Override
-                public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
-                    }
+            }
 
-                    if(layoutUpdate!=null) {
-                        layoutUpdate.getForeground().setAlpha( 0); // restore
-                    }
-
-                    if(!Util.checkAndShowNetworkPopup(UpdateRestProfileActivity.this)){
-                        fetchUpdatedUserInfo(lat, lang);
-                    }else {
-                        alertServerConnectFailure(UpdateRestProfileActivity.this);
-                    }
-
-                    Log.d(TAG, "Failure of connecting to the server");
+            @Override
+            public void onFailure(Call<UpdateRestaurantResponse> call, Throwable t) {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
                 }
-            });
+
+                if (layoutUpdate != null) {
+                    layoutUpdate.getForeground().setAlpha(0); // restore
+                }
+
+                if (!Util.checkAndShowNetworkPopup(UpdateRestProfileActivity.this)) {
+                    fetchUpdatedUserInfo(lat, lang);
+                } else {
+                    alertServerConnectFailure(UpdateRestProfileActivity.this);
+                }
+
+                Log.d(TAG, "Failure of connecting to the server");
+            }
+        });
     }
 
     public void alertServerConnectFailure(final Activity activity) {
@@ -731,7 +739,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                        homeIntent.addCategory( Intent.CATEGORY_HOME );
+                        homeIntent.addCategory(Intent.CATEGORY_HOME);
                         homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(homeIntent);
                     }
@@ -918,7 +926,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
             PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
                     .checkLocationSettings(googleApiClient, builder.build());
 
-            layoutUpdate.getForeground().setAlpha( 180); // dim
+            layoutUpdate.getForeground().setAlpha(180); // dim
 //            if (!(UpdateRestProfileActivity.this).isFinishing()) {
 //                if(progressGps==null) {
 //                    progressGps = new ProgressDialog(UpdateRestProfileActivity.this);
@@ -978,6 +986,16 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     public void onConnected(@Nullable Bundle bundle) {
 
         startLocationUpdates();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (mLastLocation != null) {
@@ -1019,14 +1037,22 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         Log.d(TAG, "Remove Location");
         try {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
 
     protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, this);
     }
 }
