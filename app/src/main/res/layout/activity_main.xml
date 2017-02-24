@@ -4,19 +4,12 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_screen"
+    android:gravity="center"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="0dp"
-    android:background="@color/greyWhite"
-    tools:context="com.dishq.buzz.MainActivity"
-    android:gravity="center">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/splashscreen_logo"
-        android:gravity="center" />
-
+    tools:context="com.dishq.buzz.MainActivity">
 
 </RelativeLayout>

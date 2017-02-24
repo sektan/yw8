@@ -31,8 +31,10 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.firebase.auth.FirebaseAuth;
@@ -76,24 +78,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             progressDialog = new ProgressDialog(HomePageActivity.this);
             progressDialog.show();
         }
-
-        String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestServerAuthCode(serverClientId)
-                .requestIdToken(serverClientId)
-                .build();
-
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .addOnConnectionFailedListener(this).
-                        addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .addApi(Plus.API)
-                .build();
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
         setSupportActionBar(toolbar);
@@ -275,35 +259,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         });
     }
 
-    public void alertServerConnectFailure(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Oops, something went wrong, please try again")
-                .setCancelable(false)
-                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent backButtonIntent = new Intent(HomePageActivity.this, HomePageActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                        homeIntent.addCategory( Intent.CATEGORY_HOME );
-                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(homeIntent);
-                    }
-                })
-                .create();
-        dialog.show();
-    }
-
     public void alertTryAgain(final Activity activity) {
         if (!(HomePageActivity.this).isFinishing()) {
             AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -336,7 +291,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_options:
-                //TODO
+
                 return true;
             case R.id.get_points:
                 Intent intentGetPoints = new Intent(HomePageActivity.this, GetPointsActivity.class);
@@ -379,32 +334,50 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
 
     public void googleSignOut() {
 
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-            mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                @Override
-                public void onConnected(@Nullable Bundle bundle) {
+        String serverClientId = "54832716150-u8qscc87ku414fhlie9mfu4ig7m93cji.apps.googleusercontent.com";
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode(serverClientId, false)
+                .requestIdToken(serverClientId)
+                .build();
 
-                    FirebaseAuth.getInstance().signOut();
-                    if (mGoogleApiClient.isConnected()) {
-                        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(@NonNull Status status) {
-                                if (status.isSuccess()) {
-                                    Log.d("HomePage", "User Logged out");
-                                    userLogOut();
-                                }
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onConnectionSuspended(int i) {
-                    Log.d("HomePage", "Google API Client Connection Suspended");
-                }
-            });
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        if(mGoogleApiClient==null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+            // [END build_client]
         }
+
+        mGoogleApiClient.connect();
+        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+            @Override
+            public void onConnected(@Nullable Bundle bundle) {
+
+                FirebaseAuth.getInstance().signOut();
+                if (mGoogleApiClient.isConnected()) {
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            if (status.isSuccess()) {
+                                Log.d("HomePage", "User Logged out");
+                                userLogOut();
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onConnectionSuspended(int i) {
+                Log.d("HomePage", "Google API Client Connection Suspended");
+            }
+        });
     }
 
     public void userLogOut() {
@@ -436,6 +409,11 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
     @Override
     protected void onDestroy() {
         mixpanel.flush();
+        if(mGoogleApiClient!=null) {
+            if (mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.disconnect();
+            }
+        }
         super.onDestroy();
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by dishq on 06-11-2016.
+ * Package name version1.dishq.dishq.
  */
 
 public class YearLeaderBoardResponse {
@@ -18,11 +19,7 @@ public class YearLeaderBoardResponse {
 
     @SerializedName("data")
     @Expose
-    public List<YearPointsInfo> yearPointsInfo;
-
-    public YearLeaderBoardResponse (ArrayList<YearPointsInfo> yearPointsInfo) {
-        this.yearPointsInfo = yearPointsInfo;
-    }
+    public ArrayList<YearPointsInfo> yearPointsInfo;
 
     public class YearPointsInfo {
         @SerializedName("num_points")
@@ -36,6 +33,14 @@ public class YearLeaderBoardResponse {
         @SerializedName("rank")
         @Expose
         public int yearRank;
+
+        public YearUserDetails getYearUserDetails() {
+            return yearUserDetails;
+        }
+
+        public void setYearUserDetails(YearUserDetails yearUserDetails) {
+            this.yearUserDetails = yearUserDetails;
+        }
 
         public int getYearPoints() {
             return yearPoints;
@@ -52,6 +57,7 @@ public class YearLeaderBoardResponse {
         public void setYearRank(int yearRank) {
             this.yearRank = yearRank;
         }
+    }
 
         public class YearUserDetails {
             @SerializedName("username")
@@ -89,6 +95,5 @@ public class YearLeaderBoardResponse {
             public void setYearUserId(int yearUserId) {
                 this.yearUserId = yearUserId;
             }
-        }
     }
 }

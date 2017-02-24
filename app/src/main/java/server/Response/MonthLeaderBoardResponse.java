@@ -3,10 +3,12 @@ package server.Response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dishq on 06-11-2016.
+ * Package name version1.dishq.dishq.
  */
 
 public class MonthLeaderBoardResponse {
@@ -17,7 +19,7 @@ public class MonthLeaderBoardResponse {
 
     @SerializedName("data")
     @Expose
-    public List<MonthPointsInfo> monthPointsInfo;
+    public ArrayList<MonthPointsInfo> monthPointsInfo;
 
     public class MonthPointsInfo {
         @SerializedName("num_points")
@@ -40,6 +42,14 @@ public class MonthLeaderBoardResponse {
             this.monthPoints = monthPoints;
         }
 
+        public MonthUserDetails getMonthUserDetails() {
+            return monthUserDetails;
+        }
+
+        public void setMonthUserDetails(MonthUserDetails monthUserDetails) {
+            this.monthUserDetails = monthUserDetails;
+        }
+
         public int getMonthRank() {
             return monthRank;
         }
@@ -48,18 +58,20 @@ public class MonthLeaderBoardResponse {
             this.monthRank = monthRank;
         }
 
+    }
+
         public class MonthUserDetails {
             @SerializedName("username")
             @Expose
-            public String monthUserName;
+            String monthUserName;
 
             @SerializedName("is_current_user")
             @Expose
-            public Boolean monthIsCurrentUser;
+            Boolean monthIsCurrentUser;
 
             @SerializedName("user_id")
             @Expose
-            public int monthUserId;
+            int monthUserId;
 
             public String getMonthUserName() {
                 return monthUserName;
@@ -84,6 +96,5 @@ public class MonthLeaderBoardResponse {
             public void setMonthUserId(int monthUserId) {
                 this.monthUserId = monthUserId;
             }
-        }
     }
 }

@@ -87,14 +87,14 @@ public class UserProfileActivity extends BaseActivity {
         userProfLifetimeText.setTypeface(Util.getFaceRoman());
         userProfInfoText = (TextView) findViewById(R.id.up_info_text);
         userProfInfoText.setTypeface(Util.getFaceRoman());
-//        userProfMonth = (TextView) findViewById(R.id.up_month_name);
-//        userProfMonth.setTypeface(Util.getFaceMedium());
-//        userProfMonthRank = (TextView) findViewById(R.id.up_month_rank);
-//        userProfMonthRank.setTypeface(Util.getFaceRoman());
-//        userProfMonthPoints = (TextView) findViewById(R.id.up_month_points);
-//        userProfMonthPoints.setTypeface(Util.getFaceRoman());
-//        TextView mPtText = (TextView) findViewById(R.id.up_month_pt_text);
-//        mPtText.setTypeface(Util.getFaceRoman());
+        userProfMonth = (TextView) findViewById(R.id.up_month_name);
+        userProfMonth.setTypeface(Util.getFaceMedium());
+        userProfMonthRank = (TextView) findViewById(R.id.up_month_rank);
+        userProfMonthRank.setTypeface(Util.getFaceRoman());
+        userProfMonthPoints = (TextView) findViewById(R.id.up_month_points);
+        userProfMonthPoints.setTypeface(Util.getFaceRoman());
+        TextView mPtText = (TextView) findViewById(R.id.up_month_pt_text);
+        mPtText.setTypeface(Util.getFaceRoman());
         userProfYear = (TextView) findViewById(R.id.up_year_no);
         userProfYear.setTypeface(Util.getFaceMedium());
         userProfYearRank = (TextView) findViewById(R.id.up_year_rank);
@@ -103,7 +103,7 @@ public class UserProfileActivity extends BaseActivity {
         userProfYearPoints.setTypeface(Util.getFaceRoman());
         TextView yPtText = (TextView) findViewById(R.id.up_ypts_text);
         yPtText.setTypeface(Util.getFaceRoman());
-        //monthCV = (CardView) findViewById(R.id.cv_month_leaderboard);
+        monthCV = (CardView) findViewById(R.id.cv_month_leaderboard);
         yearCV = (CardView) findViewById(R.id.cv_year_leaderboard);
         userProfProgress = (ProgressBar) findViewById(R.id.up_progressBar);
         userProfBack.setOnClickListener(new View.OnClickListener() {
@@ -174,17 +174,17 @@ public class UserProfileActivity extends BaseActivity {
 
         userProfInfoText.setText(body.getfPointsToUgrade());
 
-        //userProfMonth.setText(body.monthBuzzPointsInfo.getmMonthName());
-        //Util.setMonthName(body.monthBuzzPointsInfo.getmMonthName());
+        userProfMonth.setText(body.monthBuzzPointsInfo.getmMonthName());
+        Util.setMonthName(body.monthBuzzPointsInfo.getmMonthName());
 
-//        if (body.monthBuzzPointsInfo.getmRank() != 0 && body.monthBuzzPointsInfo.getmRank() != -1) {
-//            String monthRankText = "#" + Integer.toString(body.monthBuzzPointsInfo.getmRank());
-//            userProfMonthRank.setText(monthRankText);
-//        }
-//
-//        if (body.monthBuzzPointsInfo.getmNoOfPoints() != 0) {
-//            userProfMonthPoints.setText(String.format(Locale.ENGLISH, "%d", body.monthBuzzPointsInfo.getmNoOfPoints()));
-//        }
+        if (body.monthBuzzPointsInfo.getmRank() != 0 && body.monthBuzzPointsInfo.getmRank() != -1) {
+            String monthRankText = "#" + Integer.toString(body.monthBuzzPointsInfo.getmRank());
+            userProfMonthRank.setText(monthRankText);
+        }
+
+        if (body.monthBuzzPointsInfo.getmNoOfPoints() != 0) {
+            userProfMonthPoints.setText(String.format(Locale.ENGLISH, "%d", body.monthBuzzPointsInfo.getmNoOfPoints()));
+        }
 
         if (body.yearBuzzPointsInfo.getyYear() != 0) {
             userProfYear.setText(String.format(getResources().getString(R.string.year_leaderboard), body.yearBuzzPointsInfo.getyYear()));
@@ -200,32 +200,32 @@ public class UserProfileActivity extends BaseActivity {
             userProfYearPoints.setText(String.format(Locale.ENGLISH, "%d", body.yearBuzzPointsInfo.getyNoOfPoints()));
         }
 
-        //Util.setMonthNumber(body.monthBuzzPointsInfo.getmMonthNo());
+        Util.setMonthNumber(body.monthBuzzPointsInfo.getmMonthNo());
 
-//        monthCV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                monthOrYear = "month";
-//                Util.setMonthOrYear(monthOrYear);
-//                Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                try {
-//                    final JSONObject properties = new JSONObject();
-//                    properties.put("monthly leaderboard", "monthly leaderboard");
-//                    mixpanel.track("monthly leaderboard", properties);
-//                } catch (final JSONException e) {
-//                    throw new RuntimeException("Could not encode hour of the day in JSON");
-//                }
-//                startActivity(intent);
-//            }
-//        });
+        monthCV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                monthOrYear = "month";
+                Util.setMonthOrYear(monthOrYear);
+                Intent intent = new Intent(UserProfileActivity.this, LeadBoardActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("monthly leaderboard", "monthly leaderboard");
+                    mixpanel.track("monthly leaderboard", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
+                startActivity(intent);
+            }
+        });
 
         yearCV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 monthOrYear = "year";
                 Util.setMonthOrYear(monthOrYear);
-                Intent intent = new Intent(UserProfileActivity.this, LeaderBoardActivity.class);
+                Intent intent = new Intent(UserProfileActivity.this, LeadBoardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 try {
                     final JSONObject properties = new JSONObject();

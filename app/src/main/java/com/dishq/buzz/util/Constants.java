@@ -1,8 +1,5 @@
 package com.dishq.buzz.util;
 
-import java.util.ArrayList;
-
-import server.Finder.YearlyLeaderBoardFinder;
 
 /**
  * Created by dishq on 06-11-2016.

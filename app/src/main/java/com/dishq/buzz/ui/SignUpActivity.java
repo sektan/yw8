@@ -31,15 +31,22 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
+import com.google.android.gms.common.api.Scope;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+//Google SignIn Libraries
+//import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+//import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+//import com.google.api.client.http.javanet.NetHttpTransport;
+//import com.google.api.client.json.jackson2.JacksonFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,6 +64,7 @@ import server.api.Config;
 
 /**
  * Created by dishq on 25-10-2016.
+ * Package name version1.dishq.dishq.
  */
 
 public class SignUpActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -66,11 +74,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private ProgressDialog progressDialog;
     private CallbackManager callbackManager;
     private static final int RC_SIGN_IN = 9001;
-    final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private String facebookAccessToken = "";
     private static String facebookOrGoogle = "";
 
-    String ace = "";
+    String accessToken = "";
     MixpanelAPI mixpanel = null;
     LoginButton loginButton;
     private Boolean GOOGLE_BUTTON_SELECTED, FACEBOOK_BUTTON_SELECTED;
@@ -85,22 +92,21 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         //Facebook SDK is initialized
         facebookSDKInitialize();
 
-        String serverClientId = "54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com";
+        String serverClientId = "54832716150-u8qscc87ku414fhlie9mfu4ig7m93cji.apps.googleusercontent.com";
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
-                .requestServerAuthCode(serverClientId)
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode(serverClientId, false)
                 .requestIdToken(serverClientId)
                 .build();
-
+        Log.d(TAG, "Google sign in has been set up");
         // [START build_client]
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .addOnConnectionFailedListener(this).
-                        addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .addApi(Plus.API)
+                .addOnConnectionFailedListener(this)
                 .build();
         // [END build_client]
         setContentView(R.layout.activity_signup);
@@ -190,9 +196,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                facebookOrGoogle = "facebook";
-                YW8Application.setFacebookOrGoogle(facebookOrGoogle);
-                YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
                 facebookAccessToken = loginResult.getAccessToken().getToken();
                 progressDialog = new ProgressDialog(SignUpActivity.this);
                 progressDialog.show();
@@ -235,11 +238,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             case R.id.google_sign_up:
                 GOOGLE_BUTTON_SELECTED = true;
                 FACEBOOK_BUTTON_SELECTED = false;
-                if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-                    signIn();
-                } else if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
-                    selfPermission();
-                }
+                signIn();
                 break;
         }
     }
@@ -255,49 +254,48 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (result.isSuccess()) {
 
             // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
+            final GoogleSignInAccount acct = result.getSignInAccount();
             assert acct != null;
-            final String access = acct.getServerAuthCode();
-            final String SCOPES = "https://www.googleapis.com/auth/userinfo.profile";
+            final String authCode = acct.getServerAuthCode();
+            Log.d(TAG, "the authCode is:" + authCode);
 
-            AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
-                @Override
-                protected String doInBackground(Void... params) {
-                    try {
-
-                        if (ActivityCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-
-                        }
-                        ace = GoogleAuthUtil.getToken(getApplicationContext(),
-                                Plus.AccountApi.getAccountName(mGoogleApiClient),
-                                "oauth2:" + SCOPES);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    Log.i("", "mustafa olll " + access);
-                    return ace;
-                }
-
-                @Override
-                protected void onPostExecute(String token) {
-                    Log.i(TAG, "Access token retrieved:" + ace);
-                    facebookOrGoogle = "google";
-                    YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
-                    YW8Application.setFacebookOrGoogle(facebookOrGoogle);
-                    progressDialog = new ProgressDialog(SignUpActivity.this);
-                    progressDialog.show();
-                    fetchAccessToken(ace);
-                }
-
-            };
-            task.execute();
-
-            Log.e("signin", acct.getDisplayName() + acct.getIdToken() + acct.getEmail());
-
-
+//            AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
+//                @Override
+//                protected String doInBackground(Void... params) {
+//                    try {
+//                        GoogleTokenResponse tokenResponse =
+//                                new GoogleAuthorizationCodeTokenRequest(
+//                                        new NetHttpTransport(),
+//                                        JacksonFactory.getDefaultInstance(),
+//                                        "https://www.googleapis.com/oauth2/v4/token",
+//                                        "54832716150-u8qscc87ku414fhlie9mfu4ig7m93cji.apps.googleusercontent.com",
+//                                        "H6SzKnutZc8gqactUDK_rtyX",
+//                                        authCode, "")
+//                                        .execute();
+//
+//                        accessToken = tokenResponse.getAccessToken();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    return accessToken;
+//                }
+//
+//                @Override
+//                protected void onPostExecute(String token) {
+//                    Log.i(TAG, "Access token retrieved:" + accessToken);
+//                    facebookOrGoogle = "google";
+//                    YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
+//                    YW8Application.setFacebookOrGoogle(facebookOrGoogle);
+//                    progressDialog = new ProgressDialog(SignUpActivity.this);
+//                    progressDialog.show();
+//                    fetchAccessToken(accessToken);
+//                }
+//
+//            };
+//            task.execute();
         } else {
-            Log.e("google", result + "");
+            Log.e(TAG, result + "");
         }
     }
 
@@ -357,7 +355,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void startHomePageActivity() {
-        Intent i = new Intent(SignUpActivity.this.getApplicationContext(), HomePageActivity.class);
+        Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
         startActivity(i);
@@ -366,78 +364,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    void selfPermission() {
-        if (ContextCompat.checkSelfPermission(SignUpActivity.this,
-                Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivity.this,
-                    Manifest.permission.GET_ACCOUNTS)) {
-                Log.e("accept", "accept");
-            } else {
-                // we can request the permission.
-                Log.e("accept", "not accept");
-                ActivityCompat.requestPermissions(SignUpActivity.this,
-                        new String[]{Manifest.permission.GET_ACCOUNTS},
-                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    signIn();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Log.e("yaay", "yaay");
-                } else {
-                    showAlert("", "That permission is needed to use Google Signup. Tap retry or use Facebook to Signup.");
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-
-    public void showAlert(String title, String message) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(SignUpActivity.this);
-        builder.setTitle(title);
-        builder.setMessage(message).setCancelable(false)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
-                            ActivityCompat.requestPermissions(SignUpActivity.this,
-                                    new String[]{Manifest.permission.GET_ACCOUNTS},
-                                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-                        }
-                    }
-                });
-
-
-        android.app.AlertDialog alert = builder.create();
-        alert.show();
-        TextView message1 = (TextView) alert.findViewById(android.R.id.message);
-        assert message != null;
-        message1.setLineSpacing(0, 1.5f);
-
     }
 
     @Override

@@ -14,14 +14,18 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import server.Finder.MonthlyLeaderBoardFinder;
-import server.Finder.YearlyLeaderBoardFinder;
+import server.Response.MonthLeaderBoardResponse;
+import server.Response.YearLeaderBoardResponse;
 
 /**
  * Created by dishq on 02-11-2016.
+ * Package name version1.dishq.dishq.
  */
 
 public class Util {
+
+    public static ArrayList<MonthLeaderBoardResponse.MonthPointsInfo> monthPointsInfos = new ArrayList<>();
+    public static ArrayList<YearLeaderBoardResponse.YearPointsInfo> yearPointsInfos = new ArrayList<>();
     public static String ACCESS_TOKEN = "";
     public static double latitude = 17.77;
     public static double longitude;

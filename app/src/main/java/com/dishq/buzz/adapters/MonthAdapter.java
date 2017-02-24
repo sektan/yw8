@@ -1,4 +1,4 @@
-package custom;
+package com.dishq.buzz.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,29 +13,24 @@ import com.dishq.buzz.R;
 import com.dishq.buzz.ui.UserProfileActivity;
 import com.dishq.buzz.util.Util;
 
-import java.util.ArrayList;
-
-import server.Finder.MonthlyLeaderBoardFinder;
-
 /**
- * Created by dishq on 09-11-2016.
+ * Created by dishq on 24-02-2017.
+ * Package name version1.dishq.dishq.
  */
 
-public class MonthlyAdapter extends BaseAdapter{
+public class MonthAdapter extends BaseAdapter {
 
     LayoutInflater layoutInflater;
     Context context;
-    ArrayList<MonthlyLeaderBoardFinder> monthlyFinder;
 
-    public MonthlyAdapter(Context context, ArrayList<MonthlyLeaderBoardFinder> monthlyFinder){
+    public MonthAdapter(Context context){
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
-        this.monthlyFinder = monthlyFinder;
     }
 
     @Override
     public int getCount() {
-        return monthlyFinder.size();
+        return Util.monthPointsInfos.size();
     }
 
     @Override
@@ -49,8 +44,7 @@ public class MonthlyAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View ConverterView, ViewGroup viewGroup) {
-        View view = null;
+    public View getView(int position, View view, ViewGroup viewGroup) {
         if(view == null) {
             view = layoutInflater.inflate(R.layout.monthly_row_item, viewGroup, false);
         }
@@ -65,7 +59,7 @@ public class MonthlyAdapter extends BaseAdapter{
         LinearLayout lllayout = (LinearLayout) view.findViewById(R.id.ll_monthly_row);
 
         if(lllayout!= null) {
-            if(monthlyFinder.get(position).getMonthIsCurrentUser()) {
+            if(Util.monthPointsInfos.get(position).getMonthUserDetails().getMonthIsCurrentUser()) {
                 monthlyRank.setTextColor(context.getResources().getColor(R.color.lightPurple));
                 monthlyUserName.setTextColor(context.getResources().getColor(R.color.lightPurple));
                 monthlyPoints.setTextColor(context.getResources().getColor(R.color.lightPurple));
@@ -77,8 +71,6 @@ public class MonthlyAdapter extends BaseAdapter{
                         context.startActivity(intent);
                     }
                 });
-            }else {
-
             }
             if(position%2 == 1) {
                 lllayout.setBackgroundColor(context.getResources().getColor(R.color.rowPurple));
@@ -87,24 +79,18 @@ public class MonthlyAdapter extends BaseAdapter{
             }
         }
 
-        if(monthlyRank != null) {
-            if(Integer.toString(monthlyFinder.get(position).getMonthRank())!=null) {
-                if(monthlyFinder.get(position).getMonthRank()!= -1) {
-                    String rank = "#" + Integer.toString(monthlyFinder.get(position).getMonthRank());
-                    monthlyRank.setText(rank);
-                }
+        if(Integer.toString(Util.monthPointsInfos.get(position).getMonthRank())!=null) {
+            if(Util.monthPointsInfos.get(position).getMonthRank()!= -1) {
+                String rank = "#" + Integer.toString(Util.monthPointsInfos.get(position).getMonthRank());
+                monthlyRank.setText(rank);
             }
         }
-        if(monthlyUserName != null) {
-            monthlyUserName.setText(monthlyFinder.get(position).getMonthUserName());
+        monthlyUserName.setText(Util.monthPointsInfos.get(position).getMonthUserDetails().getMonthUserName());
+        if(Integer.toString(Util.monthPointsInfos.get(position).getMonthPoints())!=null) {
+            String points = Integer.toString(Util.monthPointsInfos.get(position).getMonthPoints());
+            monthlyPoints.setText(points);
         }
-        if(monthlyPoints != null) {
-            if(Integer.toString(monthlyFinder.get(position).getMonthPoints())!=null) {
-                String points = Integer.toString(monthlyFinder.get(position).getMonthPoints());
-                monthlyPoints.setText(points);
-            }
 
-        }
         return view;
     }
 }

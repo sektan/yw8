@@ -1,4 +1,4 @@
-package custom;
+package com.dishq.buzz.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,28 +13,24 @@ import com.dishq.buzz.R;
 import com.dishq.buzz.ui.UserProfileActivity;
 import com.dishq.buzz.util.Util;
 
-import java.util.ArrayList;
-import server.Finder.YearlyLeaderBoardFinder;
-
 /**
- * Created by dishq on 08-11-2016.
+ * Created by dishq on 24-02-2017.
+ * Package name version1.dishq.dishq.
  */
 
-public class YearlyAdapter extends BaseAdapter {
+public class YearAdapter extends BaseAdapter {
 
     LayoutInflater layoutInflater;
     Context context;
-    ArrayList<YearlyLeaderBoardFinder> yearlyFinder;
 
-    public YearlyAdapter(Context context, ArrayList<YearlyLeaderBoardFinder> yearlyFinder){
+    public YearAdapter(Context context){
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
-        this.yearlyFinder = yearlyFinder;
     }
 
     @Override
     public int getCount() {
-        return yearlyFinder.size();
+        return Util.yearPointsInfos.size();
     }
 
     @Override
@@ -48,8 +44,7 @@ public class YearlyAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View ConverterView, ViewGroup viewGroup) {
-        View view = null;
+    public View getView(int position, View view, ViewGroup viewGroup) {
         if(view == null) {
             view = layoutInflater.inflate(R.layout.yearly_row_item, viewGroup, false);
         }
@@ -64,7 +59,7 @@ public class YearlyAdapter extends BaseAdapter {
         LinearLayout llayout = (LinearLayout) view.findViewById(R.id.ll_year_row);
 
         if(llayout!=null) {
-            if(yearlyFinder.get(position).getYearIsCurrentUser()){
+            if(Util.yearPointsInfos.get(position).getYearUserDetails().getYearIsCurrentUser()){
                 yearlyRank.setTextColor(context.getResources().getColor(R.color.lightPurple));
                 yearlyUserName.setTextColor(context.getResources().getColor(R.color.lightPurple));
                 yearlyPoints.setTextColor(context.getResources().getColor(R.color.lightPurple));
@@ -76,8 +71,6 @@ public class YearlyAdapter extends BaseAdapter {
                         context.startActivity(intent);
                     }
                 });
-            }else {
-
             }
             if(position%2 == 1) {
                 llayout.setBackgroundColor(context.getResources().getColor(R.color.rowPurple));
@@ -86,22 +79,16 @@ public class YearlyAdapter extends BaseAdapter {
             }
         }
 
-        if(yearlyRank != null) {
-            if(Integer.toString(yearlyFinder.get(position).getYearRank())!=null) {
-                if(yearlyFinder.get(position).getYearRank()!= -1) {
-                    String rank = "#" + Integer.toString(yearlyFinder.get(position).getYearRank());
-                    yearlyRank.setText(rank);
-                }
+        if(Integer.toString(Util.yearPointsInfos.get(position).getYearRank())!=null) {
+            if(Util.yearPointsInfos.get(position).getYearRank()!= -1) {
+                String rank = "#" + Integer.toString(Util.yearPointsInfos.get(position).getYearRank());
+                yearlyRank.setText(rank);
             }
         }
-        if(yearlyUserName != null) {
-            yearlyUserName.setText(yearlyFinder.get(position).getYearUserName());
-        }
-        if(yearlyPoints != null) {
-            if(Integer.toString(yearlyFinder.get(position).getYearPoints())!=null) {
-                String points = Integer.toString(yearlyFinder.get(position).getYearPoints());
-                yearlyPoints.setText(points);
-            }
+        yearlyUserName.setText(Util.yearPointsInfos.get(position).getYearUserDetails().getYearUserName());
+        if(Integer.toString(Util.yearPointsInfos.get(position).getYearPoints())!=null) {
+            String points = Integer.toString(Util.yearPointsInfos.get(position).getYearPoints());
+            yearlyPoints.setText(points);
         }
         return view;
     }
