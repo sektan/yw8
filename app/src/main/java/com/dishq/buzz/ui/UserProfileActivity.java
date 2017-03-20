@@ -1,12 +1,9 @@
 package com.dishq.buzz.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +33,7 @@ import server.api.Config;
 
 /**
  * Created by dishq on 26-10-2016.
+ * Package name version1.dishq.dishq.
  */
 
 public class UserProfileActivity extends BaseActivity {
@@ -58,11 +56,15 @@ public class UserProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(UserProfileActivity.this);
         progressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         //MixPanel Instantiation
         mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
         setContentView(R.layout.activity_user_profile);
         setTags();
-        fetchFullUserDetails();
+        if(!Util.checkAndShowNetworkPopup(this)) {
+            fetchFullUserDetails();
+        }
     }
 
     @Override
@@ -109,7 +111,13 @@ public class UserProfileActivity extends BaseActivity {
         userProfBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("app_back", "app_back");
+                    mixpanel.track("app_back", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 Intent intent = new Intent(UserProfileActivity.this, HomePageActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 SearchActivity.currentActivity.finish();
@@ -174,7 +182,7 @@ public class UserProfileActivity extends BaseActivity {
 
         userProfInfoText.setText(body.getfPointsToUgrade());
 
-        userProfMonth.setText(body.monthBuzzPointsInfo.getmMonthName());
+        userProfMonth.setText(String.format(getResources().getString(R.string.month_leaderboard), body.monthBuzzPointsInfo.getmMonthName()));
         Util.setMonthName(body.monthBuzzPointsInfo.getmMonthName());
 
         if (body.monthBuzzPointsInfo.getmRank() != 0 && body.monthBuzzPointsInfo.getmRank() != -1) {
@@ -206,6 +214,7 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 monthOrYear = "month";
+                Util.setTabSelected(0);
                 Util.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeadBoardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -224,6 +233,7 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 monthOrYear = "year";
+                Util.setTabSelected(1);
                 Util.setMonthOrYear(monthOrYear);
                 Intent intent = new Intent(UserProfileActivity.this, LeadBoardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -276,41 +286,9 @@ public class UserProfileActivity extends BaseActivity {
                 if(!Util.checkAndShowNetworkPopup(UserProfileActivity.this)) {
                     fetchFullUserDetails();
                 }
-//                }else {
-//                    alertServerConnectFailure(UserProfileActivity.this);
-//                }
             }
 
         });
-    }
-
-    public void alertServerConnectFailure(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Oops, something went wrong, please try again")
-                .setCancelable(false)
-                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent backButtonIntent = new Intent(UserProfileActivity.this, UserProfileActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                        homeIntent.addCategory( Intent.CATEGORY_HOME );
-                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(homeIntent);
-                    }
-                })
-                .create();
-        dialog.show();
     }
 
     @Override

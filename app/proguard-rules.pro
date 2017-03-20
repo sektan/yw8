@@ -15,3 +15,17 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
+-dontwarn com.google.api.client.extensions.android.**
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
+
+-optimizations !code/allocation/variable
+-keepattributes EnclosingMethod
+
+-dontnote sun.misc.Unsafe
+-dontwarn sun.misc.Unsafe

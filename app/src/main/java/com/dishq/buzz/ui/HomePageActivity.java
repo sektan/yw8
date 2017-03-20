@@ -36,7 +36,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.plus.Plus;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -77,6 +76,8 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
         if (!(HomePageActivity.this).isFinishing()) {
             progressDialog = new ProgressDialog(HomePageActivity.this);
             progressDialog.show();
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
         }
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_page_toolbar);
@@ -93,8 +94,9 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             Log.e("HomePage", "Failed to obtain title bar");
         }
         setTags();
-        fetchShortUserProfile();
-
+        if(!Util.checkAndShowNetworkPopup(this)){
+            fetchShortUserProfile();
+        }
     }
 
     void setTags() {
@@ -229,9 +231,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                         ShortUserDetailsResponse.ShortUserDetailsInfo body = response.body().shortUserDetailsInfo;
                         if (body != null) {
                             Util.setUserId(body.shortUserDetails.getUserId());
-                            mixpanel.identify(body.shortUserDetails.getUserId());
-                            mixpanel.getPeople().identify(body.shortUserDetails.getUserId());
-                            mixpanel.getPeople().set("Plan", "Premium");
                             setFunctionality(body);
                         }
                     } else {

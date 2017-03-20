@@ -171,7 +171,7 @@
                             android:layout_gravity="center"
                             android:textColor="@color/black"
                             android:alpha="0.86"
-                            android:text="Month"
+                            android:text="@string/month_leaderboard"
                             android:textSize="@dimen/home_page_button_text" />
 
                         <LinearLayout

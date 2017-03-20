@@ -67,7 +67,9 @@ public class YearlyLeaderboardFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listView = (ListView) view.findViewById(R.id.year_leaderboard_list);
-        fetchYearlyDetails(Util.getYearNumber());
+        if(!Util.checkAndShowNetworkPopup(getActivity())) {
+            fetchYearlyDetails(Util.getYearNumber());
+        }
     }
 
     private void fetchYearlyDetails(final int yearNumber) {

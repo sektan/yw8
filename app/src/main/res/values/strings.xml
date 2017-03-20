@@ -11,7 +11,7 @@
     <string name="app_heading">YW8</string>
 
     <!-- signIn/signUp -->
-    <string name="connect_with">Connect with</string>
+    <string name="connect_with">Sign up via</string>
     <string name="server_client_id">54832716150-fedbq3bfv99as0vkv2fp3q12juu3btp7.apps.googleusercontent.com</string>
     <string name="server_web_id">54832716150-9d6pd2m4ttlcllelrpifbthke4t5eckb.apps.googleusercontent.com</string>
     <string name="backend_facebook">facebook</string>
@@ -53,8 +53,8 @@
     <string name="update">Update</string>
     <string name="current_wait">Current waiting time\?</string>
     <string name="ambiance">Ambiance\?</string>
-    <string name="similar_rest_text_wait">Similar restaurant nearby with no waiting time</string>
-    <string name="similar_rest_closed">Similar restaurant that\'s open with no waiting time</string>
+    <string name="similar_rest_text_wait">Similar place nearby with no waiting time</string>
+    <string name="similar_rest_closed">Similar place that\'s open with no waiting time</string>
     <string name="similar_closed">There are no similar open restaurants nearby right now.</string>
     <string name="num_of_points_added">Thanks, you just earned %s points&#33;</string>
     <string name="too_often_update">You can\'t update the waiting time for the same place too often</string>
@@ -83,5 +83,6 @@
     <string name="rookie">ROOKIE</string>
     <string name="roo_level">LEVEL 1</string>
     <string name="badges_to_collect">Badges To Collect</string>
+    <string name="month_leaderboard">%s Leaderboard</string>
 
 </resources>

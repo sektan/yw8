@@ -1,27 +1,17 @@
 package com.dishq.buzz;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.net.Uri;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,28 +21,40 @@ import server.api.Config;
 
 import com.dishq.buzz.ui.HomePageActivity;
 import com.dishq.buzz.ui.SignUpActivity;
+import com.dishq.buzz.util.Constants;
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     public String versionName;
     public int versionCode = 0;
+    MixpanelAPI mixpanel = null;
+    public String uniqueIdentifier;
+    private static final String TAG = "MainActivity";
     private boolean networkFailed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Crashlytics instantiation
-        Fabric.with(this, new Crashlytics());
         //Google Analytics instantiation
         setContentView(R.layout.activity_main);
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
 
+        uniqueIdentifier = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        YW8Application.getPrefs().edit().putString(Constants.UNIQUE_IDENTIFIER, uniqueIdentifier).apply();
+        YW8Application.setUniqueId(uniqueIdentifier);
+        Log.d(TAG, "Unique number: " + uniqueIdentifier);
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             versionName = pInfo.versionName;
             versionCode = pInfo.versionCode;
 
-            Log.e("dfdd", pInfo.versionName + pInfo.versionCode);
+            Log.d(TAG, pInfo.versionName + pInfo.versionCode);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,6 +65,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(networkFailed) {
+            checkNetwork();
+        }
+
+        try {
+            final JSONObject properties = new JSONObject();
+            properties.put("app_splash", "splash");
+            mixpanel.track("app_splash", properties);
+        } catch (final JSONException e) {
+            throw new RuntimeException("Could not encode hour of the day in JSON");
+        }
 
     }
 
@@ -90,7 +103,9 @@ public class MainActivity extends AppCompatActivity {
         request.enqueue(new Callback<VersionCheckResponse>() {
             @Override
             public void onResponse(Call<VersionCheckResponse> call, Response<VersionCheckResponse> response) {
-                Log.d("MainActivity", "Success");
+                if (BuildConfig.DEBUG) {
+                    Log.d("MainActivity", "Success");
+                }
                 try {
                     if(response.isSuccessful()) {
                         VersionCheckResponse.VersionCheckData body = response.body().versionCheckData;
@@ -131,7 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<VersionCheckResponse> call, Throwable t) {
-                Log.d("MainActivity", "Failure");
+                if (BuildConfig.DEBUG) {
+                    Log.d("MainActivity", "Failure");
+                }
                 if(!Util.checkAndShowNetworkPopup(MainActivity.this)) {
                     fetchVersion(versionName, versionCode);
                 }
@@ -140,53 +157,39 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void alertTryAgain(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Your Internet connection is slow. Please find a better connection.")
-                .setCancelable(false)
-                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        System.exit(0);
-                    }
-                })
-                .create();
-        dialog.show();
-    }
-
     public void showAlert(String title, String message, boolean force) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title);
-        builder.setMessage(message).setCancelable(false)
-                .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+        if(!(MainActivity.this).isFinishing()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message).setCancelable(false)
+                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
+                        }
+                    });
+            if (!force) {
+                builder.setNegativeButton("Not now", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
+                        if (!YW8Application.getAccessToken().equals("null null")) {
+                            //Intent to start home page when access token
+                            Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
+                            startHomePageActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            finish();
+                            startActivity(startHomePageActivity);
+                        } else {
+                            //Intent to start the Signup Activity after the splash screen
+                            Intent i = new Intent(MainActivity.this, SignUpActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            finish();
+                            startActivity(i);
+                        }
                     }
                 });
-        if(!force){
-            builder.setNegativeButton("Not now", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    if (!YW8Application.getAccessToken().equals("null null")) {
-                        //Intent to start home page when access token
-                        Intent startHomePageActivity = new Intent(MainActivity.this, HomePageActivity.class);
-                        startHomePageActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        finish();
-                        startActivity(startHomePageActivity);
-                    } else {
-                        //Intent to start the Signup Activity after the splash screen
-                        Intent i = new Intent(MainActivity.this, SignUpActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        finish();
-                        startActivity(i);
-                    }
-                }
-            });
-        }
+            }
 
-        AlertDialog alert = builder.create();
-        alert.show();
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
 
     }
 
@@ -198,6 +201,12 @@ public class MainActivity extends AppCompatActivity {
         }else{
             networkFailed = true;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
     }
 
 }

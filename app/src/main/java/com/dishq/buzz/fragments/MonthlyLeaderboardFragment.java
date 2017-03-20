@@ -1,5 +1,6 @@
 package com.dishq.buzz.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -68,7 +69,9 @@ public class MonthlyLeaderboardFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listView = (ListView) view.findViewById(R.id.month_leaderboard_list);
-        fetchMonthlyDetails(Util.getMonthNumber(), Util.getYearNumber());
+        if(!Util.checkAndShowNetworkPopup(getActivity())) {
+            fetchMonthlyDetails(Util.getMonthNumber(), Util.getYearNumber());
+        }
     }
 
     private void fetchMonthlyDetails(final int monthNumber, final int yearNumber) {

@@ -1,52 +1,45 @@
 package com.dishq.buzz.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Util;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-import retrofit2.http.Url;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by dishq on 26-10-2016.
+ * Package name version1.dishq.dishq.
  */
 
-public class
-
-
-
-
-
-
-GetPointsActivity extends BaseActivity {
+public class GetPointsActivity extends BaseActivity {
 
     private WebView webviewPointsInfo;
     ImageView GetPointsBack, GetPointsFinder;
     TextView getPointsHeader;
     private ProgressDialog progressDialog;
-    String url = "http://www.yw8.in/x/points";
+    MixpanelAPI mixpanel = null;
+    String url = "http://yw8.in/winprizes";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //MixPanel Instantiation
+        mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
         setContentView(R.layout.activity_get_points);
         progressDialog = new ProgressDialog(GetPointsActivity.this);
         progressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         setTags();
             }
 
@@ -62,6 +55,13 @@ GetPointsActivity extends BaseActivity {
         GetPointsBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("app_back", "app_back");
+                    mixpanel.track("app_back", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 finish();
@@ -95,5 +95,11 @@ GetPointsActivity extends BaseActivity {
         Intent intent = new Intent(GetPointsActivity.this, HomePageActivity.class);
         finish();
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mixpanel.flush();
+        super.onDestroy();
     }
 }

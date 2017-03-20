@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import server.Response.MonthLeaderBoardResponse;
 import server.Response.YearLeaderBoardResponse;
 
+import static com.dishq.buzz.util.YW8Application.getContext;
+
 /**
  * Created by dishq on 02-11-2016.
  * Package name version1.dishq.dishq.
@@ -34,9 +36,10 @@ public class Util {
     public static String monthName = "";
     public static String restaurantName = "", restId = "", restAddr = "";
     public static int yearNumber = 0, monthNumber = 0;
-    public static Typeface faceRoman = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
+    public static int tabSelected = -1;
+    public static Typeface faceRoman = Typeface.createFromAsset(getContext().getAssets(),
             "avenirltstdroman.ttf"),
-            faceMedium = Typeface.createFromAsset(YW8Application.getContext().getAssets(),
+            faceMedium = Typeface.createFromAsset(getContext().getAssets(),
                     "avenirltstdmedium.ttf");
 
     public static Typeface getFaceRoman() {
@@ -48,14 +51,15 @@ public class Util {
     }
 
     public static boolean checkAndShowNetworkPopup(final Activity activity) {
-        if (!isOnline(false)) {
+        if(!(activity).isFinishing()){
+        if (!isOnline()) {
             AlertDialog dialog = new AlertDialog.Builder(activity).setTitle("No Internet Detected")
                     .setMessage("Please try again when you're online. ")
                     .setCancelable(false)
                     .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            activity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                            activity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
                         }
                     })
                     .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
@@ -63,10 +67,7 @@ public class Util {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                            homeIntent.addCategory( Intent.CATEGORY_HOME );
-                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            activity.startActivity(homeIntent);
+                            System.exit(0);
                         }
                     })
                     .create();
@@ -74,23 +75,41 @@ public class Util {
 
             TextView message = (TextView) dialog.findViewById(android.R.id.message);
             assert message != null;
-
             return true;
+        }else{
+            return false;
+        }
+
         }
         return false;
     }
 
-    public static boolean isOnline(boolean showToast) {
-        ConnectivityManager conMgr = (ConnectivityManager) YW8Application.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
-
-        if (netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()) {
-            if (showToast)
-                Toast.makeText(YW8Application.getContext(), "No Internet connection!", Toast.LENGTH_LONG).show();
+    private static boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) { // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                //Toast.makeText(getContext(), activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to the mobile provider's data plan
+                //Toast.makeText(getContext(), activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        } else {
+            // not connected to the internet
             return false;
         }
+        return false;
+    }
 
-        return true;
+    public static int getTabSelected() {
+        return tabSelected;
+    }
+
+    public static void setTabSelected(int tabSelected) {
+        Util.tabSelected = tabSelected;
     }
 
     public static String getRestId() {

@@ -126,7 +126,9 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         restAdd = Util.getRestAddr();
         setContentView(R.layout.activity_update_rest_profile);
         setTags();
-        fetchWaitTimeInfo();
+        if(!Util.checkAndShowNetworkPopup(this)) {
+            fetchWaitTimeInfo();
+        }
     }
 
     public void checkGPS() {
@@ -204,7 +206,9 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 lat = "" + mLastLocation.getLatitude();
                 lang = "" + mLastLocation.getLongitude();
                 Log.d("LOCATION", "LOCATION" + mLastLocation.getLatitude());
-                fetchUpdatedUserInfo(lat, lang);
+                if(!Util.checkAndShowNetworkPopup(this)) {
+                    fetchUpdatedUserInfo(lat, lang);
+                }
 
             } else {
                 startLocationUpdates();
@@ -250,7 +254,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
             case MY_PERMISSIONS_REQUEST_GPS_ACCESS: {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getLocation();
+                    getTheLocale();
                 } else {
                     showAlert("", "That permission is needed in order to update wait time. Tap Retry.");
                 }
@@ -259,33 +263,35 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     public void showAlert(String title, String message) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
-        builder.setTitle(title);
-        builder.setMessage(message).setCancelable(false)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        if(!(UpdateRestProfileActivity.this).isFinishing()) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UpdateRestProfileActivity.this);
+            builder.setTitle(title);
+            builder.setMessage(message).setCancelable(false)
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-
-
-                })
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
-                            ActivityCompat.requestPermissions(UpdateRestProfileActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    MY_PERMISSIONS_REQUEST_GPS_ACCESS);
                         }
-                    }
-                });
 
 
-        android.app.AlertDialog alert = builder.create();
-        alert.show();
-        TextView message1 = (TextView) alert.findViewById(android.R.id.message);
-        //assert message != null;
-        message1.setLineSpacing(0, 1.5f);
+                    })
+                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (ContextCompat.checkSelfPermission(UpdateRestProfileActivity.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_DENIED) {
+                                ActivityCompat.requestPermissions(UpdateRestProfileActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_GPS_ACCESS);
+                            }
+                        }
+                    });
+
+
+            android.app.AlertDialog alert = builder.create();
+            alert.show();
+            TextView message1 = (TextView) alert.findViewById(android.R.id.message);
+            //assert message != null;
+            message1.setLineSpacing(0, 1.5f);
+        }
 
     }
 
@@ -312,6 +318,13 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    final JSONObject properties = new JSONObject();
+                    properties.put("app_back", "app_back");
+                    mixpanel.track("app_back", properties);
+                } catch (final JSONException e) {
+                    throw new RuntimeException("Could not encode hour of the day in JSON");
+                }
                 Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, SearchActivity.class);
                 backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
@@ -345,15 +358,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         tvMinFour.setTypeface(Util.getFaceMedium());
         tvMinFive = (TextView) findViewById(R.id.cv_tv_min_five);
         tvMinFive.setTypeface(Util.getFaceMedium());
-//        ambianceOne = (CardView) findViewById(R.id.cv_ambiance_one);
-//        ambianceTwo = (CardView) findViewById(R.id.cv_ambiance_two);
-//        tvAmbianceOne = (TextView) findViewById(R.id.cv_tv_ambiance_one);
-//        tvAmbianceOne.setTypeface(Util.getFaceRoman());
-//        tvAmbianceTwo = (TextView) findViewById(R.id.cv_tv_ambiance_two);
-//        tvAmbianceTwo.setTypeface(Util.getFaceRoman());
-//        textAmbiance = (TextView) findViewById(R.id.tv_ambiance);
-//        textAmbiance.setTypeface(Util.getFaceRoman());
-//        llAmbiance = (LinearLayout) findViewById(R.id.ll_current_ambiance);
         buttonUpdate = (Button) findViewById(R.id.button_update);
         buttonUpdate.setTypeface(Util.getFaceMedium());
         waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
@@ -414,9 +418,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         tvMinFour.setTextColor(getResources().getColor(R.color.black));
                         tvMinFive.setTextColor(getResources().getColor(R.color.black));
 
-//                    textAmbiance.setVisibility(View.VISIBLE);
-//                    llAmbiance.setVisibility(View.VISIBLE);
-
                         buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
                         buttonUpdate.setTextColor(getResources().getColor(R.color.white));
@@ -450,9 +451,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         tvMinThree.setTextColor(getResources().getColor(R.color.black));
                         tvMinFour.setTextColor(getResources().getColor(R.color.black));
                         tvMinFive.setTextColor(getResources().getColor(R.color.black));
-
-//                    textAmbiance.setVisibility(View.GONE);
-//                    llAmbiance.setVisibility(View.GONE);
 
                         buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
@@ -488,9 +486,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         tvMinFour.setTextColor(getResources().getColor(R.color.black));
                         tvMinFive.setTextColor(getResources().getColor(R.color.black));
 
-//                    textAmbiance.setVisibility(View.GONE);
-//                    llAmbiance.setVisibility(View.GONE);
-
                         buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
                         buttonUpdate.setTextColor(getResources().getColor(R.color.white));
@@ -524,9 +519,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         tvMinThree.setTextColor(getResources().getColor(R.color.black));
                         tvMinFour.setTextColor(getResources().getColor(R.color.white));
                         tvMinFive.setTextColor(getResources().getColor(R.color.black));
-
-//                    textAmbiance.setVisibility(View.GONE);
-//                    llAmbiance.setVisibility(View.GONE);
 
                         buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
@@ -562,9 +554,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         tvMinFour.setTextColor(getResources().getColor(R.color.black));
                         tvMinFive.setTextColor(getResources().getColor(R.color.white));
 
-//                    textAmbiance.setVisibility(View.GONE);
-//                    llAmbiance.setVisibility(View.GONE);
-
                         buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
                         buttonUpdate.setTextColor(getResources().getColor(R.color.white));
@@ -589,10 +578,11 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                     if (!(UpdateRestProfileActivity.this).isFinishing()) {
                         progressDialog = new ProgressDialog(UpdateRestProfileActivity.this);
                         progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setCanceledOnTouchOutside(false);
                         checkGPS();
 
                     }
-
 
                     buttonUpdate.setEnabled(false);
                 }
@@ -633,6 +623,10 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 if (layoutUpdate != null) {
                     layoutUpdate.getForeground().setAlpha(0); // restore
                 }
+                if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                    if(progressGps!=null)
+                        progressGps.dismiss();
+                }
                 try {
                     final JSONObject properties = new JSONObject();
                     properties.put(waitTimeUpdate, waitTimeUpdate);
@@ -652,6 +646,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 try {
                     final JSONObject properties = new JSONObject();
                     properties.put("update", "update");
+                    properties.put("restaurant name", restaurantName);
                     mixpanel.track("update", properties);
                 } catch (final JSONException e) {
                     throw new RuntimeException("Could not encode hour of the day in JSON");
@@ -672,6 +667,8 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                             if (!(UpdateRestProfileActivity.this).isFinishing()) {
                                 progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
                                 progressDialoglert.show();
+                                progressDialoglert.setCancelable(false);
+                                progressDialoglert.setCanceledOnTouchOutside(false);
                             }
                             checkWhereToGo(updateRestaurantFinder);
 
@@ -682,6 +679,8 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                         if (!(UpdateRestProfileActivity.this).isFinishing()) {
                             progressDialoglert = new ProgressDialog(UpdateRestProfileActivity.this);
                             progressDialoglert.show();
+                            progressDialoglert.setCancelable(false);
+                            progressDialoglert.setCanceledOnTouchOutside(false);
                             if (response.code() == 412) {
                                 alertTooFrequent(UpdateRestProfileActivity.this);
                             } else if (response.code() == 406) {
@@ -708,6 +707,11 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                     layoutUpdate.getForeground().setAlpha(0); // restore
                 }
 
+                if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                    if(progressGps!=null)
+                        progressGps.dismiss();
+                }
+
                 if (!Util.checkAndShowNetworkPopup(UpdateRestProfileActivity.this)) {
                     fetchUpdatedUserInfo(lat, lang);
                 } else {
@@ -720,35 +724,37 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     public void alertServerConnectFailure(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Oops, something went wrong, please try again")
-                .setCancelable(false)
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+        if(!(UpdateRestProfileActivity.this).isFinishing()) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("Oops, something went wrong, please try again")
+                    .setCancelable(false)
+                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, UpdateRestProfileActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, UpdateRestProfileActivity.class);
+                            backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(backButtonIntent);
+                        }
+                    })
+                    .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                        homeIntent.addCategory(Intent.CATEGORY_HOME);
-                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(homeIntent);
-                    }
-                })
-                .create();
-        if (progressDialoglert != null) {
-            progressDialoglert.dismiss();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                            homeIntent.addCategory(Intent.CATEGORY_HOME);
+                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(homeIntent);
+                        }
+                    })
+                    .create();
+            if (progressDialoglert != null) {
+                progressDialoglert.dismiss();
+            }
+            dialog.show();
         }
-        dialog.show();
     }
 
     public void alertNoForward(final Activity activity) {
@@ -775,68 +781,72 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     }
 
     public void alertTooFrequent(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage(getResources().getString(R.string.too_often_update))
-                .setCancelable(false)
-                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+        if(!(UpdateRestProfileActivity.this).isFinishing()) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage(getResources().getString(R.string.too_often_update))
+                    .setCancelable(false)
+                    .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .create();
-        if (progressDialoglert != null) {
-            progressDialoglert.dismiss();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                            backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(backButtonIntent);
+                        }
+                    })
+                    .create();
+            if (progressDialoglert != null) {
+                progressDialoglert.dismiss();
+            }
+            dialog.show();
         }
-        dialog.show();
-
     }
 
     public void alertFarOff(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("You can't give the waiting time unless you are at the place ")
-                .setCancelable(false)
-                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
+        if(!(UpdateRestProfileActivity.this).isFinishing()) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("You can't give the waiting time unless you are at the place ")
+                    .setCancelable(false)
+                    .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .create();
-        if (progressDialoglert != null) {
-            progressDialoglert.dismiss();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, HomePageActivity.class);
+                            backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(backButtonIntent);
+                        }
+                    })
+                    .create();
+            if (progressDialoglert != null) {
+                progressDialoglert.dismiss();
+            }
+            dialog.show();
         }
-        dialog.show();
-
     }
 
     public void alertTryAgain(final Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setMessage("Oops, something went wrong, please try again")
-                .setCancelable(false)
-                .setNegativeButton("Retry", new DialogInterface.OnClickListener() {
+        if(!(UpdateRestProfileActivity.this).isFinishing()) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setMessage("Oops, something went wrong, please try again")
+                    .setCancelable(false)
+                    .setNegativeButton("Retry", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, UpdateRestProfileActivity.class);
-                        backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        finish();
-                        startActivity(backButtonIntent);
-                    }
-                })
-                .create();
-        if (progressDialoglert != null) {
-            progressDialoglert.dismiss();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent backButtonIntent = new Intent(UpdateRestProfileActivity.this, UpdateRestProfileActivity.class);
+                            backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            finish();
+                            startActivity(backButtonIntent);
+                        }
+                    })
+                    .create();
+            if (progressDialoglert != null) {
+                progressDialoglert.dismiss();
+            }
+            dialog.show();
         }
-        dialog.show();
     }
 
     public void checkWhereToGo(UpdateRestaurantFinder updateRestaurantFinder) {
@@ -920,19 +930,17 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
             builder.setAlwaysShow(true); // this is the key ingredient
             // **************************
 
-            if (!(UpdateRestProfileActivity.this).isFinishing()) {
-                progressDialog.dismiss();
-            }
             PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
                     .checkLocationSettings(googleApiClient, builder.build());
 
             layoutUpdate.getForeground().setAlpha(180); // dim
-//            if (!(UpdateRestProfileActivity.this).isFinishing()) {
-//                if(progressGps==null) {
-//                    progressGps = new ProgressDialog(UpdateRestProfileActivity.this);
-//                    progressGps.show();
-//                }
-//            }
+            if (!(UpdateRestProfileActivity.this).isFinishing()) {
+                progressGps = new ProgressDialog(UpdateRestProfileActivity.this);
+                progressGps.show();
+                progressGps.setCancelable(false);
+                progressGps.setCanceledOnTouchOutside(false);
+            }
+
             result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
                 @Override
                 public void onResult(LocationSettingsResult result) {
@@ -1044,7 +1052,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
 
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,

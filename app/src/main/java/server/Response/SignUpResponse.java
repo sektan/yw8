@@ -5,66 +5,122 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by dishq on 02-11-2016.
+ * Package name version1.dishq.dishq.
  */
 
 public class SignUpResponse {
-    @SerializedName("access_token")
+    @SerializedName("data")
     @Expose
-    private String accessToken;
+    public SignUpData signUpData;
 
-    @SerializedName("token_type")
+    @SerializedName("message")
     @Expose
-    private String tokenType;
+    private String signUpMessage;
 
-    @SerializedName("expires_in")
+    @SerializedName("response")
     @Expose
-    private String expiresIn;
+    private String signUpResponse;
 
-    @SerializedName("refresh_token")
-    @Expose
-    private String refreshToken;
+    public class SignUpData {
 
-    @SerializedName("scope")
-    @Expose
-    private String responseScope;
+        @SerializedName("access_token")
+        @Expose
+        private String accessToken;
 
-    public String getAccessToken() {
-        return accessToken;
+        @SerializedName("token_type")
+        @Expose
+        private String tokenType;
+
+        @SerializedName("expires_in")
+        @Expose
+        private String expiresIn;
+
+        @SerializedName("refresh_token")
+        @Expose
+        private String refreshToken;
+
+        @SerializedName("scope")
+        @Expose
+        private String responseScope;
+
+        @SerializedName("user_data")
+        @Expose
+        private UserData userData;
+
+        public UserData getUserData() {
+            return userData;
+        }
+
+        public void setUserData(UserData userData) {
+            this.userData = userData;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public String getTokenType() {
+            return tokenType;
+        }
+
+        public void setTokenType(String tokenType) {
+            this.tokenType = tokenType;
+        }
+
+        public String getExpiresIn() {
+            return expiresIn;
+        }
+
+        public void setExpiresIn(String expiresIn) {
+            this.expiresIn = expiresIn;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+        }
+
+        public String getResponseScope() {
+            return responseScope;
+        }
+
+        public void setResponseScope(String responseScope) {
+            this.responseScope = responseScope;
+        }
+
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
+    public class UserData {
+        @SerializedName("username")
+        @Expose
+        private String userName;
 
-    public String getTokenType() {
-        return tokenType;
-    }
+        @SerializedName("user_id")
+        @Expose
+        private int userId;
 
-    public void setTokenType(String tokenType) {
-        this.tokenType = tokenType;
-    }
+        public String getUserName() {
+            return userName;
+        }
 
-    public String getExpiresIn() {
-        return expiresIn;
-    }
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
 
-    public void setExpiresIn(String expiresIn) {
-        this.expiresIn = expiresIn;
-    }
+        public int getUserId() {
+            return userId;
+        }
 
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public String getResponseScope() {
-        return responseScope;
-    }
-
-    public void setResponseScope(String responseScope) {
-        this.responseScope = responseScope;
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
     }
 }
+

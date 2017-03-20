@@ -1,22 +1,16 @@
 package com.dishq.buzz.ui;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.dishq.buzz.BaseActivity;
 import com.dishq.buzz.R;
 import com.dishq.buzz.util.Constants;
@@ -43,17 +37,16 @@ import com.google.android.gms.common.api.Scope;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 //Google SignIn Libraries
-//import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-//import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-//import com.google.api.client.http.javanet.NetHttpTransport;
-//import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -86,7 +79,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         //MixPanel Instantiation
         mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
         //Facebook SDK is initialized
@@ -109,6 +101,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 .addOnConnectionFailedListener(this)
                 .build();
         // [END build_client]
+
+        try {
+            final JSONObject properties = new JSONObject();
+            properties.put("app_connect", "signup");
+            mixpanel.track("app_connect", properties);
+        } catch (final JSONException e) {
+            throw new RuntimeException("Could not encode hour of the day in JSON");
+        }
         setContentView(R.layout.activity_signup);
         setTags(getApplicationContext());
     }
@@ -174,6 +174,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             FACEBOOK_BUTTON_SELECTED = true;
                             progressDialog = new ProgressDialog(SignUpActivity.this);
                             progressDialog.show();
+                            progressDialog.setCancelable(false);
+                            progressDialog.setCanceledOnTouchOutside(false);
                             fetchAccessToken(accessToken.getToken());
                         }
                     } else {
@@ -199,6 +201,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 facebookAccessToken = loginResult.getAccessToken().getToken();
                 progressDialog = new ProgressDialog(SignUpActivity.this);
                 progressDialog.show();
+                progressDialog.setCancelable(false);
+                progressDialog.setCanceledOnTouchOutside(false);
                 fetchAccessToken(facebookAccessToken);
             }
 
@@ -259,41 +263,43 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             final String authCode = acct.getServerAuthCode();
             Log.d(TAG, "the authCode is:" + authCode);
 
-//            AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
-//                @Override
-//                protected String doInBackground(Void... params) {
-//                    try {
-//                        GoogleTokenResponse tokenResponse =
-//                                new GoogleAuthorizationCodeTokenRequest(
-//                                        new NetHttpTransport(),
-//                                        JacksonFactory.getDefaultInstance(),
-//                                        "https://www.googleapis.com/oauth2/v4/token",
-//                                        "54832716150-u8qscc87ku414fhlie9mfu4ig7m93cji.apps.googleusercontent.com",
-//                                        "H6SzKnutZc8gqactUDK_rtyX",
-//                                        authCode, "")
-//                                        .execute();
-//
-//                        accessToken = tokenResponse.getAccessToken();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    return accessToken;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(String token) {
-//                    Log.i(TAG, "Access token retrieved:" + accessToken);
-//                    facebookOrGoogle = "google";
-//                    YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
-//                    YW8Application.setFacebookOrGoogle(facebookOrGoogle);
-//                    progressDialog = new ProgressDialog(SignUpActivity.this);
-//                    progressDialog.show();
-//                    fetchAccessToken(accessToken);
-//                }
-//
-//            };
-//            task.execute();
+            AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... params) {
+                    try {
+                        GoogleTokenResponse tokenResponse =
+                                new GoogleAuthorizationCodeTokenRequest(
+                                        new NetHttpTransport(),
+                                        JacksonFactory.getDefaultInstance(),
+                                        "https://www.googleapis.com/oauth2/v4/token",
+                                        "54832716150-u8qscc87ku414fhlie9mfu4ig7m93cji.apps.googleusercontent.com",
+                                        "H6SzKnutZc8gqactUDK_rtyX",
+                                        authCode, "")
+                                        .execute();
+
+                        accessToken = tokenResponse.getAccessToken();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return accessToken;
+                }
+
+                @Override
+                protected void onPostExecute(String token) {
+                    Log.i(TAG, "Access token retrieved:" + accessToken);
+                    facebookOrGoogle = "google";
+                    YW8Application.getPrefs().edit().putString(Constants.FACEBOOK_OR_GOOGLE, facebookOrGoogle).apply();
+                    YW8Application.setFacebookOrGoogle(facebookOrGoogle);
+                    progressDialog = new ProgressDialog(SignUpActivity.this);
+                    progressDialog.show();
+                    progressDialog.setCancelable(false);
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    fetchAccessToken(accessToken);
+                }
+
+            };
+            task.execute();
         } else {
             Log.e(TAG, result + "");
         }
@@ -310,8 +316,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         final SignUpHelper signUpHelper = new SignUpHelper("convert_token", backend, "bkdTGKU1Xe2B8gDgRPUVD5xsAGqlsajZUaHNGnW6",
                 "aymffss0X4FP0k0A4A2qMJL5OdcTQckYxL9nlSA1M14DUXDGC5XuGfhUOjT7X888CQGd8XMbQONUpXTNj3wZd8cF0rFA9GsSj75jRWorPPGWTHSGi25rf45lMdZaEDAg",
                 accessToken);
+        String authorization = "Bearer" + " " + backend + " " + accessToken;
         ApiInterface apiInterface = Config.createService(ApiInterface.class);
-        Call<SignUpResponse> call = apiInterface.createNewUser(signUpHelper);
+        Call<SignUpResponse> call = apiInterface.createNewUser(authorization, signUpHelper);
         call.enqueue(new Callback<SignUpResponse>() {
             @Override
             public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
@@ -334,12 +341,17 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         throw new RuntimeException("Could not encode hour of the day in JSON");
                     }
                 }
-                SignUpResponse body = response.body();
+                SignUpResponse.SignUpData body = response.body().signUpData;
                 if (body != null) {
                     YW8Application.getPrefs().edit().putString(Constants.ACCESS_TOKEN, body.getAccessToken()).apply();
                     YW8Application.getPrefs().edit().putString(Constants.REFRESH_TOKEN, body.getRefreshToken()).apply();
                     YW8Application.getPrefs().edit().putString(Constants.TOKEN_TYPE, body.getTokenType()).apply();
                     YW8Application.setAccessToken(body.getAccessToken(), body.getTokenType());
+                    mixpanel.identify(YW8Application.getUniqueID());
+                    mixpanel.getPeople().identify(YW8Application.getUniqueID());
+                    mixpanel.getPeople().set("userid", String.valueOf(body.getUserData().getUserId()));
+                    mixpanel.getPeople().set("gcmid", YW8Application.getUniqueID());
+                    mixpanel.getPeople().set("$name", body.getUserData().getUserName());
                     startHomePageActivity();
                 }
             }

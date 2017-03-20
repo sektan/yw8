@@ -56,6 +56,8 @@ public class RestaurantProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(RestaurantProfileActivity.this);
         progressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         //MixPanel Instantiation
         mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.MIXPANEL_TOKEN));
 
@@ -63,8 +65,10 @@ public class RestaurantProfileActivity extends BaseActivity {
         restaurantName = Util.getRestaurantName();
         setContentView(R.layout.activity_restaurant_profile);
         setTags();
+        if(!Util.checkAndShowNetworkPopup(this)){
+            fetchRestaurantInfo(query);
+        }
 
-        fetchRestaurantInfo(query);
     }
 
     private void setTags() {
@@ -146,6 +150,13 @@ public class RestaurantProfileActivity extends BaseActivity {
             backButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    try {
+                        final JSONObject properties = new JSONObject();
+                        properties.put("app_back", "app_back");
+                        mixpanel.track("app_back", properties);
+                    } catch (final JSONException e) {
+                        throw new RuntimeException("Could not encode hour of the day in JSON");
+                    }
                     Intent backButtonIntent = new Intent(RestaurantProfileActivity.this, SearchActivity.class);
                     backButtonIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                     finish();
@@ -222,18 +233,20 @@ public class RestaurantProfileActivity extends BaseActivity {
             public void onResponse(Call<SimilarRestaurantResponse> call, Response<SimilarRestaurantResponse> response) {
                 Log.d(TAG, "Success");
                 try {
-                    final JSONObject properties = new JSONObject();
-                    properties.put("alternative rest", "alternative rest");
-                    mixpanel.track("alternative rest", properties);
-                } catch (final JSONException e) {
-                    throw new RuntimeException("Could not encode hour of the day in JSON");
-                }
-                try {
                     if(response.isSuccessful()) {
                         SimilarRestaurantResponse.SimilarRestaurant body = response.body().similarRestaurant;
                         if (body != null) {
                             startSimilarRestInfoActivity(body);
+                            try {
+                                final JSONObject properties = new JSONObject();
+                                properties.put("alternative rest", "alternative rest");
+                                properties.put("restaurant name", body.getSimilarRestName());
+                                mixpanel.track("alternative rest", properties);
+                            } catch (final JSONException e) {
+                                throw new RuntimeException("Could not encode hour of the day in JSON");
+                            }
                         }
+
                     }else {
                         String error = response.errorBody().string();
                         Log.d("Restaurant Profile", error);

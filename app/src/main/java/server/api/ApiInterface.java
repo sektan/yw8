@@ -32,7 +32,8 @@ ApiInterface {
     Call<VersionCheckResponse> checkVersion(@Query("version_name")String versionName, @Query("version_number")int versionCode);
 
     @POST("api/auth/signup/")
-    Call<SignUpResponse> createNewUser(@Body SignUpHelper signUpHelper);
+    Call<SignUpResponse> createNewUser(@Header("Authorization") String authorization,
+                                       @Body SignUpHelper signUpHelper);
 
     @GET("api/restaurant/suggest/")
     Call<RestaurantSuggestResponse> getRestaurantsuggestion(@Query("query") String query,
