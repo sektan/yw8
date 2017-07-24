@@ -27,9 +27,9 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Response.FullUserDetailsResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Response.FullUserDetailsResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 /**
  * Created by dishq on 26-10-2016.

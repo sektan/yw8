@@ -15,9 +15,9 @@ import android.util.Log;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Response.VersionCheckResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Response.VersionCheckResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 import com.dishq.buzz.ui.HomePageActivity;
 import com.dishq.buzz.ui.SignUpActivity;

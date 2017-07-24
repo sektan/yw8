@@ -8,19 +8,17 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import server.Response.MonthLeaderBoardResponse;
-import server.Response.YearLeaderBoardResponse;
+import com.dishq.buzz.server.Response.MonthLeaderBoardResponse;
+import com.dishq.buzz.server.Response.YearLeaderBoardResponse;
 
 import static com.dishq.buzz.util.YW8Application.getContext;
 
 /**
- * Created by dishq on 02-11-2016.
+ * Created by tania on 02-11-2016.
  * Package name version1.dishq.dishq.
  */
 

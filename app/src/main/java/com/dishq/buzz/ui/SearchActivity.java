@@ -2,7 +2,6 @@ package com.dishq.buzz.ui;
 
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,8 +28,8 @@ import org.json.JSONObject;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
-import custom.AdapterClass;
-import server.Finder.RestaurantSuggestFinder;
+import com.dishq.buzz.custom.AdapterClass;
+import com.dishq.buzz.server.Finder.RestaurantSuggestFinder;
 
 import com.dishq.buzz.util.Util;
 import com.dishq.buzz.util.YW8Application;
@@ -39,12 +38,13 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Response.RestaurantSuggestResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Response.RestaurantSuggestResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 /**
- * Created by dishq on 26-10-2016.
+ * Created by tania on 26-10-2016.
+ * property of dishq
  */
 
 public class SearchActivity extends BaseActivity {
@@ -55,7 +55,7 @@ public class SearchActivity extends BaseActivity {
     Boolean REST_IS_OPENED = false;
     private String sa = "";
     private String restName;
-    ArrayList<RestaurantSuggestFinder> restaurantFinder = new ArrayList<RestaurantSuggestFinder>();
+    ArrayList<RestaurantSuggestFinder> restaurantFinder = new ArrayList<>();
     EditText txtAutoComplete;
     LinearLayout norestaurant;
     ImageView backButton;

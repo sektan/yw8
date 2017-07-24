@@ -1,10 +1,11 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class VersionCheckResponse {
@@ -20,16 +21,16 @@ public class VersionCheckResponse {
     public class VersionCheckData {
         @SerializedName("version_number")
         @Expose
-        public String lVersionNumber;
+        String lVersionNumber;
         @SerializedName("show_update_popup")
         @Expose
-        public boolean showUpdatePopup;
+        boolean showUpdatePopup;
         @SerializedName("version_name")
         @Expose
-        public String lVersionName;
+        String lVersionName;
         @SerializedName("do_force_update")
         @Expose
-        public boolean doForceUpdate;
+        boolean doForceUpdate;
 
         public String getlVersionNumber() {
            return lVersionNumber;

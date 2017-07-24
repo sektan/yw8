@@ -1,4 +1,4 @@
-package custom;
+package com.dishq.buzz.custom;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,16 +13,17 @@ import com.dishq.buzz.util.Util;
 
 import java.util.ArrayList;
 
-import server.Finder.RestaurantSuggestFinder;
+import com.dishq.buzz.server.Finder.RestaurantSuggestFinder;
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class AdapterClass extends BaseAdapter {
-    LayoutInflater layoutInflater;
-    Context context;
-    ArrayList<RestaurantSuggestFinder> restfinders;
+    private LayoutInflater layoutInflater;
+    private Context context;
+    private ArrayList<RestaurantSuggestFinder> restfinders;
     public AdapterClass(Context context, ArrayList<RestaurantSuggestFinder> restfinders){
         this.context = context;
         layoutInflater = LayoutInflater.from(context);

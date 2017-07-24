@@ -1,10 +1,11 @@
-package server.api;
+package com.dishq.buzz.server.api;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by dishq on 28-10-2016.
+ * Created by tania on 28-10-2016.
+ * property of dishq
  */
 
 public class Config {

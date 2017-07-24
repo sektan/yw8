@@ -1,4 +1,4 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by dishq on 06-11-2016.
+ * Created by tania on 06-11-2016.
  * Package name version1.dishq.dishq.
  */
 
@@ -24,15 +24,15 @@ public class MonthLeaderBoardResponse {
     public class MonthPointsInfo {
         @SerializedName("num_points")
         @Expose
-        public int monthPoints;
+        int monthPoints;
 
         @SerializedName("user_details")
         @Expose
-        public MonthUserDetails monthUserDetails;
+        MonthUserDetails monthUserDetails;
 
         @SerializedName("rank")
         @Expose
-        public int monthRank;
+        int monthRank;
 
         public int getMonthPoints() {
             return monthPoints;
@@ -60,7 +60,7 @@ public class MonthLeaderBoardResponse {
 
     }
 
-        public class MonthUserDetails {
+        private class MonthUserDetails {
             @SerializedName("username")
             @Expose
             String monthUserName;

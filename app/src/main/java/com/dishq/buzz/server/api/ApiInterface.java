@@ -1,4 +1,15 @@
-package server.api;
+package com.dishq.buzz.server.api;
+
+import com.dishq.buzz.server.Request.SignUpHelper;
+import com.dishq.buzz.server.Request.UpdateRestaurantHelper;
+import com.dishq.buzz.server.Response.FullUserDetailsResponse;
+import com.dishq.buzz.server.Response.RestaurantInfoResponse;
+import com.dishq.buzz.server.Response.RestaurantSuggestResponse;
+import com.dishq.buzz.server.Response.ShortUserDetailsResponse;
+import com.dishq.buzz.server.Response.SignUpResponse;
+import com.dishq.buzz.server.Response.UpdateRestaurantResponse;
+import com.dishq.buzz.server.Response.UpdateWaitTimeResponse;
+import com.dishq.buzz.server.Response.YearLeaderBoardResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -7,22 +18,14 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import server.Request.SignUpHelper;
-import server.Request.UpdateRestaurantHelper;
-import server.Response.FullUserDetailsResponse;
-import server.Response.MonthLeaderBoardResponse;
-import server.Response.RestaurantInfoResponse;
-import server.Response.RestaurantSuggestResponse;
-import server.Response.ShortUserDetailsResponse;
-import server.Response.SignUpResponse;
-import server.Response.SimilarRestaurantResponse;
-import server.Response.UpdateRestaurantResponse;
-import server.Response.UpdateWaitTimeResponse;
-import server.Response.VersionCheckResponse;
-import server.Response.YearLeaderBoardResponse;
+
+import com.dishq.buzz.server.Response.MonthLeaderBoardResponse;
+import com.dishq.buzz.server.Response.SimilarRestaurantResponse;
+import com.dishq.buzz.server.Response.VersionCheckResponse;
 
 /**
- * Created by dishq on 28-10-2016.
+ * Created by tania on 28-10-2016.
+ * property of dishq
  */
 
 public interface

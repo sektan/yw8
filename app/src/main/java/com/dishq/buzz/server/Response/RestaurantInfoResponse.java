@@ -1,4 +1,4 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 
 import com.google.gson.annotations.Expose;
@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class RestaurantInfoResponse {

@@ -1,10 +1,11 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by dishq on 06-11-2016.
+ * Created by tania on 06-11-2016.
+ * property of dishq
  */
 
 public class UpdateUserProfileResponse {
@@ -21,7 +22,7 @@ public class UpdateUserProfileResponse {
     @Expose
     private UpdateUserProfileInfo updateUserProfileInfo;
 
-    public class UpdateUserProfileInfo {
+    private class UpdateUserProfileInfo {
         @SerializedName("curr_badge")
         @Expose
         private UpdateUserCurrBadgeInfo updateUserCurrBadgeInfo;
@@ -35,7 +36,7 @@ public class UpdateUserProfileResponse {
         private int updateUserNumPointsAdded;
     }
 
-    public class UpdateUserCurrBadgeInfo {
+    private class UpdateUserCurrBadgeInfo {
 
     }
 }

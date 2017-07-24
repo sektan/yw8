@@ -1,6 +1,5 @@
 package com.dishq.buzz.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,9 +24,9 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Response.MonthLeaderBoardResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Response.MonthLeaderBoardResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 /**
  * Created by dishq on 22-02-2017.

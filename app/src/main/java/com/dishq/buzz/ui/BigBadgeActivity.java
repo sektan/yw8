@@ -12,7 +12,8 @@ import com.dishq.buzz.R;
 import com.dishq.buzz.util.Util;
 
 /**
- * Created by dishq on 07-11-2016.
+ * Created by tania on 07-11-2016.
+ * property of dishq
  */
 
 public class BigBadgeActivity extends BaseActivity {

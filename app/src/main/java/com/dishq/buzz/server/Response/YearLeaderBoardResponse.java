@@ -1,4 +1,4 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by dishq on 06-11-2016.
+ * Created by tania on 06-11-2016.
  * Package name version1.dishq.dishq.
  */
 
@@ -24,15 +24,15 @@ public class YearLeaderBoardResponse {
     public class YearPointsInfo {
         @SerializedName("num_points")
         @Expose
-        public int yearPoints;
+        int yearPoints;
 
         @SerializedName("user_details")
         @Expose
-        public YearUserDetails yearUserDetails;
+        YearUserDetails yearUserDetails;
 
         @SerializedName("rank")
         @Expose
-        public int yearRank;
+        int yearRank;
 
         public YearUserDetails getYearUserDetails() {
             return yearUserDetails;
@@ -59,18 +59,18 @@ public class YearLeaderBoardResponse {
         }
     }
 
-        public class YearUserDetails {
+        private class YearUserDetails {
             @SerializedName("username")
             @Expose
-            public String yearUserName;
+            String yearUserName;
 
             @SerializedName("is_current_user")
             @Expose
-            public Boolean yearIsCurrentUser;
+            Boolean yearIsCurrentUser;
 
             @SerializedName("user_id")
             @Expose
-            public int yearUserId;
+            int yearUserId;
 
             public String getYearUserName() {
                 return yearUserName;

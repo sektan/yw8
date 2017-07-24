@@ -1,4 +1,4 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class UpdateWaitTimeResponse {
@@ -19,7 +20,7 @@ public class UpdateWaitTimeResponse {
     @Expose
     private List<UpdateWaitTimeInfo> updateWaitTimeInfo;
 
-    public class UpdateWaitTimeInfo {
+    private class UpdateWaitTimeInfo {
         @SerializedName("show_buzz_type_options")
         @Expose
         private Boolean showBuzzTypeOptions;

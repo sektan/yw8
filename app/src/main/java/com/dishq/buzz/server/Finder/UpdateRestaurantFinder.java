@@ -1,7 +1,8 @@
-package server.Finder;
+package com.dishq.buzz.server.Finder;
 
 /**
- * Created by dishq on 07-11-2016.
+ * Created by tania on 07-11-2016.
+ * property of dishq
  */
 
 public class UpdateRestaurantFinder {

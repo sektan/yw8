@@ -1,15 +1,16 @@
-package server.Finder;
+package com.dishq.buzz.server.Finder;
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class RestaurantSuggestFinder {
 
-    int restaurantId ;
-    String restaurantName;
-    String restaurantAddress;
-    Boolean IS_OPEN_NOW;
+    private int restaurantId ;
+    private String restaurantName;
+    private String restaurantAddress;
+    private Boolean IS_OPEN_NOW;
 
     public RestaurantSuggestFinder(int restaurantId, String restaurantName, String restaurantAddress,
                                    Boolean IS_OPEN_NOW) {

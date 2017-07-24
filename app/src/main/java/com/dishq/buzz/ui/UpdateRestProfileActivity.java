@@ -3,22 +3,17 @@ package com.dishq.buzz.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -61,16 +56,17 @@ import java.util.TimerTask;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Finder.UpdateRestaurantFinder;
-import server.Request.UpdateRestaurantHelper;
-import server.Response.UpdateRestaurantResponse;
-import server.Response.UpdateWaitTimeResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Finder.UpdateRestaurantFinder;
+import com.dishq.buzz.server.Request.UpdateRestaurantHelper;
+import com.dishq.buzz.server.Response.UpdateRestaurantResponse;
+import com.dishq.buzz.server.Response.UpdateWaitTimeResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class UpdateRestProfileActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -153,9 +149,6 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     @Override
     protected void onResume() {
         super.onResume();
-        if (isUpdateClicked) {
-
-        }
     }
 
     @Override
@@ -360,23 +353,23 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         tvMinFive.setTypeface(Util.getFaceMedium());
         buttonUpdate = (Button) findViewById(R.id.button_update);
         buttonUpdate.setTypeface(Util.getFaceMedium());
-        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
-        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
-        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
-        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
+        waitTimeOne.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
+        waitTimeTwo.setCardBackgroundColor(ContextCompat.getColor(this, R.color.cardOne));
+        waitTimeThree.setCardBackgroundColor(ContextCompat.getColor(this, R.color.cardTwo));
+        waitTimeFour.setCardBackgroundColor(ContextCompat.getColor(this, R.color.cardThree));
+        waitTimeFive.setCardBackgroundColor(ContextCompat.getColor(this, R.color.cardFour));
 
-        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
-        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
-        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.black));
-        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.black));
-        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.black));
+        tvWaitTimeOne.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvWaitTimeTwo.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvWaitTimeThree.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvWaitTimeFour.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvWaitTimeFive.setTextColor(ContextCompat.getColor(this, R.color.black));
 
-        tvMinOne.setTextColor(getResources().getColor(R.color.black));
-        tvMinTwo.setTextColor(getResources().getColor(R.color.black));
-        tvMinThree.setTextColor(getResources().getColor(R.color.black));
-        tvMinFour.setTextColor(getResources().getColor(R.color.black));
-        tvMinFive.setTextColor(getResources().getColor(R.color.black));
+        tvMinOne.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvMinTwo.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvMinThree.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvMinFour.setTextColor(ContextCompat.getColor(this, R.color.black));
+        tvMinFive.setTextColor(ContextCompat.getColor(this, R.color.black));
         setFunctionality();
     }
 
@@ -400,27 +393,27 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 waitTimeOne.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
-                        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
-                        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
-                        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
+                        waitTimeOne.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
+                        waitTimeTwo.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardOne));
+                        waitTimeThree.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardTwo));
+                        waitTimeFour.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardThree));
+                        waitTimeFive.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardFour));
 
-                        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.white));
-                        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.black));
+                        tvWaitTimeOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvWaitTimeTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        tvMinOne.setTextColor(getResources().getColor(R.color.white));
-                        tvMinTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvMinThree.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFour.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFive.setTextColor(getResources().getColor(R.color.black));
+                        tvMinOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvMinTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
+                        buttonUpdate.setBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
-                        buttonUpdate.setTextColor(getResources().getColor(R.color.white));
+                        buttonUpdate.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
                         buttonUpdate.setEnabled(true);
 
                         waitTimeUpdate = "0 mins";
@@ -434,27 +427,27 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 waitTimeTwo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
-                        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
-                        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
+                        waitTimeOne.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        waitTimeTwo.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
+                        waitTimeThree.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardTwo));
+                        waitTimeFour.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardThree));
+                        waitTimeFive.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardFour));
 
-                        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.white));
-                        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.black));
+                        tvWaitTimeOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvWaitTimeThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        tvMinOne.setTextColor(getResources().getColor(R.color.black));
-                        tvMinTwo.setTextColor(getResources().getColor(R.color.white));
-                        tvMinThree.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFour.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFive.setTextColor(getResources().getColor(R.color.black));
+                        tvMinOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvMinThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
+                        buttonUpdate.setBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
-                        buttonUpdate.setTextColor(getResources().getColor(R.color.white));
+                        buttonUpdate.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
                         buttonUpdate.setEnabled(true);
 
                         waitTimeUpdate = "10 mins";
@@ -468,27 +461,27 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 waitTimeThree.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
-                        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
-                        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
+                        waitTimeOne.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        waitTimeTwo.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardOne));
+                        waitTimeThree.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
+                        waitTimeFour.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardThree));
+                        waitTimeFive.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardFour));
 
-                        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.white));
-                        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.black));
+                        tvWaitTimeOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvWaitTimeFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        tvMinOne.setTextColor(getResources().getColor(R.color.black));
-                        tvMinTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvMinThree.setTextColor(getResources().getColor(R.color.white));
-                        tvMinFour.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFive.setTextColor(getResources().getColor(R.color.black));
+                        tvMinOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvMinFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
+                        buttonUpdate.setBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
-                        buttonUpdate.setTextColor(getResources().getColor(R.color.white));
+                        buttonUpdate.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
                         buttonUpdate.setEnabled(true);
 
                         waitTimeUpdate = "20 mins";
@@ -502,27 +495,27 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 waitTimeFour.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
-                        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
-                        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
-                        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.cardFour));
+                        waitTimeOne.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        waitTimeTwo.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardOne));
+                        waitTimeThree.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardTwo));
+                        waitTimeFour.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
+                        waitTimeFive.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardFour));
 
-                        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.white));
-                        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.black));
+                        tvWaitTimeOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvWaitTimeFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        tvMinOne.setTextColor(getResources().getColor(R.color.black));
-                        tvMinTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvMinThree.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFour.setTextColor(getResources().getColor(R.color.white));
-                        tvMinFive.setTextColor(getResources().getColor(R.color.black));
+                        tvMinOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        tvMinFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
 
-                        buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
+                        buttonUpdate.setBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
-                        buttonUpdate.setTextColor(getResources().getColor(R.color.white));
+                        buttonUpdate.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
                         buttonUpdate.setEnabled(true);
 
                         waitTimeUpdate = "30 mins";
@@ -536,27 +529,27 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
                 waitTimeFive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        waitTimeOne.setCardBackgroundColor(getResources().getColor(R.color.white));
-                        waitTimeTwo.setCardBackgroundColor(getResources().getColor(R.color.cardOne));
-                        waitTimeThree.setCardBackgroundColor(getResources().getColor(R.color.cardTwo));
-                        waitTimeFour.setCardBackgroundColor(getResources().getColor(R.color.cardThree));
-                        waitTimeFive.setCardBackgroundColor(getResources().getColor(R.color.lightPurple));
+                        waitTimeOne.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
+                        waitTimeTwo.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardOne));
+                        waitTimeThree.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardTwo));
+                        waitTimeFour.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.cardThree));
+                        waitTimeFive.setCardBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
 
-                        tvWaitTimeOne.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeThree.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFour.setTextColor(getResources().getColor(R.color.black));
-                        tvWaitTimeFive.setTextColor(getResources().getColor(R.color.white));
+                        tvWaitTimeOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvWaitTimeFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
 
-                        tvMinOne.setTextColor(getResources().getColor(R.color.black));
-                        tvMinTwo.setTextColor(getResources().getColor(R.color.black));
-                        tvMinThree.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFour.setTextColor(getResources().getColor(R.color.black));
-                        tvMinFive.setTextColor(getResources().getColor(R.color.white));
+                        tvMinOne.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinTwo.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinThree.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFour.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.black));
+                        tvMinFive.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
 
-                        buttonUpdate.setBackgroundColor(getResources().getColor(R.color.lightPurple));
+                        buttonUpdate.setBackgroundColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.lightPurple));
                         buttonUpdate.setAlpha(Float.parseFloat("1"));
-                        buttonUpdate.setTextColor(getResources().getColor(R.color.white));
+                        buttonUpdate.setTextColor(ContextCompat.getColor(UpdateRestProfileActivity.this, R.color.white));
                         buttonUpdate.setEnabled(true);
 
                         waitTimeUpdate = "30+ mins";
@@ -852,7 +845,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
     public void checkWhereToGo(UpdateRestaurantFinder updateRestaurantFinder) {
         if (updateRestaurantFinder != null) {
             Boolean badgeUpgrade = updateRestaurantFinder.getHasBadgeUpgrade();
-            if (badgeUpgrade == true) {
+            if (badgeUpgrade) {
                 Intent intent = new Intent(UpdateRestProfileActivity.this, BigBadgeActivity.class);
                 intent.putExtra("badge_name", updateRestaurantFinder.getBadgeName());
                 intent.putExtra("badge_level", updateRestaurantFinder.getBadgeLevel());
@@ -943,7 +936,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
 
             result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
                 @Override
-                public void onResult(LocationSettingsResult result) {
+                public void onResult(@NonNull LocationSettingsResult result) {
                     final Status status = result.getStatus();
                     switch (status.getStatusCode()) {
 
@@ -1046,7 +1039,7 @@ public class UpdateRestProfileActivity extends BaseActivity implements GoogleApi
         try {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

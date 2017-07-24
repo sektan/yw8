@@ -47,9 +47,9 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Response.ShortUserDetailsResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Response.ShortUserDetailsResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 /**
  * Created by dishq on 24-10-2016.
@@ -89,7 +89,7 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
             TextView title = (TextView) getWindow().findViewById(titleID);
             title.setTypeface(Util.getFaceMedium());
             title.setTextSize(22);
-            title.setTextColor(getResources().getColor(R.color.white));
+            title.setTextColor(ContextCompat.getColor(HomePageActivity.this, R.color.white));
         }catch(Exception e) {
             Log.e("HomePage", "Failed to obtain title bar");
         }
@@ -240,7 +240,6 @@ public class HomePageActivity extends BaseActivity implements GoogleApiClient.On
                             alertTryAgain(HomePageActivity.this);
                         }
                     }
-                    return;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

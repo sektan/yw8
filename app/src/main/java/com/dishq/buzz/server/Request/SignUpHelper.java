@@ -1,4 +1,4 @@
-package server.Request;
+package com.dishq.buzz.server.Request;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 
 /**
- * Created by dishq on 02-11-2016.
+ * Created by tania on 02-11-2016.
+ * property of dishq
  */
 
 public class SignUpHelper {

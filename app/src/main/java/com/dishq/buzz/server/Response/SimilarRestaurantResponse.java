@@ -1,10 +1,11 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by dishq on 03-11-2016.
+ * Created by tania on 03-11-2016.
+ * property of dishq
  */
 
 public class SimilarRestaurantResponse {
@@ -20,27 +21,27 @@ public class SimilarRestaurantResponse {
     public class SimilarRestaurant {
         @SerializedName("cuisine")
         @Expose
-        public String[] similarRestCuisine;
+        String[] similarRestCuisine;
 
         @SerializedName("display_address")
         @Expose
-        public String similarRestAddr;
+        String similarRestAddr;
 
         @SerializedName("name")
         @Expose
-        public String similarRestName;
+        String similarRestName;
 
         @SerializedName("restaurant_id")
         @Expose
-        public String similarRestId;
+        String similarRestId;
 
         @SerializedName("is_open_now")
         @Expose
-        public Boolean similarRestIsOpenOn;
+        Boolean similarRestIsOpenOn;
 
         @SerializedName("restaurant_type")
         @Expose
-        public String[] similarRestType;
+        String[] similarRestType;
 
         public String[] getSimilarRestCuisine() {
             return similarRestCuisine;

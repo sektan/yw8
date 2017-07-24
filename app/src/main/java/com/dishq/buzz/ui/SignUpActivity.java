@@ -50,10 +50,10 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Request.SignUpHelper;
-import server.Response.SignUpResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Request.SignUpHelper;
+import com.dishq.buzz.server.Response.SignUpResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 /**
  * Created by dishq on 25-10-2016.

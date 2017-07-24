@@ -1,10 +1,11 @@
-package server.Response;
+package com.dishq.buzz.server.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by dishq on 05-11-2016.
+ * Created by tania on 05-11-2016.
+ * property of dishq
  */
 
 public class FullUserDetailsResponse {

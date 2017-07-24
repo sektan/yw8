@@ -2,8 +2,8 @@ package com.dishq.buzz.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,13 +26,14 @@ import java.util.Arrays;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import server.Response.RestaurantInfoResponse;
-import server.Response.SimilarRestaurantResponse;
-import server.api.ApiInterface;
-import server.api.Config;
+import com.dishq.buzz.server.Response.RestaurantInfoResponse;
+import com.dishq.buzz.server.Response.SimilarRestaurantResponse;
+import com.dishq.buzz.server.api.ApiInterface;
+import com.dishq.buzz.server.api.Config;
 
 /**
- * Created by dishq on 02-11-2016.
+ * Created by tania on 02-11-2016.
+ * property of dishq
  */
 
 public class RestaurantProfileActivity extends BaseActivity {
@@ -120,9 +121,9 @@ public class RestaurantProfileActivity extends BaseActivity {
                     }
                 }
             } else {
-                restToolbar.setBackgroundColor(getResources().getColor(R.color.red));
+                restToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.red));
                 rlRestWaitTime.setVisibility(View.VISIBLE);
-                rlRestWaitTime.setBackgroundColor(getResources().getColor(R.color.red));
+                rlRestWaitTime.setBackgroundColor(ContextCompat.getColor(this, R.color.red));
                 rlRestWait.setVisibility(View.GONE);
                 rlRestClosed.setVisibility(View.VISIBLE);
                 fetchSimilarRestInfo(query);
